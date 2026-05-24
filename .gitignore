@@ -4,6 +4,7 @@ out
 .env
 .env.local
 .env*.local
+.credentials*
 .DS_Store
 *.log
 .vercel
@@ -12,3 +13,4 @@ coverage
 dist
 .cache
 .supabase
+.shot*.png
