@@ -24,7 +24,11 @@ export async function POST(request: Request) {
   if (insertErr) return NextResponse.json({ error: insertErr.message }, { status: 500 });
 
   // Increment inquiry counter on the listing
-  await supabase.rpc('increment_inquiry_count', { listing_id: listingId }).catch(() => {});
+  try {
+    await supabase.rpc('increment_inquiry_count', { listing_id: listingId });
+  } catch {
+    /* counter increment is non-critical */
+  }
 
   // Send email notification to vendor
   if (process.env.RESEND_API_KEY) {
