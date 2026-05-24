@@ -1,0 +1,230 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { createClient } from '@/lib/supabase/client';
+import { slugify } from '@/lib/utils';
+import { Loader2, Upload } from 'lucide-react';
+import type { Category } from '@/lib/types';
+
+interface Props {
+  categories: Category[];
+  userId: string;
+}
+
+export function SubmitListingForm({ categories, userId }: Props) {
+  const router = useRouter();
+  const [businessName, setBusinessName] = useState('');
+  const [description, setDescription] = useState('');
+  const [websiteUrl, setWebsiteUrl] = useState('');
+  const [phone, setPhone] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
+  const [heroFile, setHeroFile] = useState<File | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  function toggleCategory(id: string) {
+    const next = new Set(selectedCategories);
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    setSelectedCategories(next);
+  }
+
+  async function geocode(city: string, state: string): Promise<{ lat: number; lng: number } | null> {
+    try {
+      const q = encodeURIComponent(`${city}, ${state}, USA`);
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${q}&limit=1`);
+      const data = await res.json();
+      if (data[0]) return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+    } catch { /* fall through */ }
+    return null;
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+    try {
+      const supabase = createClient();
+      const slug = slugify(businessName);
+
+      // 1. Create vendor record
+      const { data: vendor, error: vendorErr } = await supabase
+        .from('vendors')
+        .insert({
+          user_id: userId,
+          business_name: businessName,
+          slug,
+          website_url: websiteUrl || null,
+          phone: phone || null,
+        })
+        .select('id')
+        .single();
+      if (vendorErr) throw vendorErr;
+
+      // 2. Upload hero image (if provided)
+      let heroUrl: string | null = null;
+      if (heroFile) {
+        const path = `listings/${slug}-${Date.now()}-${heroFile.name}`;
+        const { error: uploadErr } = await supabase.storage
+          .from('listings')
+          .upload(path, heroFile, { upsert: false });
+        if (uploadErr) throw uploadErr;
+        const { data: pub } = supabase.storage.from('listings').getPublicUrl(path);
+        heroUrl = pub.publicUrl;
+      }
+
+      // 3. Geocode city/state
+      const coords = await geocode(city, state);
+
+      // 4. Create listing
+      const { data: listing, error: listingErr } = await supabase
+        .from('listings')
+        .insert({
+          vendor_id: vendor.id,
+          title: businessName,
+          slug,
+          description,
+          hero_image_url: heroUrl,
+          website_url: websiteUrl || null,
+          city,
+          state,
+          lat: coords?.lat,
+          lng: coords?.lng,
+          status: 'pending',
+          tier: 'basic',
+        })
+        .select('id, slug')
+        .single();
+      if (listingErr) throw listingErr;
+
+      // 5. Link categories
+      if (selectedCategories.size > 0) {
+        await supabase.from('listing_categories').insert(
+          [...selectedCategories].map((catId) => ({ listing_id: listing.id, category_id: catId }))
+        );
+      }
+
+      // Update profile role to vendor
+      await supabase.from('profiles').update({ role: 'vendor' }).eq('id', userId);
+
+      router.push(`/dashboard?welcome=1`);
+      router.refresh();
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <section className="rounded-xl border bg-card p-6 space-y-4">
+        <h2 className="font-display text-xl font-semibold">Business details</h2>
+
+        <div>
+          <label htmlFor="businessName" className="block text-sm font-medium mb-1.5">Business name *</label>
+          <Input id="businessName" required value={businessName} onChange={(e) => setBusinessName(e.target.value)} />
+        </div>
+
+        <div>
+          <label htmlFor="description" className="block text-sm font-medium mb-1.5">Description *</label>
+          <textarea
+            id="description"
+            required
+            rows={5}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            placeholder="Tell couples about your services — equipment, experience, what makes you different…"
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="website" className="block text-sm font-medium mb-1.5">Website</label>
+            <Input id="website" type="url" value={websiteUrl} onChange={(e) => setWebsiteUrl(e.target.value)} placeholder="https://" />
+          </div>
+          <div>
+            <label htmlFor="phone" className="block text-sm font-medium mb-1.5">Phone</label>
+            <Input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
+          </div>
+        </div>
+      </section>
+
+      <section className="rounded-xl border bg-card p-6 space-y-4">
+        <h2 className="font-display text-xl font-semibold">Location</h2>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="city" className="block text-sm font-medium mb-1.5">City *</label>
+            <Input id="city" required value={city} onChange={(e) => setCity(e.target.value)} />
+          </div>
+          <div>
+            <label htmlFor="state" className="block text-sm font-medium mb-1.5">State *</label>
+            <Input id="state" required value={state} onChange={(e) => setState(e.target.value)} />
+          </div>
+        </div>
+        <p className="text-xs text-muted-foreground">We&rsquo;ll auto-detect your coordinates from the city + state for map display.</p>
+      </section>
+
+      <section className="rounded-xl border bg-card p-6 space-y-4">
+        <h2 className="font-display text-xl font-semibold">Categories</h2>
+        <p className="text-sm text-muted-foreground">Pick all that apply — couples will filter by these.</p>
+        <div className="grid grid-cols-2 gap-2">
+          {categories.map((cat) => (
+            <label
+              key={cat.id}
+              className={`flex items-center gap-2 px-3 py-2 rounded-md border cursor-pointer transition-colors ${
+                selectedCategories.has(cat.id) ? 'border-primary bg-accent' : 'border-input hover:bg-muted'
+              }`}
+            >
+              <input
+                type="checkbox"
+                checked={selectedCategories.has(cat.id)}
+                onChange={() => toggleCategory(cat.id)}
+                className="rounded"
+              />
+              <span className="text-sm">{cat.name}</span>
+            </label>
+          ))}
+        </div>
+      </section>
+
+      <section className="rounded-xl border bg-card p-6 space-y-4">
+        <h2 className="font-display text-xl font-semibold">Hero photo</h2>
+        <label className="flex items-center justify-center gap-2 px-4 py-8 rounded-lg border-2 border-dashed cursor-pointer hover:border-primary transition-colors">
+          <Upload className="h-5 w-5 text-muted-foreground" />
+          <span className="text-sm text-muted-foreground">
+            {heroFile ? heroFile.name : 'Click to upload (or drag and drop)'}
+          </span>
+          <input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => setHeroFile(e.target.files?.[0] || null)}
+          />
+        </label>
+      </section>
+
+      {error && (
+        <div className="p-4 rounded-lg bg-destructive/10 text-destructive text-sm border border-destructive/20">
+          {error}
+        </div>
+      )}
+
+      <div className="flex items-center justify-between pt-4 border-t">
+        <p className="text-sm text-muted-foreground">
+          Your listing will be reviewed and live within 24 hours.
+        </p>
+        <Button type="submit" size="lg" disabled={loading || !businessName || !city || !state}>
+          {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+          Submit Listing
+        </Button>
+      </div>
+    </form>
+  );
+}
