@@ -6,6 +6,7 @@ import { Search, Sparkles, MessageSquare, Plus, Eye, Inbox } from 'lucide-react'
 export const metadata: Metadata = {
   title: 'How It Works',
   description: 'Finding the perfect live streaming vendor for your wedding is simple. Here\'s everything you need to know.',
+  alternates: { canonical: '/how-it-works' },
 };
 
 const COUPLE_STEPS = [

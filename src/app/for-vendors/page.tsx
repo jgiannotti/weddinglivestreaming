@@ -6,6 +6,7 @@ import { Target, MessageSquare, MapPin, Sparkles, Clock, Search } from 'lucide-r
 export const metadata: Metadata = {
   title: 'For Vendors',
   description: 'Reach couples actively searching for wedding live streaming. Create your free vendor listing in minutes. No commissions, no middleman — direct inquiries only.',
+  alternates: { canonical: '/for-vendors' },
 };
 
 const REASONS = [

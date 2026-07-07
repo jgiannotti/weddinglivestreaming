@@ -7,10 +7,15 @@ import { ListingCard } from '@/components/listing-card';
 import { Button } from '@/components/ui/button';
 import { getListings } from '@/lib/data/listings';
 import { CATEGORIES } from '@/lib/categories';
+import { BreadcrumbJsonLd, ListingsItemListJsonLd } from '@/components/json-ld';
 
 export const metadata: Metadata = {
   title: 'Find Vendors',
   description: 'Browse professional wedding live streaming vendors across the United States.',
+  // Every filter/sort/page combination is the same underlying content — point
+  // them all at the unfiltered canonical URL so search engines don't treat
+  // ?location=&category=&page= combinations as separate duplicate pages.
+  alternates: { canonical: '/directory' },
 };
 
 const PAGE_SIZE = 12;
@@ -38,6 +43,8 @@ export default async function DirectoryPage({ searchParams }: PageProps) {
 
   return (
     <div className="container py-10 md:py-14">
+      <BreadcrumbJsonLd items={[{ name: 'Home', path: '/' }, { name: 'Directory', path: '/directory' }]} />
+      {listings.length > 0 && <ListingsItemListJsonLd listings={listings} />}
       <div className="mb-8">
         <p className="text-sm font-medium tracking-wider uppercase text-primary mb-2">Directory</p>
         <h1 className="font-display text-3xl md:text-4xl font-medium mb-2">

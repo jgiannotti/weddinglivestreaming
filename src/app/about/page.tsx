@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 export const metadata: Metadata = {
   title: 'About',
   description: 'WeddingLiveStreaming.com — the only directory dedicated to wedding live streaming.',
+  alternates: { canonical: '/about' },
 };
 
 export default function AboutPage() {

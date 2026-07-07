@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, Sparkles, MessageSquare, MapPin, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -5,6 +6,10 @@ import { SearchBar } from '@/components/search-bar';
 import { ListingCard } from '@/components/listing-card';
 import { getFeaturedListings, getListingStats } from '@/lib/data/listings';
 import { US_STATES } from '@/lib/states';
+
+export const metadata: Metadata = {
+  alternates: { canonical: '/' },
+};
 
 const POPULAR_STATES = ['california', 'texas', 'florida', 'new-york', 'georgia', 'pennsylvania', 'illinois', 'ohio', 'north-carolina', 'michigan', 'arizona', 'massachusetts', 'washington', 'colorado', 'virginia', 'tennessee'];
 
@@ -110,7 +115,7 @@ export default async function HomePage() {
       </section>
 
       {/* BROWSE BY STATE */}
-      <section className="container py-20 md:py-24">
+      <section id="browse-by-state" className="container py-20 md:py-24">
         <div className="text-center mb-10">
           <p className="text-sm font-medium tracking-wider uppercase text-primary mb-2">Find Vendors Near You</p>
           <h2 className="font-display text-3xl md:text-4xl font-medium">Browse by State</h2>

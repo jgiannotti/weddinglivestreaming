@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { ListingCard } from '@/components/listing-card';
 import { getStateBySlug, US_STATES } from '@/lib/states';
 import { getListings } from '@/lib/data/listings';
+import { STATE_CONTENT } from '@/lib/state-content';
+import { BreadcrumbJsonLd, ListingsItemListJsonLd, FaqJsonLd } from '@/components/json-ld';
 
 interface PageProps {
   params: Promise<{ state: string }>;
@@ -22,6 +24,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: `Wedding Live Streaming in ${info.name}`,
     description: `Find and connect with professional wedding live streaming vendors serving couples across ${info.name}.`,
+    alternates: { canonical: `/wedding-live-streaming-${info.slug}` },
   };
 }
 
@@ -30,10 +33,24 @@ export default async function StatePage({ params }: PageProps) {
   const info = getStateBySlug(state);
   if (!info) notFound();
 
-  const listings = await getListings({ state: info.name, limit: 9 });
+  // Fetch the full unfiltered set for this state so the vendor count shown
+  // is real, then cap the on-page grid at 9 — previously the count and the
+  // grid used the same limited query, so the count silently capped at "9+"
+  // forever even once a state had 50 real vendors.
+  const allListings = await getListings({ state: info.name });
+  const listings = allListings.slice(0, 9);
+  const content = STATE_CONTENT[info.slug];
 
   return (
     <div>
+      <BreadcrumbJsonLd
+        items={[
+          { name: 'Home', path: '/' },
+          { name: info.name, path: `/wedding-live-streaming-${info.slug}` },
+        ]}
+      />
+      {listings.length > 0 && <ListingsItemListJsonLd listings={listings} />}
+      {content && <FaqJsonLd items={content.faqs} />}
       {/* HERO */}
       <section className="bg-accent/30 border-b">
         <div className="container py-16 md:py-20">
@@ -42,11 +59,14 @@ export default async function StatePage({ params }: PageProps) {
             <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-medium leading-tight">
               Wedding Live Streaming<br />in {info.name}
             </h1>
-            <p className="mt-5 text-lg text-muted-foreground max-w-2xl">
-              Find and connect with professional wedding live streaming vendors serving couples across {info.name}.
+            <p className="mt-5 text-lg text-muted-foreground max-w-2xl font-medium">
+              {content?.intro ??
+                `Find and connect with professional wedding live streaming vendors serving couples across ${info.name}.`}
             </p>
             <div className="mt-8 flex flex-wrap gap-x-8 gap-y-3 text-sm">
-              <span><span className="font-semibold text-foreground">{listings.length}+</span> Vendors</span>
+              {allListings.length > 0 && (
+                <span><span className="font-semibold text-foreground">{allListings.length}+</span> Vendors</span>
+              )}
               <span><span className="font-semibold text-foreground">Free</span> To Contact</span>
               <span><span className="font-semibold text-foreground">Direct</span> Messaging</span>
             </div>
@@ -101,6 +121,26 @@ export default async function StatePage({ params }: PageProps) {
               >
                 {city}
               </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* FAQ */}
+      {content && content.faqs.length > 0 && (
+        <section className="container py-16 border-t max-w-3xl">
+          <h2 className="font-display text-3xl font-medium mb-8">
+            {info.name} Wedding Live Streaming FAQs
+          </h2>
+          <div className="space-y-3">
+            {content.faqs.map((item) => (
+              <details key={item.question} className="group rounded-xl border bg-card p-5 transition-shadow open:shadow-md">
+                <summary className="cursor-pointer font-semibold flex items-center justify-between list-none">
+                  {item.question}
+                  <span className="text-muted-foreground transition-transform group-open:rotate-45 text-xl">+</span>
+                </summary>
+                <p className="mt-3 text-muted-foreground leading-relaxed">{item.answer}</p>
+              </details>
             ))}
           </div>
         </section>

@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { SubmitListingForm } from './form';
 import { CATEGORIES } from '@/lib/categories';
 
-export const metadata = { title: 'List Your Business' };
+export const metadata = { title: 'List Your Business', alternates: { canonical: '/submit-listing' } };
 export const dynamic = 'force-dynamic';
 
 export default async function SubmitListingPage() {

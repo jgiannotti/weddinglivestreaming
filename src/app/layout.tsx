@@ -3,6 +3,7 @@ import { Inter, Cormorant_Garamond } from 'next/font/google';
 import './globals.css';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
+import { OrganizationJsonLd, WebsiteJsonLd } from '@/components/json-ld';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -25,6 +26,11 @@ export const metadata: Metadata = {
   },
   description:
     'The nationwide directory of professional wedding live streaming vendors. Connect directly with vendors in your area — free for couples.',
+  // NOTE: canonical is intentionally set per-page (via each page's own
+  // `metadata`/`generateMetadata`), not here. Next.js inherits unset metadata
+  // fields from parent layouts down to child pages — a root-level default
+  // canonical would silently apply to every page that doesn't set its own,
+  // which would wrongly claim the homepage as canonical for everything.
   openGraph: {
     type: 'website',
     locale: 'en_US',
@@ -46,6 +52,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${inter.variable} ${cormorant.variable}`}>
       <body className="flex min-h-screen flex-col">
+        <OrganizationJsonLd />
+        <WebsiteJsonLd />
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />

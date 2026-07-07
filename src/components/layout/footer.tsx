@@ -19,6 +19,15 @@ const FOOTER_NAV = [
     ],
   },
   {
+    heading: 'Guides',
+    links: [
+      { label: 'Livestreaming Cost',     href: '/guides/wedding-live-streaming-cost' },
+      { label: 'How to Live Stream',     href: '/guides/how-to-live-stream-a-wedding' },
+      { label: 'DIY vs. Professional',   href: '/guides/diy-vs-professional-wedding-livestream' },
+      { label: 'Vendor Questions',       href: '/guides/questions-to-ask-your-wedding-livestreamer' },
+    ],
+  },
+  {
     heading: 'Company',
     links: [
       { label: 'About',                href: '/about' },
@@ -42,7 +51,7 @@ export function Footer() {
   return (
     <footer className="border-t bg-secondary/30 mt-24">
       <div className="container py-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 mb-12">
           {FOOTER_NAV.map((section) => (
             <div key={section.heading}>
               <h4 className="font-display text-base font-semibold mb-4">{section.heading}</h4>

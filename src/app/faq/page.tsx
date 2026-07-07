@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
-export const metadata: Metadata = { title: 'FAQ' };
+export const metadata: Metadata = { title: 'FAQ', alternates: { canonical: '/faq' } };
 
 const FAQ_ITEMS = [
   {

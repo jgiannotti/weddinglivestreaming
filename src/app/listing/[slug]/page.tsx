@@ -9,6 +9,7 @@ import { ListingCard } from '@/components/listing-card';
 import { getListingBySlug, getRelatedListings } from '@/lib/data/listings';
 import { formatDate } from '@/lib/utils';
 import { PLACEHOLDER_LISTING_IMAGE } from '@/lib/constants';
+import { ListingJsonLd, BreadcrumbJsonLd } from '@/components/json-ld';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -25,6 +26,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: listing.title,
     description: listing.description.slice(0, 160),
+    alternates: { canonical: `/listing/${listing.slug}` },
     openGraph: {
       title: listing.title,
       description: listing.description.slice(0, 160),
@@ -43,6 +45,14 @@ export default async function ListingPage({ params }: PageProps) {
 
   return (
     <div>
+      <ListingJsonLd listing={listing} />
+      <BreadcrumbJsonLd
+        items={[
+          { name: 'Home', path: '/' },
+          { name: 'Directory', path: '/directory' },
+          { name: listing.title, path: `/listing/${listing.slug}` },
+        ]}
+      />
       {/* HERO */}
       <div className="relative aspect-[16/8] md:aspect-[16/6] overflow-hidden bg-muted">
         <Image

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Mail } from 'lucide-react';
 
-export const metadata: Metadata = { title: 'Contact' };
+export const metadata: Metadata = { title: 'Contact', alternates: { canonical: '/contact' } };
 
 export default function ContactPage() {
   return (

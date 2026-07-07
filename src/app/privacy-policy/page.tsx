@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = { title: 'Privacy Policy' };
+export const metadata: Metadata = { title: 'Privacy Policy', alternates: { canonical: '/privacy-policy' } };
 
 export default function PrivacyPolicyPage() {
   return (

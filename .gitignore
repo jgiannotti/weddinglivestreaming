@@ -14,3 +14,4 @@ dist
 .cache
 .supabase
 .shot*.png
+*.tsbuildinfo

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 export const metadata: Metadata = {
   title: 'Vendor Pricing',
   description: "Start for free. Upgrade when you're ready to grow. No contracts, no surprises.",
+  alternates: { canonical: '/pricing' },
 };
 
 const BASIC_FEATURES = [

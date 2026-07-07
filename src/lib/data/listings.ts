@@ -84,6 +84,7 @@ function sortByTierFirst(listings: Listing[]): Listing[] {
 export async function getListings(
   opts: {
     state?: string;
+    city?: string;
     category?: string;
     search?: string;
     limit?: number;
@@ -120,6 +121,10 @@ export async function getListings(
     // ilike with no wildcards = case-insensitive equality, matching the
     // previous exact (but case-insensitive) state-name comparison.
     query = query.ilike('state', opts.state);
+  }
+
+  if (opts.city) {
+    query = query.ilike('city', opts.city);
   }
 
   if (listingIds) {
@@ -222,6 +227,32 @@ export async function getListingStats(): Promise<{ vendorCount: number; stateCou
   const stateCount = new Set((stateRows ?? []).map((r: any) => r.state)).size;
 
   return { vendorCount: vendorCount ?? 0, stateCount };
+}
+
+// Distinct (state, city) pairs that have at least one approved listing.
+// Drives the programmatic city pages (/wedding-live-streaming-[state]/[city])
+// and their sitemap entries — a city only gets a page once a real vendor
+// exists there, so this never generates thin/empty pages.
+export async function getCitiesWithListings(): Promise<{ state: string; city: string }[]> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from('listings')
+    .select('state, city')
+    .eq('status', 'approved');
+
+  if (error || !data) return [];
+
+  const seen = new Set<string>();
+  const pairs: { state: string; city: string }[] = [];
+  for (const row of data as any[]) {
+    const key = `${row.state}|${row.city}`.toLowerCase();
+    if (!seen.has(key)) {
+      seen.add(key);
+      pairs.push({ state: row.state, city: row.city });
+    }
+  }
+  return pairs;
 }
 
 export async function getRelatedListings(listing: Listing, limit = 3): Promise<Listing[]> {
