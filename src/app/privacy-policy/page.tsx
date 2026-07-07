@@ -19,7 +19,7 @@ export default function PrivacyPolicyPage() {
           <li><strong>Vendor profile info:</strong> business name, location, photos, website, phone, and description if you list a business.</li>
           <li><strong>Messages:</strong> inquiries you send to vendors are stored so vendors can respond.</li>
           <li><strong>Usage data:</strong> standard server logs and basic analytics (page views, referrers) to keep the site fast and find bugs.</li>
-          <li><strong>Payment info:</strong> handled entirely by Stripe or PayPal. We never see or store your card details.</li>
+          <li><strong>Payment info:</strong> handled entirely by Stripe. We never see or store your card details.</li>
         </ul>
 
         <h2 className="font-display text-2xl font-semibold mt-8">How we use it</h2>
@@ -34,7 +34,7 @@ export default function PrivacyPolicyPage() {
 
         <h2 className="font-display text-2xl font-semibold mt-8">Third parties</h2>
         <p>
-          We use Supabase (database + auth), Vercel (hosting), Resend (email), Stripe and PayPal (payments), and OpenStreetMap (maps). Each has its own privacy policy.
+          We use Supabase (database + auth), Vercel (hosting), Resend (email), Stripe (payments), and OpenStreetMap (maps). Each has its own privacy policy.
         </p>
 
         <h2 className="font-display text-2xl font-semibold mt-8">Contact</h2>

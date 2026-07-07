@@ -20,11 +20,11 @@ const BASIC_FEATURES = [
 
 const FEATURED_FEATURES = [
   'Everything in Basic',
+  'Instant access to new couple quote requests (Basic vendors see them 24 hours later)',
   'Top placement in search results',
   'Gold "Featured" badge on listing',
-  'Homepage spotlight section',
+  'Homepage spotlight carousel',
   'Priority in city & state searches',
-  'Enhanced profile visibility',
   '12-month listing duration',
 ];
 
@@ -48,10 +48,6 @@ const FAQ = [
   {
     q: 'How do I upgrade from Basic to Featured?',
     a: 'Log in to your account, go to your listing dashboard, and select "Upgrade to Featured." You can upgrade at any time after your listing goes live.',
-  },
-  {
-    q: 'Can I pay with PayPal instead of credit card?',
-    a: 'Yes. We accept both Stripe (all major cards) and PayPal at checkout. Pick whichever you prefer.',
   },
 ];
 
@@ -123,7 +119,6 @@ export default function PricingPage() {
             <Button asChild size="lg" className="w-full">
               <Link href="/submit-listing">Get Featured</Link>
             </Button>
-            <p className="mt-3 text-xs text-center text-muted-foreground">Pay with Stripe or PayPal</p>
           </div>
         </div>
       </section>

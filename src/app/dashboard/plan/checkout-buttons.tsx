@@ -8,7 +8,7 @@ export function CheckoutButtons() {
   const [plan, setPlan] = useState<'monthly' | 'annual'>('monthly');
   const [loading, setLoading] = useState<string | null>(null);
 
-  async function checkout(processor: 'stripe' | 'paypal') {
+  async function checkout(processor: 'stripe') {
     setLoading(processor);
     try {
       const res = await fetch(`/api/checkout/${processor}`, {
@@ -51,10 +51,6 @@ export function CheckoutButtons() {
       <Button onClick={() => checkout('stripe')} disabled={!!loading} className="w-full" size="lg">
         {loading === 'stripe' && <Loader2 className="h-4 w-4 animate-spin" />}
         Pay with Card (Stripe)
-      </Button>
-      <Button onClick={() => checkout('paypal')} disabled={!!loading} variant="outline" className="w-full" size="lg">
-        {loading === 'paypal' && <Loader2 className="h-4 w-4 animate-spin" />}
-        Pay with PayPal
       </Button>
     </div>
   );

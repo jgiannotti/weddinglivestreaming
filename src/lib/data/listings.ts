@@ -38,12 +38,26 @@ function mapVendor(row: any): Vendor {
   };
 }
 
+// Tier/expiry integrity, enforced at read time (never relying on the nightly
+// downgrade_expired_featured() cron to have run yet). A listing whose
+// featured_until has already passed reads back as 'basic' immediately,
+// regardless of what the tier column still says in the DB. Per plan: no
+// query-time enforcement here would mean vendors who stop paying keep
+// Featured forever until a cron happens to run.
+function effectiveTier(row: any): 'basic' | 'featured' {
+  if (row.tier !== 'featured') return 'basic';
+  if (!row.featured_until) return 'featured';
+  return new Date(row.featured_until) > new Date() ? 'featured' : 'basic';
+}
+
 function mapListing(row: any): Listing {
   const categories: Category[] = (row.listing_categories ?? [])
     .map((lc: any) => lc.categories)
     .filter((c: any): c is any => !!c)
     .map(mapCategory)
     .sort((a: Category, b: Category) => a.sortOrder - b.sortOrder);
+
+  const tier = effectiveTier(row);
 
   return {
     id: row.id,
@@ -58,8 +72,8 @@ function mapListing(row: any): Listing {
     lat: row.lat,
     lng: row.lng,
     status: row.status,
-    tier: row.tier,
-    featuredUntil: row.featured_until,
+    tier,
+    featuredUntil: tier === 'featured' ? row.featured_until : null,
     websiteUrl: row.website_url,
     categories,
     viewCount: row.view_count,
@@ -115,7 +129,14 @@ export async function getListings(
     if (listingIds.length === 0) return [];
   }
 
-  let query = supabase.from('listings').select(LISTING_SELECT).eq('status', 'approved');
+  // Expired listings drop from every public page (query-time enforcement,
+  // no cron dependency) but stay visible in the vendor's own dashboard via
+  // getListingsByVendor, which does not apply this filter.
+  let query = supabase
+    .from('listings')
+    .select(LISTING_SELECT)
+    .eq('status', 'approved')
+    .gt('expires_at', new Date().toISOString());
 
   if (opts.state) {
     // ilike with no wildcards = case-insensitive equality, matching the
@@ -154,12 +175,20 @@ export async function getListings(
 
 export async function getFeaturedListings(limit = 6): Promise<Listing[]> {
   const supabase = await createClient();
+  const nowIso = new Date().toISOString();
 
   const { data, error } = await supabase
     .from('listings')
     .select(LISTING_SELECT)
     .eq('status', 'approved')
     .eq('tier', 'featured')
+    .gt('expires_at', nowIso)
+    // Only genuinely-still-featured rows — a row whose featured_until has
+    // passed but hasn't been downgraded by the cron yet must not occupy a
+    // Featured carousel slot (effectiveTier() would relabel it 'basic' after
+    // fetch, but by then it would have already taken a slot from a real
+    // Featured vendor).
+    .or(`featured_until.is.null,featured_until.gte.${nowIso}`)
     .order('created_at', { ascending: false })
     .limit(limit);
 
@@ -174,6 +203,7 @@ export async function getListingBySlug(slug: string): Promise<Listing | null> {
     .from('listings')
     .select(LISTING_SELECT)
     .eq('status', 'approved')
+    .gt('expires_at', new Date().toISOString())
     .eq('slug', slug)
     .maybeSingle();
 
@@ -274,6 +304,7 @@ export async function getRelatedListings(listing: Listing, limit = 3): Promise<L
     .from('listings')
     .select(LISTING_SELECT)
     .eq('status', 'approved')
+    .gt('expires_at', new Date().toISOString())
     .in('id', candidateIds)
     .order('created_at', { ascending: false })
     .limit(limit);
