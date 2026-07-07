@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     template: '%s | WeddingLiveStreaming',
   },
   description:
-    'Search 100+ professional wedding live streaming vendors across 40+ states. Connect directly with vendors in your area — free for couples.',
+    'The nationwide directory of professional wedding live streaming vendors. Connect directly with vendors in your area — free for couples.',
   openGraph: {
     type: 'website',
     locale: 'en_US',

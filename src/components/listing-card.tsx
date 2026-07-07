@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { MapPin, Sparkles } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { formatDate } from '@/lib/utils';
+import { PLACEHOLDER_LISTING_IMAGE } from '@/lib/constants';
 import type { Listing } from '@/lib/types';
 
 interface ListingCardProps {
@@ -20,7 +21,7 @@ export function ListingCard({ listing, priority = false }: ListingCardProps) {
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-muted">
         <Image
-          src={listing.heroImageUrl}
+          src={listing.heroImageUrl ?? PLACEHOLDER_LISTING_IMAGE}
           alt={listing.title}
           fill
           sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 100vw"

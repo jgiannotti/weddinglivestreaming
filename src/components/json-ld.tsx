@@ -1,3 +1,4 @@
+import { PLACEHOLDER_LISTING_IMAGE } from '@/lib/constants';
 import type { Listing } from '@/lib/types';
 
 interface ListingJsonLdProps {
@@ -5,12 +6,14 @@ interface ListingJsonLdProps {
 }
 
 export function ListingJsonLd({ listing }: ListingJsonLdProps) {
+  const hasCoordinates = listing.lat != null && listing.lng != null;
+
   const data = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     name: listing.title,
     description: listing.description,
-    image: listing.heroImageUrl,
+    image: listing.heroImageUrl ?? PLACEHOLDER_LISTING_IMAGE,
     url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://weddinglivestreaming.com'}/listing/${listing.slug}`,
     address: {
       '@type': 'PostalAddress',
@@ -18,11 +21,13 @@ export function ListingJsonLd({ listing }: ListingJsonLdProps) {
       addressRegion: listing.state,
       addressCountry: 'US',
     },
-    geo: {
-      '@type': 'GeoCoordinates',
-      latitude: listing.lat,
-      longitude: listing.lng,
-    },
+    ...(hasCoordinates && {
+      geo: {
+        '@type': 'GeoCoordinates',
+        latitude: listing.lat,
+        longitude: listing.lng,
+      },
+    }),
     serviceType: 'Wedding Live Streaming',
   };
 

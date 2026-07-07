@@ -3,13 +3,14 @@ import { ArrowRight, Sparkles, MessageSquare, MapPin, Heart } from 'lucide-react
 import { Button } from '@/components/ui/button';
 import { SearchBar } from '@/components/search-bar';
 import { ListingCard } from '@/components/listing-card';
-import { getFeaturedListings } from '@/data/mock-listings';
+import { getFeaturedListings, getListingStats } from '@/lib/data/listings';
 import { US_STATES } from '@/lib/states';
 
 const POPULAR_STATES = ['california', 'texas', 'florida', 'new-york', 'georgia', 'pennsylvania', 'illinois', 'ohio', 'north-carolina', 'michigan', 'arizona', 'massachusetts', 'washington', 'colorado', 'virginia', 'tennessee'];
 
-export default function HomePage() {
-  const featured = getFeaturedListings(8);
+export default async function HomePage() {
+  const featured = await getFeaturedListings(8);
+  const stats = await getListingStats();
 
   return (
     <>
@@ -33,8 +34,16 @@ export default function HomePage() {
             </div>
 
             <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-muted-foreground">
-              <span className="flex items-center gap-1.5"><span className="font-semibold text-foreground">104+</span> Verified Vendors</span>
-              <span className="flex items-center gap-1.5"><span className="font-semibold text-foreground">40+</span> States Covered</span>
+              {stats.vendorCount > 0 && (
+                <span className="flex items-center gap-1.5">
+                  <span className="font-semibold text-foreground">{stats.vendorCount}+</span> Verified Vendors
+                </span>
+              )}
+              {stats.stateCount > 0 && (
+                <span className="flex items-center gap-1.5">
+                  <span className="font-semibold text-foreground">{stats.stateCount}+</span> States Covered
+                </span>
+              )}
               <span className="flex items-center gap-1.5"><span className="font-semibold text-foreground">Free</span> To Search &amp; Contact</span>
             </div>
           </div>
@@ -84,11 +93,19 @@ export default function HomePage() {
             </Button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {featured.map((listing, i) => (
-              <ListingCard key={listing.id} listing={listing} priority={i < 4} />
-            ))}
-          </div>
+          {featured.length === 0 ? (
+            <div className="text-center py-16 border-2 border-dashed rounded-xl bg-background/50">
+              <p className="text-muted-foreground">
+                We&rsquo;re just getting started — check back soon for featured vendors.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              {featured.map((listing, i) => (
+                <ListingCard key={listing.id} listing={listing} priority={i < 4} />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

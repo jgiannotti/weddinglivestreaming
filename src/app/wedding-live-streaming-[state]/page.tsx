@@ -5,7 +5,7 @@ import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ListingCard } from '@/components/listing-card';
 import { getStateBySlug, US_STATES } from '@/lib/states';
-import { getListings } from '@/data/mock-listings';
+import { getListings } from '@/lib/data/listings';
 
 interface PageProps {
   params: Promise<{ state: string }>;
@@ -30,7 +30,7 @@ export default async function StatePage({ params }: PageProps) {
   const info = getStateBySlug(state);
   if (!info) notFound();
 
-  const listings = getListings({ state: info.name, limit: 9 });
+  const listings = await getListings({ state: info.name, limit: 9 });
 
   return (
     <div>

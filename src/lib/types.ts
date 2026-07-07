@@ -28,12 +28,12 @@ export interface Listing {
   title: string;
   slug: string;
   description: string;
-  heroImageUrl: string;
+  heroImageUrl: string | null;
   city: string;
   state: string;
   country: string;
-  lat: number;
-  lng: number;
+  lat: number | null;
+  lng: number | null;
   status: ListingStatus;
   tier: ListingTier;
   featuredUntil: string | null;

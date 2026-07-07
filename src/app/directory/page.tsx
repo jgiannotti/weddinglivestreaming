@@ -5,12 +5,12 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { SearchBar } from '@/components/search-bar';
 import { ListingCard } from '@/components/listing-card';
 import { Button } from '@/components/ui/button';
-import { getListings } from '@/data/mock-listings';
+import { getListings } from '@/lib/data/listings';
 import { CATEGORIES } from '@/lib/categories';
 
 export const metadata: Metadata = {
   title: 'Find Vendors',
-  description: 'Browse 100+ professional wedding live streaming vendors across the United States.',
+  description: 'Browse professional wedding live streaming vendors across the United States.',
 };
 
 const PAGE_SIZE = 12;
@@ -27,7 +27,7 @@ interface PageProps {
 export default async function DirectoryPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const page = Math.max(1, parseInt(params.page || '1', 10));
-  const all = getListings({
+  const all = await getListings({
     state: params.location,
     category: params.category,
     sortBy: params.sort || 'date',

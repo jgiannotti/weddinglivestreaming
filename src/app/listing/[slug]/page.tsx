@@ -6,24 +6,21 @@ import { MapPin, Globe, Sparkles, MessageSquare, Flag, ShieldCheck, Heart } from
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ListingCard } from '@/components/listing-card';
-import {
-  getListingBySlug,
-  getRelatedListings,
-  MOCK_LISTINGS,
-} from '@/data/mock-listings';
+import { getListingBySlug, getRelatedListings } from '@/lib/data/listings';
 import { formatDate } from '@/lib/utils';
+import { PLACEHOLDER_LISTING_IMAGE } from '@/lib/constants';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateStaticParams() {
-  return MOCK_LISTINGS.map((l) => ({ slug: l.slug }));
-}
+// No generateStaticParams: listings change at runtime (new approvals, edits,
+// expirations) and the table starts empty, so this route renders dynamically
+// per-request (Next 15 default when no generateStaticParams/dynamic export).
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const listing = getListingBySlug(slug);
+  const listing = await getListingBySlug(slug);
   if (!listing) return { title: 'Vendor Not Found' };
   return {
     title: listing.title,
@@ -31,24 +28,25 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     openGraph: {
       title: listing.title,
       description: listing.description.slice(0, 160),
-      images: [{ url: listing.heroImageUrl }],
+      images: [{ url: listing.heroImageUrl ?? PLACEHOLDER_LISTING_IMAGE }],
     },
   };
 }
 
 export default async function ListingPage({ params }: PageProps) {
   const { slug } = await params;
-  const listing = getListingBySlug(slug);
+  const listing = await getListingBySlug(slug);
   if (!listing) notFound();
 
-  const related = getRelatedListings(listing, 3);
+  const related = await getRelatedListings(listing, 3);
+  const hasCoordinates = listing.lat != null && listing.lng != null;
 
   return (
     <div>
       {/* HERO */}
       <div className="relative aspect-[16/8] md:aspect-[16/6] overflow-hidden bg-muted">
         <Image
-          src={listing.heroImageUrl}
+          src={listing.heroImageUrl ?? PLACEHOLDER_LISTING_IMAGE}
           alt={listing.title}
           fill
           priority
@@ -90,23 +88,32 @@ export default async function ListingPage({ params }: PageProps) {
 
             <section className="mb-10">
               <h2 className="font-display text-2xl font-semibold mb-4">Location</h2>
-              <div className="rounded-xl overflow-hidden border bg-muted aspect-[16/9] relative">
-                <iframe
-                  title={`Map of ${listing.title}`}
-                  src={`https://www.openstreetmap.org/export/embed.html?bbox=${listing.lng - 0.05}%2C${listing.lat - 0.05}%2C${listing.lng + 0.05}%2C${listing.lat + 0.05}&layer=mapnik&marker=${listing.lat}%2C${listing.lng}`}
-                  className="w-full h-full border-0"
-                  loading="lazy"
-                />
-              </div>
-              <a
-                href={`https://www.google.com/maps/search/?api=1&query=${listing.lat},${listing.lng}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 mt-3 text-sm text-primary hover:underline"
-              >
-                <MapPin className="h-3.5 w-3.5" />
-                View on Google Maps
-              </a>
+              {hasCoordinates ? (
+                <>
+                  <div className="rounded-xl overflow-hidden border bg-muted aspect-[16/9] relative">
+                    <iframe
+                      title={`Map of ${listing.title}`}
+                      src={`https://www.openstreetmap.org/export/embed.html?bbox=${listing.lng! - 0.05}%2C${listing.lat! - 0.05}%2C${listing.lng! + 0.05}%2C${listing.lat! + 0.05}&layer=mapnik&marker=${listing.lat}%2C${listing.lng}`}
+                      className="w-full h-full border-0"
+                      loading="lazy"
+                    />
+                  </div>
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${listing.lat},${listing.lng}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 mt-3 text-sm text-primary hover:underline"
+                  >
+                    <MapPin className="h-3.5 w-3.5" />
+                    View on Google Maps
+                  </a>
+                </>
+              ) : (
+                <p className="text-sm text-muted-foreground flex items-center gap-1.5">
+                  <MapPin className="h-3.5 w-3.5" />
+                  {listing.city}, {listing.state}
+                </p>
+              )}
             </section>
           </div>
 

@@ -1,13 +1,12 @@
 import type { MetadataRoute } from 'next';
 import { US_STATES } from '@/lib/states';
-import { CATEGORIES } from '@/lib/categories';
-import { MOCK_LISTINGS } from '@/data/mock-listings';
+import { getListings } from '@/lib/data/listings';
 
 const BASE = process.env.NEXT_PUBLIC_SITE_URL || 'https://weddinglivestreaming.com';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  // TODO: when Supabase is connected, swap MOCK_LISTINGS for a live query
   const now = new Date();
+  const listings = await getListings();
 
   const staticPages = [
     '/',
@@ -34,7 +33,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  const listingPages = MOCK_LISTINGS.map((l) => ({
+  const listingPages = listings.map((l) => ({
     url: `${BASE}/listing/${l.slug}`,
     lastModified: new Date(l.updatedAt),
     changeFrequency: 'monthly' as const,
