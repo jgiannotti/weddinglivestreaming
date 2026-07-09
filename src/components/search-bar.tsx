@@ -4,8 +4,9 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Search, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
 import { CATEGORIES } from '@/lib/categories';
+import { cn } from '@/lib/utils';
 
 interface SearchBarProps {
   variant?: 'hero' | 'compact';
@@ -16,13 +17,16 @@ interface SearchBarProps {
 export function SearchBar({ variant = 'hero', defaultLocation = '', defaultCategory = '' }: SearchBarProps) {
   const router = useRouter();
   const [location, setLocation] = useState(defaultLocation);
-  const [category, setCategory] = useState(defaultCategory);
+  // Radix Select can't use an empty string as an item value, so "all" is the
+  // sentinel for "no category filter" — translated back to "no param" below.
+  const [category, setCategory] = useState(defaultCategory || 'all');
+  const [focused, setFocused] = useState(false);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const params = new URLSearchParams();
     if (location.trim()) params.set('location', location.trim());
-    if (category) params.set('category', category);
+    if (category && category !== 'all') params.set('category', category);
     router.push(`/directory?${params.toString()}`);
   }
 
@@ -51,44 +55,49 @@ export function SearchBar({ variant = 'hero', defaultLocation = '', defaultCateg
   return (
     <form
       onSubmit={handleSubmit}
-      className={
-        isHero
-          ? 'flex flex-col md:flex-row gap-2 p-2 bg-white rounded-2xl shadow-xl border'
-          : 'flex flex-col sm:flex-row gap-2'
-      }
+      className={cn(
+        'flex flex-col md:flex-row md:items-center gap-1.5 rounded-2xl md:rounded-full border bg-card p-1.5 transition-shadow',
+        isHero ? 'shadow-lg shadow-primary/5' : 'shadow-sm',
+        focused && 'ring-2 ring-primary/30'
+      )}
     >
-      <div className="flex-1 flex items-center gap-2 px-3 rounded-lg bg-muted/40">
-        <Search className="h-4 w-4 text-muted-foreground" />
-        <Input
+      <div className="flex-1 flex items-center gap-2 px-3.5 h-11 rounded-full md:rounded-l-full">
+        <MapPin className="h-4 w-4 text-muted-foreground shrink-0" />
+        <input
           value={location}
           onChange={(e) => setLocation(e.target.value)}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
           placeholder="City, state, or ZIP code"
-          className="border-0 bg-transparent shadow-none focus-visible:ring-0 px-0"
+          className="flex-1 min-w-0 bg-transparent text-sm focus-visible:outline-none placeholder:text-muted-foreground"
         />
         <button
           type="button"
           onClick={handleLocateMe}
           aria-label="Use my location"
-          className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-background transition-colors"
+          className="p-1.5 rounded-full text-muted-foreground hover:text-primary hover:bg-accent/50 transition-colors shrink-0"
         >
-          <MapPin className="h-4 w-4" />
+          <Search className="h-3.5 w-3.5" />
         </button>
       </div>
 
-      <select
-        value={category}
-        onChange={(e) => setCategory(e.target.value)}
-        className="h-10 px-3 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-      >
-        <option value="">All Categories</option>
-        {CATEGORIES.map((c) => (
-          <option key={c.slug} value={c.slug}>
-            {c.name}
-          </option>
-        ))}
-      </select>
+      <div className="hidden md:block h-6 w-px bg-border shrink-0" />
 
-      <Button type="submit" size={isHero ? 'lg' : 'default'} className="md:w-auto">
+      <Select value={category} onValueChange={setCategory}>
+        <SelectTrigger className="h-11 border-0 md:w-[180px] shrink-0 focus:ring-0">
+          <SelectValue placeholder="All Categories" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">All Categories</SelectItem>
+          {CATEGORIES.map((c) => (
+            <SelectItem key={c.slug} value={c.slug}>
+              {c.name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+
+      <Button type="submit" size={isHero ? 'lg' : 'default'} className="md:w-auto shrink-0">
         <Search className="h-4 w-4" />
         Search
       </Button>
