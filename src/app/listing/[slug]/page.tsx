@@ -6,6 +6,7 @@ import { MapPin, Globe, Sparkles, MessageSquare, Flag, ShieldCheck, Heart } from
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ListingCard } from '@/components/listing-card';
+import { LeadForm } from '@/components/lead-form';
 import { getListingBySlug, getRelatedListings } from '@/lib/data/listings';
 import { formatDate } from '@/lib/utils';
 import { PLACEHOLDER_LISTING_IMAGE } from '@/lib/constants';
@@ -188,6 +189,13 @@ export default async function ListingPage({ params }: PageProps) {
                 Report
               </button>
             </div>
+
+            <LeadForm
+              venueState={listing.state}
+              venueCity={listing.city}
+              sourceListingId={listing.id}
+              title="Get Free Quotes"
+            />
           </aside>
         </div>
 

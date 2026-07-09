@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Heart } from 'lucide-react';
+import { SubscribeBox } from '@/components/subscribe-box';
 
 const FOOTER_NAV = [
   {
@@ -69,6 +70,16 @@ export function Footer() {
               </ul>
             </div>
           ))}
+        </div>
+
+        <div className="border-t pt-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8">
+          <div>
+            <h4 className="font-display text-base font-semibold mb-1">Get vendor tips &amp; deals</h4>
+            <p className="text-sm text-muted-foreground mb-3">
+              Occasional emails for couples planning a wedding live stream.
+            </p>
+            <SubscribeBox source="footer" />
+          </div>
         </div>
 
         <div className="border-t pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
