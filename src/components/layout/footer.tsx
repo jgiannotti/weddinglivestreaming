@@ -93,7 +93,26 @@ export function Footer() {
 
         <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-ink-foreground/50">
-            © {new Date().getFullYear()} WeddingLiveStreaming. All rights reserved.
+            © {new Date().getFullYear()} WeddingLiveStreaming. All rights reserved. Location search
+            contains information from{' '}
+            <a
+              href="https://www.geonames.org"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-ink-foreground"
+            >
+              GeoNames
+            </a>
+            , made available under the{' '}
+            <a
+              href="https://creativecommons.org/licenses/by/4.0/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-ink-foreground"
+            >
+              CC BY 4.0
+            </a>{' '}
+            license.
           </p>
           <p className="italic text-sm text-ink-foreground/60">
             Every love story deserves every guest.

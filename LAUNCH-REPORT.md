@@ -157,3 +157,139 @@ Lower-priority findings deferred (not fixed, correctly not urgent): storage buck
 ---
 
 *This report is the detailed record for the EXECUTE-ONESHOT.md launch plan. Launch is complete as of 2026-07-08.*
+
+---
+
+## Milestone 2 — Location intelligence & search UX (2026-07-09)
+
+**Status: code complete, verified live against production data, committed locally (`53e1179`), not
+yet pushed/deployed.** See `PROGRESS.md` for the current blocker (Joe needs to `git push origin main`).
+
+### The problem
+
+`src/lib/data/listings.ts` filtered locations with `ilike` on raw city/state text. A vendor based in
+Tampa with a listing radius wide enough to reach St. Petersburg would never show up if a couple
+searched "St. Petersburg" — the query only ever matched the literal string stored on the listing, with
+no concept of distance or coverage at all. `listings.lat/lng` and an `ll_to_earth` index existed from
+migration 0001 but were completely unused. There was no vendor coverage-radius concept, and the search
+box was a bare text input with no autocomplete.
+
+### What shipped
+
+**Cities/ZIP backbone.** New `cities` (17,102 rows) and `zips` (41,488 rows) tables, seeded from
+GeoNames (`cities1000` + US ZIP data, CC BY 4.0 — attribution included in `migration/seed-cities.py`'s
+docstring and owed a footer credit, see "Not done" below). This is the stored-coordinates source of
+truth, deliberately **not** Mapbox — Mapbox's free Temporary Geocoding tier prohibits persisting
+results, so using it for storage would have been a ToS violation. Public read-only RLS (`select using
+(true)`, no write policy — inserts only via service_role, which is how the seed data was bulk-loaded).
+
+**Coverage radius.** `listings.service_radius_miles` (int, DB `CHECK` constraint 10–500 — enforced
+server-side regardless of what any client sends) and `listings.travels_nationwide` (boolean). Sensible
+per-category defaults (Solo Operator/Budget-Friendly 40mi, Full-Service/Multi-Camera 100mi,
+Destination Weddings defaults to nationwide) auto-suggested on the submit form, overridable by the
+vendor. Radius + nationwide toggle now editable on both the submit-listing form and a **new**
+`/dashboard/listings/[id]/edit` page — which didn't exist before this session; it was linked from the
+vendor dashboard but 404'd on every click, a real pre-existing bug found while building this.
+
+**Tiered radius search.** A single Postgres function, `search_listings_by_location`, replaces the old
+string match:
+- **Tier 1** — listings whose `service_radius_miles` covers the searched point (the actual fix).
+- **Tier 2** — same-state fallback, shown only when tier 1 has fewer than 5 results.
+- **Tier 3** — `travels_nationwide` vendors, always available as a last resort.
+Ranked tier → currently-effective Featured status → distance. `resolveLocation()`
+(`src/lib/data/geo.ts`) turns free-text input (city name, "City, ST", or a 5-digit ZIP) into
+coordinates via the own-DB tables, with an exact-match-then-prefix-then-state-centroid fallback chain.
+State/city SEO pages use the same function, so a thin city page (e.g. Clearwater, 0 listings of its
+own) correctly shows nearby Tampa vendors instead of coming up empty.
+
+**Autocomplete.** Search bar rebuilt as a proper ARIA combobox (keyboard nav, `aria-expanded`,
+`aria-activedescendant`) with debounced (150ms) type-ahead against the own-DB `suggest_cities` function
+(population-ranked), recent searches (localStorage, max 5) and popular cities shown on focus, and a
+"near me" button backed by a new `nearest_city` function (replacing a third-party Nominatim
+reverse-geocode call with an own-DB lookup — one less dependency). If the own-DB suggestions return
+fewer than 3 results, the client optionally supplements with Mapbox's Search Box API
+(session-token-per-keystroke-series, US/place/postcode only) — feature-flagged entirely on whether
+`NEXT_PUBLIC_MAPBOX_TOKEN` is set, so the site works identically without it.
+
+### Live verification (the actual proof)
+
+Ran directly against production Supabase — created a temporary real vendor + listing (Tampa,
+27.9506/-82.4572, 30mi radius), ran the search RPC from multiple points, then deleted all of it
+(listing, vendor, profile, auth user) leaving production exactly as it was before:
+
+| Search origin | Distance | Result |
+|---|---|---|
+| St. Petersburg, FL (27.771, -82.679) | 18.4 mi | **Tier 1** — the exact bug this milestone fixes |
+| Orlando, FL (28.538, -81.379) | 77.3 mi | Tier 2 — same-state fallback, correctly beyond radius |
+| New York, NY | — | Empty — correctly excluded (different state, not nationwide) |
+| Category filter mismatch (church-religious vs. listing's solo-operator) | — | Empty — category scoping works |
+| Category filter match (solo-operator) | 18.4 mi | Tier 1 again — confirms filtering doesn't break the core match |
+
+Also confirmed directly: `suggest_cities('Tam')` returns Tampa/Tamarac/Tamiami ranked by population;
+`nearest_city` from St. Petersburg's own coordinates correctly resolves to St. Petersburg at 2.4mi
+(sanity check on the distance math itself); ZIP `33701` resolves to Saint Petersburg, FL.
+
+### Security re-audit findings
+
+A subagent-driven audit of the new surface area (migration RLS, both new API routes, all three
+Postgres functions, the radius CHECK constraint, ownership scoping on the edit form) found one real
+gap: **`/api/geo/nearest` had no rate limiting** (its sibling `/api/geo/suggest` did). Fixed by
+extracting a shared limiter into `src/lib/rate-limit.ts` and applying it to both routes (40 req/min/IP,
+same as before). Everything else passed: cities/zips are genuinely read-only for anon/authenticated,
+the radius bound is enforced by a DB constraint (not just the client-side slider), all three functions
+are parameterized (no injection surface) and grant-scoped to `anon, authenticated` only, and the
+existing "vendor owners manage their listings" RLS policy correctly covers the new columns with no
+separate policy needed.
+
+### UX audit ("use it like a couple") findings
+
+Walked the 5 journeys from the milestone plan against the actual code (mobile-first). Found and fixed:
+- **Real bug:** when tier 1 had zero results, tier 2/3 results started at index 0 and rendered with
+  **no section header at all** — which could read as "these vendors cover you" when they actually
+  don't. Fixed in `src/app/directory/page.tsx` so a tier's label always shows, regardless of position.
+- No `loading.tsx` existed anywhere in the app — the directory page (an async Server Component) showed
+  a blank white flash on every navigation. Added `src/app/directory/loading.tsx` with a matching
+  skeleton.
+- The "Use my location" button had a ~26px tap target; bumped to a proper 40px hit area.
+- "Add to Favorites" on the listing page had no `onClick` at all — a couple trying to shortlist
+  vendors would tap it and nothing would happen. Fixed by disabling it with an honest "Save for Later
+  (Coming Soon)" label rather than leaving a dead affordance in place.
+- Featured tier is well-explained on `/pricing` and `/dashboard/plan` but wasn't mentioned anywhere in
+  the actual vendor signup flow. Added a small "See what Featured placement includes →" link near the
+  submit button.
+
+**Milestone-3 candidates logged, not built:** a real favorites/shortlist system; two inconsistent
+contact paths on listing pages ("Message Vendor" forces sign-in, the sidebar lead form doesn't — worth
+a product decision on which is right); ZIP-code live autocomplete suggestions (full ZIP entry resolves
+correctly today, it just doesn't suggest-as-you-type the way city names do); "Claim Listing"/"Report"
+buttons are non-functional stubs, same class of issue as the favorites button was.
+
+### Mapbox usage & limits
+
+Default public token retrieved from Joe's Mapbox account, set as `NEXT_PUBLIC_MAPBOX_TOKEN` in Vercel
+(Production + Preview) and locally in `.env.local`/`.credentials.local.md`. Used exclusively
+client-side, exclusively for autocomplete supplementation (own-DB suggestions still come first) —
+never for storing coordinates. Free tier covers roughly 100k Search Box sessions/month, comfortably
+above what this site will see for a long time; if usage ever approached that limit, the feature-flag
+means simply unsetting the token reverts to own-DB-only autocomplete with zero code changes.
+
+### Not done in this pass
+
+- **Real build/typecheck verification** — this sandbox cannot run `npm install`/`next build`/`tsc`
+  (see `PROGRESS.md` → "Known sandbox quirks"). Substituted with two independent subagent-driven manual
+  code reviews (import-resolution + type-consistency pass or found zero issues; a separate UX-focused
+  pass that fixed several real bugs). Recommend treating Vercel's first real build after push as the
+  final confirmation, and note that `next.config.mjs` has `ignoreBuildErrors`/`ignoreDuringBuilds` set
+  (pre-existing), so even a green build won't catch every TypeScript issue.
+- **ZIP-prefix autocomplete** — the milestone plan mentioned "+zips" for type-ahead; `suggest_cities`
+  only queries the `cities` table. Full ZIP entry (5 digits + Enter) resolves correctly via
+  `resolveLocation`'s ZIP regex path; only the live-suggestion-while-typing part is missing. Logged as
+  a milestone-3 candidate above.
+
+### Next milestone candidates (carried up from the UX audit)
+
+1. Favorites/shortlist system with persistence — today's disabled button is an honest stopgap, not a
+   feature.
+2. Resolve the two-contact-paths inconsistency on listing pages (sign-in-gated vs. not).
+3. ZIP-code live autocomplete.
+4. Functional "Claim Listing" and "Report" actions.
