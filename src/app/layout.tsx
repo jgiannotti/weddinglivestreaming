@@ -47,6 +47,9 @@ export const metadata: Metadata = {
     'max-video-preview': -1,
     'max-image-preview': 'large',
   },
+  verification: {
+    google: 'rx-O-t2dI5gOpwWA-wkDJLZAE1FnmK8fAhcwilfmyc0',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
