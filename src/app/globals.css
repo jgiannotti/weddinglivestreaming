@@ -4,39 +4,43 @@
 
 @layer base {
   :root {
-    /* Wedding industry palette: warm, romantic, premium without being saccharine.
-       Hue family: dusty rose primary, muted gold accent for Featured tier,
-       warm cream backgrounds (not cold gray). */
+    /* Refined romantic, photography-led palette (2026 redesign).
+       Warm ivory surface, deep burgundy primary, dark plum "ink" surface
+       used sparingly as a rhythm device, muted gold reserved for Featured
+       tier signals only. See DESIGN-OVERHAUL.md §1.2. */
 
-    --background: 33 30% 98%;          /* warm cream */
-    --foreground: 340 15% 18%;         /* deep plum-tinted near-black */
+    --background: 36 45% 97%;          /* warm ivory */
+    --foreground: 340 30% 13%;         /* deep plum-black */
 
     --card: 0 0% 100%;
-    --card-foreground: 340 15% 18%;
+    --card-foreground: 340 30% 13%;
 
-    --primary: 345 50% 38%;            /* deep dusty rose */
-    --primary-foreground: 33 30% 98%;
+    --primary: 345 60% 29%;            /* deep burgundy — richer than prior rose */
+    --primary-foreground: 36 45% 97%;
 
-    --secondary: 25 20% 92%;           /* soft sand */
-    --secondary-foreground: 340 15% 18%;
+    --secondary: 30 25% 93%;
+    --secondary-foreground: 340 30% 13%;
 
-    --muted: 25 20% 95%;
-    --muted-foreground: 340 8% 45%;
+    --muted: 30 25% 95%;
+    --muted-foreground: 340 10% 42%;
 
-    --accent: 345 40% 92%;             /* blush */
-    --accent-foreground: 345 50% 28%;
+    --accent: 348 45% 93%;             /* blush */
+    --accent-foreground: 345 60% 25%;
 
-    --gold: 38 65% 52%;                /* muted gold for Featured */
+    --gold: 38 60% 50%;                /* muted gold for Featured only */
     --gold-foreground: 0 0% 100%;
+
+    --ink: 342 32% 11%;                /* dark plum surface — footer + vendor CTA only */
+    --ink-foreground: 36 45% 96%;
 
     --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 25 15% 88%;
-    --input: 25 15% 88%;
-    --ring: 345 50% 38%;
+    --border: 30 20% 87%;
+    --input: 30 20% 87%;
+    --ring: 345 60% 29%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
   }
 
   * {
@@ -49,13 +53,17 @@
   }
 
   h1, h2, h3, h4 {
-    @apply font-display tracking-tight;
+    @apply font-display font-medium tracking-tight;
+  }
+
+  h1, h2 {
+    letter-spacing: -0.02em;
   }
 }
 
 @layer components {
   .gold-gradient {
-    background: linear-gradient(135deg, hsl(38 65% 60%) 0%, hsl(35 70% 48%) 100%);
+    background: linear-gradient(135deg, hsl(38 60% 60%) 0%, hsl(35 65% 45%) 100%);
   }
 
   .featured-badge {
@@ -64,5 +72,36 @@
 
   .container-tight {
     @apply container max-w-5xl;
+  }
+
+  /* Eyebrow label — small tracked-out uppercase kicker above headings */
+  .eyebrow {
+    @apply text-xs font-semibold tracking-[0.18em] uppercase text-primary/80;
+  }
+
+  /* Body copy measure cap for prose blocks */
+  .prose-measure {
+    max-width: 65ch;
+  }
+}
+
+@layer utilities {
+  /* Dashed borders read as "unfinished" — the design system uses solid
+     borders + accent-wash panels for empty states instead. Any leftover
+     `border-dashed` usage is neutralized site-wide. */
+  .border-dashed {
+    border-style: solid;
+  }
+}
+
+/* Reveal-on-scroll: starts hidden, IntersectionObserver in <Reveal> adds
+   .is-revealed which triggers the existing fade-in-up animation. Respects
+   prefers-reduced-motion by skipping the hidden state entirely. */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal {
+    opacity: 0;
+  }
+  .reveal.is-revealed {
+    @apply animate-fade-in-up;
   }
 }

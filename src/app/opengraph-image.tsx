@@ -16,7 +16,7 @@ export default function OpengraphImage() {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          background: 'linear-gradient(135deg, #913049 0%, #6f2338 100%)',
+          background: 'linear-gradient(135deg, #251318 0%, #3a1f27 100%)',
           padding: '80px',
         }}
       >
@@ -28,19 +28,22 @@ export default function OpengraphImage() {
             width: 88,
             height: 88,
             borderRadius: 20,
-            background: '#d49a35',
-            color: '#fbfaf8',
-            fontSize: 48,
-            fontWeight: 700,
+            background: '#761e34',
             marginBottom: 36,
           }}
         >
-          W
+          <svg width="52" height="52" viewBox="0 0 64 64">
+            <path
+              d="M32 46 L14 30 C9 25 9 17 15 13 C20 9.5 26 11 29 16 L32 21 L35 16 C38 11 44 9.5 49 13 C55 17 55 25 50 30 Z"
+              fill="#fbf8f4"
+            />
+            <path d="M28 25 L28 35 L37 30 Z" fill="#cc9433" />
+          </svg>
         </div>
         <div
           style={{
             display: 'flex',
-            color: '#fbfaf8',
+            color: '#fbf8f4',
             fontSize: 64,
             fontWeight: 700,
             textAlign: 'center',
@@ -52,10 +55,11 @@ export default function OpengraphImage() {
         <div
           style={{
             display: 'flex',
-            color: '#f3e2e7',
+            color: '#e7c7cf',
             fontSize: 30,
             marginTop: 20,
             textAlign: 'center',
+            fontStyle: 'italic',
           }}
         >
           Every love story deserves every guest.
