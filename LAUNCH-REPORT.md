@@ -99,4 +99,61 @@ Phase 6 (monetization expansion), Phase 6B (admin command center), Phase 6C (qua
 
 ---
 
-*This report will be updated as later phases complete. See PROGRESS.md for the short version.*
+## Phase 6 — Monetization expansion: done
+
+- Lead-gen quote form added to listing pages and state pages, wired to a real matching layer (`src/lib/data/leads.ts`, `/api/leads`) that assigns matched vendors server-side (not client-forgeable — see Phase 6D fix below).
+- Email subscriber opt-in (`/api/subscribe`, `subscribe-box.tsx`) for couples not ready to submit a full quote request.
+
+## Phase 6B — Admin command center: done
+
+Full moderation/ops panel added at `/admin`: pending listings, vendors (with announcement tool), reports (with resolve actions), leads (with CSV export), subscribers, and categories (CRUD). Admin nav updated to match.
+
+## Phase 6C — Quality bar: done
+
+Favicon/app icons/web manifest, dynamic OG image generation, `/terms` page, honeypot spam protection on lead and subscribe forms, `@vercel/analytics` wired into root layout, accessibility fixes across new admin pages.
+
+## Phase 6D — Security audit: done, one critical fix
+
+A dedicated security-audit subagent reviewed the full app pre-launch and found:
+
+1. **Critical, live exploit — PayPal webhook forgery.** `src/app/api/webhooks/paypal/route.ts` had zero signature verification (the code literally said "Verification omitted here for brevity"). Anyone could POST a forged `BILLING.SUBSCRIPTION.ACTIVATED` event with a fake `resource.custom_id` and upgrade any vendor to Featured tier for free, using the service-role admin client with no auth check. Since PayPal was already dropped from scope, the fix was to disable both PayPal routes (`410 Gone`) rather than rebuild them — closes the hole with zero functional loss.
+2. **RLS gap on `leads` table.** The original insert policy (`with check (true)`) let the public anon key set internal fields like `matched_vendor_ids` and `status` directly via a raw REST call, bypassing the app's real matching logic entirely. Fixed via migration `0004_leads_rls_hardening.sql`, applied to production after explicit confirmation (`with check (matched_vendor_ids = '{}' and status = 'new')`).
+3. **Stored XSS via JSON-LD.** Vendor-submitted text could break out of the JSON-LD `<script>` tag with `</script><script>...`. Fixed by escaping `<` in all 8 JSON-LD output call sites.
+4. **Next.js CVE-2025-29927** (middleware auth-bypass via `x-middleware-subrequest` header) — patched by bumping to `15.2.3`.
+
+Lower-priority findings deferred (not fixed, correctly not urgent): storage bucket policy isn't in version-controlled migrations and lacks server-side file-type/size validation on vendor image uploads; `claim_requests`/`reports` have no RLS insert/select policy but also have no live submission UI yet, so writing policy for them now would be speculative.
+
+## Phase 7 — DNS cutover: done
+
+- Vercel provided the production DNS targets: `A @ → 216.150.1.1` (apex), `CNAME www → 8f9e4d1993521f1c.vercel-dns-017.com.`
+- Applied both at GoDaddy DNS management, leaving the existing MX (`fusion.mxrouting.net`/`fusion-relay.mxrouting.net`) and SPF/verification TXT records untouched — Joe's real email was never at risk.
+- Verified via `dig` (propagated at Google's public resolver) and `curl` (HTTP 200 on both apex-redirect and `www`, correct 308 behavior, correct page content) — **weddinglivestreaming.com is live in production**, not just deployed to a `.vercel.app` preview URL.
+
+## Phase 8 — Search visibility + final report: done
+
+- Google Search Console verified via HTML meta tag (`verification.google` in `src/app/layout.tsx`) — deliberately avoided the "Domain property" OAuth/Domain-Connect flow since that would have required granting Google direct DNS-account access at GoDaddy, which needs explicit user authorization I wasn't given.
+- `sitemap.xml` submitted to Google Search Console.
+- Bing Webmaster Tools requires a Microsoft account sign-in — left for Joe (see action list below); not launch-blocking.
+- No GitHub PAT was ever minted this session (all pushes went through Joe's own local git credentials via Desktop Commander), so there's nothing to revoke.
+
+---
+
+## Final summary — what shipped, what's deferred, what's next
+
+**Live now:** full vendor directory, lead-gen + subscriber capture, admin moderation panel, Stripe-only Featured-tier payments (test mode — not yet activated for real charges), SEO/AEO layer (guides, per-state content, structured data, canonical tags, llms.txt), security-hardened (PayPal exploit closed, RLS tightened, XSS escaped, Next.js CVE patched), live on the real domain with SSL and Search Console indexing underway.
+
+**Deferred, waiting on Joe:**
+- Resend transactional email — needs Joe to set up his own sending email/domain first (see Phase 3); nothing else needed from me until then.
+- Stripe going live for real charges — needs Joe to add bank/EIN/identity info in the Stripe dashboard (Hard Gate G5).
+- Bing Webmaster Tools sitemap submission — 2-minute manual step, needs Joe's Microsoft sign-in.
+- Storage bucket policy version-control + upload validation — not urgent, worth scheduling before upload volume grows.
+
+**Suggested revenue roadmap (not started, for a future session):**
+1. Vendor outreach — the directory has zero real listings yet; growth depends entirely on getting real vendors to claim/create listings.
+2. SEO content flywheel — the guide/state/city infrastructure is built and will compound organic traffic as vendors and content grow.
+3. Activate Stripe for real Featured-tier revenue once there's enough vendor/traffic volume to justify it.
+4. Email nurture sequences once Resend is wired up.
+
+---
+
+*This report is the detailed record for the EXECUTE-ONESHOT.md launch plan. Launch is complete as of 2026-07-08.*
