@@ -20,6 +20,13 @@ async function paypalToken(): Promise<string> {
 }
 
 export async function POST(request: Request) {
+  // PayPal has been discontinued (Stripe-only now). Disabled entirely.
+  return NextResponse.json(
+    { error: 'PayPal checkout has been discontinued. Please use Stripe.' },
+    { status: 410 }
+  );
+
+  /* eslint-disable no-unreachable */
   const { plan } = await request.json();
   if (!['monthly', 'annual'].includes(plan)) {
     return NextResponse.json({ error: 'Invalid plan' }, { status: 400 });

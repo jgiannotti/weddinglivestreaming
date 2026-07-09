@@ -1,6 +1,14 @@
 import { PLACEHOLDER_LISTING_IMAGE } from '@/lib/constants';
 import type { Listing } from '@/lib/types';
 
+// JSON.stringify does not escape '<', so vendor-controlled text (e.g. a listing
+// title/description containing "</script><script>...") could break out of the
+// JSON-LD <script> tag and execute as HTML/JS. Escape '<' to '<' before
+// injecting via dangerouslySetInnerHTML.
+function safeJsonLd(data: unknown) {
+  return JSON.stringify(data).replace(/</g, '\\u003c');
+}
+
 interface ListingJsonLdProps {
   listing: Listing;
 }
@@ -34,7 +42,7 @@ export function ListingJsonLd({ listing }: ListingJsonLdProps) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: safeJsonLd(data) }}
     />
   );
 }
@@ -51,7 +59,7 @@ export function OrganizationJsonLd() {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: safeJsonLd(data) }}
     />
   );
 }
@@ -78,7 +86,7 @@ export function WebsiteJsonLd() {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: safeJsonLd(data) }}
     />
   );
 }
@@ -103,7 +111,7 @@ export function BreadcrumbJsonLd({ items }: { items: BreadcrumbItem[] }) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: safeJsonLd(data) }}
     />
   );
 }
@@ -125,7 +133,7 @@ export function ListingsItemListJsonLd({ listings }: { listings: Listing[] }) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: safeJsonLd(data) }}
     />
   );
 }
@@ -152,7 +160,7 @@ export function FaqJsonLd({ items }: { items: FaqItem[] }) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: safeJsonLd(data) }}
     />
   );
 }
@@ -183,7 +191,7 @@ export function ArticleJsonLd({
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: safeJsonLd(data) }}
     />
   );
 }
@@ -218,7 +226,7 @@ export function HowToJsonLd({
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: safeJsonLd(data) }}
     />
   );
 }

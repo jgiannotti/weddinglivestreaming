@@ -7,8 +7,18 @@ import { createAdminClient } from '@/lib/supabase/server';
 // PayPal sends signed JSON. Verification omitted here for brevity — in production
 // validate via PayPal's verify-webhook-signature endpoint.
 
-export async function POST(request: Request) {
-  const event = await request.json();
+export async function POST(_request: Request) {
+  // PayPal has been discontinued (Stripe-only now). This route never verified
+  // PayPal's webhook signature and was exploitable (forged BILLING.SUBSCRIPTION.ACTIVATED
+  // events could upgrade any vendor to Featured for free). Disabled entirely — do not
+  // re-enable without implementing proper PayPal signature verification.
+  return NextResponse.json(
+    { error: 'PayPal checkout has been discontinued. Please use Stripe.' },
+    { status: 410 }
+  );
+
+  /* eslint-disable no-unreachable */
+  const event = await _request.json();
   const supabase = await createAdminClient();
 
   const resource = event.resource || {};
