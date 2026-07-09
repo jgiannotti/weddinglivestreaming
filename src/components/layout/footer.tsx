@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Heart } from 'lucide-react';
+import { Logo } from '@/components/logo';
 import { SubscribeBox } from '@/components/subscribe-box';
 
 const FOOTER_NAV = [
@@ -51,18 +51,26 @@ const FOOTER_NAV = [
 
 export function Footer() {
   return (
-    <footer className="border-t bg-secondary/30 mt-24">
-      <div className="container py-12">
+    <footer className="bg-ink text-ink-foreground mt-24">
+      <div className="container py-16">
+        {/* Brand moment */}
+        <div className="mb-12">
+          <Logo dark textClassName="text-3xl" iconClassName="h-8 w-8" />
+          <p className="mt-3 italic text-ink-foreground/60 max-w-md">
+            Every love story deserves every guest.
+          </p>
+        </div>
+
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 mb-12">
           {FOOTER_NAV.map((section) => (
             <div key={section.heading}>
-              <h4 className="font-display text-base font-semibold mb-4">{section.heading}</h4>
-              <ul className="space-y-2">
+              <h4 className="eyebrow text-ink-foreground/50 mb-4">{section.heading}</h4>
+              <ul className="space-y-2.5">
                 {section.links.map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                      className="text-[15px] text-ink-foreground/80 hover:text-ink-foreground transition-colors"
                     >
                       {link.label}
                     </Link>
@@ -73,25 +81,22 @@ export function Footer() {
           ))}
         </div>
 
-        <div className="border-t pt-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8">
-          <div>
-            <h4 className="font-display text-base font-semibold mb-1">Get vendor tips &amp; deals</h4>
-            <p className="text-sm text-muted-foreground mb-3">
+        <div className="border-t border-white/10 pt-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-10">
+          <div className="max-w-md">
+            <h4 className="font-display text-xl font-medium mb-1">Get vendor tips &amp; deals</h4>
+            <p className="text-sm text-ink-foreground/60 mb-3">
               Occasional emails for couples planning a wedding live stream.
             </p>
-            <SubscribeBox source="footer" />
+            <SubscribeBox source="footer" dark />
           </div>
         </div>
 
-        <div className="border-t pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Heart className="h-4 w-4 fill-primary text-primary" />
-            <span>WeddingLiveStreaming.com</span>
-            <span className="hidden sm:inline">·</span>
-            <span>Every love story deserves every guest.</span>
-          </div>
-          <p className="text-xs text-muted-foreground">
+        <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-ink-foreground/50">
             © {new Date().getFullYear()} WeddingLiveStreaming. All rights reserved.
+          </p>
+          <p className="italic text-sm text-ink-foreground/60">
+            Every love story deserves every guest.
           </p>
         </div>
       </div>

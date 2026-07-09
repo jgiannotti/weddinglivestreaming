@@ -57,8 +57,8 @@ export default function PricingPage() {
       {/* HERO */}
       <section className="bg-accent/30 border-b">
         <div className="container py-16 md:py-20 text-center">
-          <p className="text-sm font-medium tracking-wider uppercase text-primary mb-3">Vendor Plans</p>
-          <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-medium leading-tight">
+          <p className="eyebrow mb-3">Vendor Plans</p>
+          <h1 className="font-display text-4xl md:text-5xl lg:text-6xl leading-tight">
             Simple, Transparent Pricing
           </h1>
           <p className="mt-5 text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -69,7 +69,7 @@ export default function PricingPage() {
 
       {/* PRICING CARDS */}
       <section className="container -mt-8 md:-mt-12 pb-16 md:pb-24">
-        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto items-stretch">
           {/* BASIC */}
           <div className="rounded-2xl border bg-card p-8 flex flex-col">
             <div className="mb-6">
@@ -92,31 +92,32 @@ export default function PricingPage() {
             </Button>
           </div>
 
-          {/* FEATURED */}
-          <div className="relative rounded-2xl border-2 border-primary bg-card p-8 flex flex-col shadow-lg">
+          {/* FEATURED — ink variant, dark-vs-light contrast makes the upsell obvious */}
+          <div className="relative rounded-2xl bg-ink text-ink-foreground p-8 flex flex-col shadow-lg">
             <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-              <span className="featured-badge">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium gold-gradient text-white shadow-sm">
                 <Sparkles className="h-3 w-3" />
                 Most Popular
               </span>
             </div>
             <div className="mb-6">
               <h2 className="font-display text-2xl font-semibold mb-1">Featured Listing</h2>
-              <p className="text-sm text-muted-foreground">per month · or $199/year (save 43%)</p>
+              <p className="text-sm text-ink-foreground/60">Top placement &amp; priority visibility</p>
             </div>
-            <div className="mb-6">
+            <div className="mb-1">
               <span className="font-display text-5xl font-medium">$29</span>
-              <span className="text-muted-foreground ml-1">/mo</span>
+              <span className="text-ink-foreground/60 ml-1">/month</span>
             </div>
+            <p className="text-sm text-ink-foreground/60 mb-6">or $199/year — save 43%</p>
             <ul className="space-y-3 mb-8 flex-1">
               {FEATURED_FEATURES.map((f) => (
                 <li key={f} className="flex items-start gap-2 text-sm">
-                  <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                  <span>{f}</span>
+                  <Check className="h-4 w-4 text-gold mt-0.5 flex-shrink-0" />
+                  <span className="text-ink-foreground/90">{f}</span>
                 </li>
               ))}
             </ul>
-            <Button asChild size="lg" className="w-full">
+            <Button asChild size="lg" className="w-full bg-background text-foreground hover:bg-background/90">
               <Link href="/submit-listing">Get Featured</Link>
             </Button>
           </div>
@@ -125,8 +126,8 @@ export default function PricingPage() {
 
       {/* FAQ */}
       <section className="container pb-20 max-w-3xl">
-        <p className="text-sm font-medium tracking-wider uppercase text-primary mb-3 text-center">Common Questions</p>
-        <h2 className="font-display text-3xl md:text-4xl font-medium text-center mb-10">Pricing FAQ</h2>
+        <p className="eyebrow mb-3 text-center">Common Questions</p>
+        <h2 className="font-display text-3xl md:text-4xl text-center mb-10">Pricing FAQ</h2>
 
         <div className="space-y-4">
           {FAQ.map((item) => (
