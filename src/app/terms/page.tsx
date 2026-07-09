@@ -4,11 +4,12 @@ export const metadata: Metadata = { title: 'Terms of Service', alternates: { can
 
 export default function TermsPage() {
   return (
-    <div className="container max-w-3xl py-16">
-      <h1 className="font-display text-4xl font-medium mb-2">Terms of Service</h1>
+    <div className="container py-10 md:py-14">
+      <p className="eyebrow mb-2">Legal</p>
+      <h1 className="font-display text-3xl md:text-4xl mb-2">Terms of Service</h1>
       <p className="text-sm text-muted-foreground mb-10">Last updated: July 8, 2026</p>
 
-      <div className="prose prose-lg max-w-none text-foreground/80 space-y-6">
+      <div className="prose-measure text-foreground/80 space-y-6 leading-relaxed">
         <p>
           These Terms of Service (&ldquo;Terms&rdquo;) govern your use of WeddingLiveStreaming.com (&ldquo;we&rdquo;, &ldquo;us&rdquo;). By using the site, you agree to these Terms.
         </p>

@@ -49,8 +49,8 @@ export default function WeddingLiveStreamingCostPage() {
 
       <section className="bg-accent/30 border-b">
         <div className="container py-16 md:py-20">
-          <p className="text-sm font-medium tracking-wider uppercase text-primary mb-3">Guides</p>
-          <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-medium max-w-3xl">
+          <p className="eyebrow mb-2">Cost Guide</p>
+          <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-medium max-w-3xl">
             How Much Does Wedding Live Streaming Cost?
           </h1>
           <p className="mt-6 text-lg max-w-3xl font-medium">
@@ -72,7 +72,7 @@ export default function WeddingLiveStreamingCostPage() {
           quote from a couple of vendors in your area to see how local pricing compares.
         </p>
 
-        <div className="overflow-x-auto rounded-xl border">
+        <div className="overflow-x-auto rounded-2xl border">
           <table className="w-full text-sm">
             <thead className="bg-secondary/40">
               <tr>

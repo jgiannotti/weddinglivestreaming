@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { SignInForm } from './sign-in-form';
+import { Card } from '@/components/ui/card';
 
 export const metadata: Metadata = { title: 'Sign In' };
 
@@ -18,13 +19,15 @@ export default async function SignInPage({
         <p className="text-muted-foreground">Sign in to manage your listing or messages.</p>
       </div>
 
-      {error && (
-        <div className="mb-6 p-4 rounded-lg bg-destructive/10 text-destructive text-sm border border-destructive/20">
-          {decodeURIComponent(error)}
-        </div>
-      )}
+      <Card className="p-6 md:p-8">
+        {error && (
+          <div className="mb-6 p-4 rounded-2xl bg-destructive/10 text-destructive text-sm border border-destructive/20">
+            {decodeURIComponent(error)}
+          </div>
+        )}
 
-      <SignInForm next={next} />
+        <SignInForm next={next} />
+      </Card>
 
       <div className="mt-8 space-y-3 text-center text-sm">
         <p>

@@ -4,7 +4,10 @@ import { useState } from 'react';
 import { Loader2, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
 import { US_STATES } from '@/lib/states';
+
+const BUDGET_OPTIONS = ['Under $500', '$500–$1,000', '$1,000–$2,500', '$2,500+'];
 
 interface Props {
   venueState?: string;
@@ -21,7 +24,9 @@ export function LeadForm({ venueState, venueCity, sourceListingId, title }: Prop
   const [city, setCity] = useState(venueCity ?? '');
   const [state, setState] = useState(venueState ?? '');
   const [guestCount, setGuestCount] = useState('');
-  const [budget, setBudget] = useState('');
+  // Radix Select can't use an empty string as an item value, so "unsure" is
+  // the sentinel for "no budget preference" — translated back to '' below.
+  const [budget, setBudget] = useState('unsure');
   const [message, setMessage] = useState('');
   const [website, setWebsite] = useState(''); // honeypot
 
@@ -45,7 +50,7 @@ export function LeadForm({ venueState, venueCity, sourceListingId, title }: Prop
           venue_city: city || undefined,
           venue_state: state,
           guest_count: guestCount ? Number(guestCount) : undefined,
-          budget: budget || undefined,
+          budget: budget !== 'unsure' ? budget : undefined,
           message: message || undefined,
           source_listing_id: sourceListingId,
           website,
@@ -63,7 +68,7 @@ export function LeadForm({ venueState, venueCity, sourceListingId, title }: Prop
 
   if (success) {
     return (
-      <div className="rounded-xl border bg-card p-6 text-center">
+      <div className="rounded-2xl border bg-card p-6 text-center">
         <CheckCircle2 className="h-8 w-8 text-primary mx-auto mb-3" />
         <p className="font-semibold mb-1">Thanks — you&rsquo;re all set!</p>
         <p className="text-sm text-muted-foreground">
@@ -74,7 +79,7 @@ export function LeadForm({ venueState, venueCity, sourceListingId, title }: Prop
   }
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-xl border bg-card p-6 space-y-4">
+    <form onSubmit={handleSubmit} className="rounded-2xl border bg-card p-6 space-y-4">
       <h3 className="font-display text-xl font-semibold">
         {title ?? 'Get Free Quotes'}
       </h3>
@@ -124,18 +129,16 @@ export function LeadForm({ venueState, venueCity, sourceListingId, title }: Prop
         </div>
         <div>
           <label htmlFor="lead-state" className="block text-sm font-medium mb-1.5">Venue state *</label>
-          <select
-            id="lead-state"
-            required
-            value={state}
-            onChange={(e) => setState(e.target.value)}
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          >
-            <option value="">Select a state</option>
-            {US_STATES.map((s) => (
-              <option key={s.slug} value={s.name}>{s.name}</option>
-            ))}
-          </select>
+          <Select value={state} onValueChange={setState}>
+            <SelectTrigger id="lead-state" className="rounded-md">
+              <SelectValue placeholder="Select a state" />
+            </SelectTrigger>
+            <SelectContent>
+              {US_STATES.map((s) => (
+                <SelectItem key={s.slug} value={s.name}>{s.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
@@ -152,18 +155,17 @@ export function LeadForm({ venueState, venueCity, sourceListingId, title }: Prop
         </div>
         <div>
           <label htmlFor="lead-budget" className="block text-sm font-medium mb-1.5">Budget</label>
-          <select
-            id="lead-budget"
-            value={budget}
-            onChange={(e) => setBudget(e.target.value)}
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          >
-            <option value="">Not sure yet</option>
-            <option value="Under $500">Under $500</option>
-            <option value="$500–$1,000">$500–$1,000</option>
-            <option value="$1,000–$2,500">$1,000–$2,500</option>
-            <option value="$2,500+">$2,500+</option>
-          </select>
+          <Select value={budget} onValueChange={setBudget}>
+            <SelectTrigger id="lead-budget" className="rounded-md">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="unsure">Not sure yet</SelectItem>
+              {BUDGET_OPTIONS.map((b) => (
+                <SelectItem key={b} value={b}>{b}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
@@ -174,7 +176,7 @@ export function LeadForm({ venueState, venueCity, sourceListingId, title }: Prop
           rows={3}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          className="flex w-full rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           placeholder="Tell us about your wedding day plans…"
         />
       </div>

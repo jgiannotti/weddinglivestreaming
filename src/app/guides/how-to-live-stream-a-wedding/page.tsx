@@ -87,8 +87,8 @@ export default function HowToLiveStreamAWeddingPage() {
 
       <section className="bg-accent/30 border-b">
         <div className="container py-16 md:py-20">
-          <p className="text-sm font-medium tracking-wider uppercase text-primary mb-3">Guides</p>
-          <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-medium max-w-3xl">
+          <p className="eyebrow mb-2">How-To Guide</p>
+          <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-medium max-w-3xl">
             How to Live Stream a Wedding Yourself
           </h1>
           <p className="mt-6 text-lg max-w-3xl font-medium">

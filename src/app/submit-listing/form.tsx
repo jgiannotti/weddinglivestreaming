@@ -123,7 +123,7 @@ export function SubmitListingForm({ categories, userId }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <section className="rounded-xl border bg-card p-6 space-y-4">
+      <section className="rounded-2xl border bg-card p-6 space-y-4">
         <h2 className="font-display text-xl font-semibold">Business details</h2>
 
         <div>
@@ -156,7 +156,7 @@ export function SubmitListingForm({ categories, userId }: Props) {
         </div>
       </section>
 
-      <section className="rounded-xl border bg-card p-6 space-y-4">
+      <section className="rounded-2xl border bg-card p-6 space-y-4">
         <h2 className="font-display text-xl font-semibold">Location</h2>
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -171,14 +171,14 @@ export function SubmitListingForm({ categories, userId }: Props) {
         <p className="text-xs text-muted-foreground">We&rsquo;ll auto-detect your coordinates from the city + state for map display.</p>
       </section>
 
-      <section className="rounded-xl border bg-card p-6 space-y-4">
+      <section className="rounded-2xl border bg-card p-6 space-y-4">
         <h2 className="font-display text-xl font-semibold">Categories</h2>
         <p className="text-sm text-muted-foreground">Pick all that apply — couples will filter by these.</p>
         <div className="grid grid-cols-2 gap-2">
           {categories.map((cat) => (
             <label
               key={cat.id}
-              className={`flex items-center gap-2 px-3 py-2 rounded-md border cursor-pointer transition-colors ${
+              className={`flex items-center gap-2 px-3 py-2 rounded-full border cursor-pointer transition-colors ${
                 selectedCategories.has(cat.id) ? 'border-primary bg-accent' : 'border-input hover:bg-muted'
               }`}
             >
@@ -194,9 +194,9 @@ export function SubmitListingForm({ categories, userId }: Props) {
         </div>
       </section>
 
-      <section className="rounded-xl border bg-card p-6 space-y-4">
+      <section className="rounded-2xl border bg-card p-6 space-y-4">
         <h2 className="font-display text-xl font-semibold">Hero photo</h2>
-        <label className="flex items-center justify-center gap-2 px-4 py-8 rounded-lg border-2 border-dashed cursor-pointer hover:border-primary transition-colors">
+        <label className="flex items-center justify-center gap-2 px-4 py-8 rounded-2xl border-2 border-dashed cursor-pointer hover:border-primary transition-colors">
           <Upload className="h-5 w-5 text-muted-foreground" />
           <span className="text-sm text-muted-foreground">
             {heroFile ? heroFile.name : 'Click to upload (or drag and drop)'}
@@ -211,7 +211,7 @@ export function SubmitListingForm({ categories, userId }: Props) {
       </section>
 
       {error && (
-        <div className="p-4 rounded-lg bg-destructive/10 text-destructive text-sm border border-destructive/20">
+        <div className="p-4 rounded-2xl bg-destructive/10 text-destructive text-sm border border-destructive/20">
           {error}
         </div>
       )}

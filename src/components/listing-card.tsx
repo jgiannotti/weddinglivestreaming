@@ -2,7 +2,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { MapPin, Sparkles } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { formatDate } from '@/lib/utils';
 import { PLACEHOLDER_LISTING_IMAGE } from '@/lib/constants';
 import type { Listing } from '@/lib/types';
 
@@ -17,7 +16,7 @@ export function ListingCard({ listing, priority = false }: ListingCardProps) {
   return (
     <Link
       href={`/listing/${listing.slug}`}
-      className="group block rounded-xl overflow-hidden border bg-card transition-all hover:shadow-lg hover:-translate-y-0.5"
+      className="group block rounded-2xl overflow-hidden border bg-card transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-muted">
         <Image
@@ -59,10 +58,6 @@ export function ListingCard({ listing, priority = false }: ListingCardProps) {
             ))}
           </div>
         )}
-
-        <p className="mt-3 text-xs text-muted-foreground">
-          Added {formatDate(listing.createdAt)}
-        </p>
       </div>
     </Link>
   );

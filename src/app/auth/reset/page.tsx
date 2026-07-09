@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ResetForm } from './reset-form';
+import { Card } from '@/components/ui/card';
 
 export const metadata: Metadata = { title: 'Reset Password' };
 
@@ -11,7 +12,9 @@ export default function ResetPage() {
         <h1 className="font-display text-3xl md:text-4xl font-medium mb-2">Reset password</h1>
         <p className="text-muted-foreground">We&rsquo;ll email you a link to set a new one.</p>
       </div>
-      <ResetForm />
+      <Card className="p-6 md:p-8">
+        <ResetForm />
+      </Card>
       <div className="mt-8 text-center text-sm">
         Remembered it?{' '}
         <Link href="/auth/sign-in" className="text-primary font-medium hover:underline">

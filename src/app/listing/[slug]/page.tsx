@@ -101,7 +101,7 @@ export default async function ListingPage({ params }: PageProps) {
               <h2 className="font-display text-2xl font-semibold mb-4">Location</h2>
               {hasCoordinates ? (
                 <>
-                  <div className="rounded-xl overflow-hidden border bg-muted aspect-[16/9] relative">
+                  <div className="rounded-2xl overflow-hidden border bg-muted aspect-[16/9] relative">
                     <iframe
                       title={`Map of ${listing.title}`}
                       src={`https://www.openstreetmap.org/export/embed.html?bbox=${listing.lng! - 0.05}%2C${listing.lat! - 0.05}%2C${listing.lng! + 0.05}%2C${listing.lat! + 0.05}&layer=mapnik&marker=${listing.lat}%2C${listing.lng}`}
@@ -130,7 +130,7 @@ export default async function ListingPage({ params }: PageProps) {
 
           {/* SIDEBAR */}
           <aside className="lg:sticky lg:top-24 lg:self-start space-y-4">
-            <div className="rounded-xl border bg-card p-6">
+            <div className="rounded-2xl border bg-card p-6">
               {listing.vendor && (
                 <Link
                   href={`/vendor/${listing.vendor.slug}`}
@@ -168,7 +168,7 @@ export default async function ListingPage({ params }: PageProps) {
               )}
             </div>
 
-            <div className="rounded-xl border bg-card p-5 text-sm space-y-3">
+            <div className="rounded-2xl border bg-card p-5 text-sm space-y-3">
               <div className="flex items-center gap-2 text-muted-foreground">
                 <ShieldCheck className="h-4 w-4 text-primary" />
                 <span>Verified vendor</span>

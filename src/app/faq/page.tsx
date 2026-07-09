@@ -26,10 +26,10 @@ const FAQ_ITEMS = [
 
 export default function FAQPage() {
   return (
-    <div className="container max-w-3xl py-16">
+    <div className="container max-w-3xl py-10 md:py-14">
       <div className="text-center mb-12">
-        <p className="text-sm font-medium tracking-wider uppercase text-primary mb-3">FAQ</p>
-        <h1 className="font-display text-4xl md:text-5xl font-medium">Frequently Asked Questions</h1>
+        <p className="eyebrow mb-3">FAQ</p>
+        <h1 className="font-display text-3xl md:text-4xl lg:text-5xl">Frequently Asked Questions</h1>
       </div>
 
       {FAQ_ITEMS.map((section) => (
@@ -37,19 +37,19 @@ export default function FAQPage() {
           <h2 className="font-display text-2xl font-semibold mb-6">{section.section}</h2>
           <div className="space-y-3">
             {section.items.map((item) => (
-              <details key={item.q} className="group rounded-xl border bg-card p-5 transition-shadow open:shadow-md">
+              <details key={item.q} className="group rounded-2xl border bg-card p-5 transition-shadow open:shadow-md">
                 <summary className="cursor-pointer font-semibold flex items-center justify-between list-none">
                   {item.q}
                   <span className="text-muted-foreground transition-transform group-open:rotate-45 text-xl">+</span>
                 </summary>
-                <p className="mt-3 text-muted-foreground leading-relaxed">{item.a}</p>
+                <p className="mt-3 text-muted-foreground leading-relaxed prose-measure">{item.a}</p>
               </details>
             ))}
           </div>
         </div>
       ))}
 
-      <div className="mt-12 p-8 rounded-2xl bg-accent/30 border text-center">
+      <div className="mt-12 p-8 rounded-3xl bg-accent/30 border border-accent text-center">
         <p className="text-muted-foreground mb-3">Still have questions?</p>
         <Link href="/contact" className="text-primary font-medium hover:underline">Get in touch →</Link>
       </div>

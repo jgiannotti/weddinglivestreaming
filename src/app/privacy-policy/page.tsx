@@ -4,11 +4,12 @@ export const metadata: Metadata = { title: 'Privacy Policy', alternates: { canon
 
 export default function PrivacyPolicyPage() {
   return (
-    <div className="container max-w-3xl py-16">
-      <h1 className="font-display text-4xl font-medium mb-2">Privacy Policy</h1>
+    <div className="container py-10 md:py-14">
+      <p className="eyebrow mb-2">Legal</p>
+      <h1 className="font-display text-3xl md:text-4xl mb-2">Privacy Policy</h1>
       <p className="text-sm text-muted-foreground mb-10">Last updated: May 2026</p>
 
-      <div className="prose prose-lg max-w-none text-foreground/80 space-y-6">
+      <div className="prose-measure text-foreground/80 space-y-6 leading-relaxed">
         <p>
           WeddingLiveStreaming.com (&ldquo;we&rdquo;, &ldquo;us&rdquo;) operates a directory of wedding live streaming vendors. This policy explains what we collect, how we use it, and the choices you have.
         </p>

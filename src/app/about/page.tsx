@@ -10,11 +10,11 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="container max-w-3xl py-16">
-      <p className="text-sm font-medium tracking-wider uppercase text-primary mb-3">About Us</p>
-      <h1 className="font-display text-4xl md:text-5xl font-medium mb-6">Every love story deserves every guest.</h1>
+    <div className="container py-10 md:py-14">
+      <p className="eyebrow mb-3">About Us</p>
+      <h1 className="font-display text-3xl md:text-4xl lg:text-5xl mb-6">Every love story deserves every guest.</h1>
 
-      <div className="prose prose-lg max-w-none text-foreground/80 space-y-5">
+      <div className="prose-measure text-foreground/80 space-y-5 text-lg leading-relaxed">
         <p>
           WeddingLiveStreaming.com exists for a simple reason: distance shouldn&rsquo;t keep the people who matter most from being part of your wedding day. Grandparents who can&rsquo;t travel. Friends stationed overseas. Family separated by visa delays, work commitments, illness, or thousands of miles.
         </p>

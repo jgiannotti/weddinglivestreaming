@@ -4,10 +4,12 @@ import { Suspense } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { SearchBar } from '@/components/search-bar';
 import { ListingCard } from '@/components/listing-card';
+import { LeadForm } from '@/components/lead-form';
 import { Button } from '@/components/ui/button';
 import { getListings } from '@/lib/data/listings';
 import { CATEGORIES } from '@/lib/categories';
 import { BreadcrumbJsonLd, ListingsItemListJsonLd } from '@/components/json-ld';
+import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
   title: 'Find Vendors',
@@ -46,13 +48,15 @@ export default async function DirectoryPage({ searchParams }: PageProps) {
       <BreadcrumbJsonLd items={[{ name: 'Home', path: '/' }, { name: 'Directory', path: '/directory' }]} />
       {listings.length > 0 && <ListingsItemListJsonLd listings={listings} />}
       <div className="mb-8">
-        <p className="text-sm font-medium tracking-wider uppercase text-primary mb-2">Directory</p>
-        <h1 className="font-display text-3xl md:text-4xl font-medium mb-2">
+        <p className="eyebrow mb-2">Directory</p>
+        <h1 className="font-display text-3xl md:text-4xl mb-2">
           {params.location ? `Vendors in ${params.location}` : 'Find Vendors'}
         </h1>
-        <p className="text-muted-foreground">
-          {all.length} {all.length === 1 ? 'vendor' : 'vendors'} found
-        </p>
+        {all.length > 0 && (
+          <p className="text-muted-foreground">
+            {all.length} {all.length === 1 ? 'vendor' : 'vendors'} found
+          </p>
+        )}
       </div>
 
       <div className="mb-8">
@@ -62,17 +66,18 @@ export default async function DirectoryPage({ searchParams }: PageProps) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-8">
-        {/* Sidebar filters */}
+        {/* Sidebar filters — chip row on mobile, stacked list on desktop */}
         <aside className="space-y-6">
           <div>
-            <h3 className="font-semibold text-sm mb-3">Categories</h3>
-            <ul className="space-y-1">
-              <li>
+            <h3 className="eyebrow mb-3">Categories</h3>
+            <ul className="flex md:flex-col gap-2 md:gap-1 overflow-x-auto md:overflow-visible pb-2 md:pb-0 -mx-4 px-4 md:mx-0 md:px-0">
+              <li className="shrink-0 md:shrink">
                 <Link
                   href={`/directory${params.location ? `?location=${encodeURIComponent(params.location)}` : ''}`}
-                  className={`block px-3 py-2 rounded-md text-sm transition-colors ${
-                    !params.category ? 'bg-accent text-accent-foreground font-medium' : 'hover:bg-muted'
-                  }`}
+                  className={cn(
+                    'block px-4 py-2 rounded-full md:rounded-md text-sm whitespace-nowrap transition-colors border md:border-0',
+                    !params.category ? 'bg-accent text-accent-foreground font-medium border-transparent' : 'bg-card md:bg-transparent hover:bg-accent/40 md:hover:bg-muted border-border/70 md:border-transparent'
+                  )}
                 >
                   All Categories
                 </Link>
@@ -82,12 +87,13 @@ export default async function DirectoryPage({ searchParams }: PageProps) {
                 if (params.location) qs.set('location', params.location);
                 qs.set('category', cat.slug);
                 return (
-                  <li key={cat.slug}>
+                  <li key={cat.slug} className="shrink-0 md:shrink">
                     <Link
                       href={`/directory?${qs.toString()}`}
-                      className={`block px-3 py-2 rounded-md text-sm transition-colors ${
-                        params.category === cat.slug ? 'bg-accent text-accent-foreground font-medium' : 'hover:bg-muted'
-                      }`}
+                      className={cn(
+                        'block px-4 py-2 rounded-full md:rounded-md text-sm whitespace-nowrap transition-colors border md:border-0',
+                        params.category === cat.slug ? 'bg-accent text-accent-foreground font-medium border-transparent' : 'bg-card md:bg-transparent hover:bg-accent/40 md:hover:bg-muted border-border/70 md:border-transparent'
+                      )}
                     >
                       {cat.name}
                     </Link>
@@ -97,8 +103,8 @@ export default async function DirectoryPage({ searchParams }: PageProps) {
             </ul>
           </div>
 
-          <div>
-            <h3 className="font-semibold text-sm mb-3">Sort</h3>
+          <div className="hidden md:block">
+            <h3 className="eyebrow mb-3">Sort</h3>
             <ul className="space-y-1">
               {[
                 { key: 'date',  label: 'Newest first' },
@@ -112,9 +118,10 @@ export default async function DirectoryPage({ searchParams }: PageProps) {
                   <li key={opt.key}>
                     <Link
                       href={`/directory?${qs.toString()}`}
-                      className={`block px-3 py-2 rounded-md text-sm transition-colors ${
+                      className={cn(
+                        'block px-3 py-2 rounded-md text-sm transition-colors',
                         (params.sort || 'date') === opt.key ? 'bg-accent text-accent-foreground font-medium' : 'hover:bg-muted'
-                      }`}
+                      )}
                     >
                       {opt.label}
                     </Link>
@@ -128,11 +135,22 @@ export default async function DirectoryPage({ searchParams }: PageProps) {
         {/* Results */}
         <div>
           {listings.length === 0 ? (
-            <div className="text-center py-20 border-2 border-dashed rounded-xl">
-              <p className="text-muted-foreground mb-4">No vendors match your search.</p>
-              <Button asChild variant="outline">
-                <Link href="/directory">Clear filters</Link>
-              </Button>
+            <div className="rounded-3xl bg-accent/30 border border-accent p-8 md:p-12">
+              <div className="max-w-lg mx-auto text-center mb-8">
+                <h3 className="font-display text-2xl md:text-3xl mb-3">Vendors are joining city by city</h3>
+                <p className="text-muted-foreground">
+                  Tell us your date and city and we&rsquo;ll connect you as soon as a vendor covers your area — free.
+                </p>
+              </div>
+              <div className="max-w-xl mx-auto">
+                <LeadForm venueState={params.location} title="Get Free Quotes" />
+              </div>
+              <p className="text-center text-sm text-muted-foreground mt-8">
+                Serve this area?{' '}
+                <Link href="/submit-listing" className="italic text-primary font-medium hover:underline">
+                  List your business free.
+                </Link>
+              </p>
             </div>
           ) : (
             <>

@@ -62,11 +62,11 @@ export function RegisterForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid grid-cols-2 gap-2 p-1 rounded-lg bg-muted">
+      <div className="grid grid-cols-2 gap-2 p-1 rounded-full bg-muted">
         <button
           type="button"
           onClick={() => setRole('couple')}
-          className={`py-2 rounded-md text-sm font-medium transition-colors ${
+          className={`py-2 rounded-full text-sm font-medium transition-colors ${
             role === 'couple' ? 'bg-card shadow' : 'text-muted-foreground'
           }`}
         >
@@ -75,7 +75,7 @@ export function RegisterForm() {
         <button
           type="button"
           onClick={() => setRole('vendor')}
-          className={`py-2 rounded-md text-sm font-medium transition-colors ${
+          className={`py-2 rounded-full text-sm font-medium transition-colors ${
             role === 'vendor' ? 'bg-card shadow' : 'text-muted-foreground'
           }`}
         >

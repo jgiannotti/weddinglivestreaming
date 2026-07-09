@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { RegisterForm } from './register-form';
+import { Card } from '@/components/ui/card';
 
 export const metadata: Metadata = { title: 'Register' };
 
@@ -12,7 +13,9 @@ export default function RegisterPage() {
         <p className="text-muted-foreground">It only takes a minute.</p>
       </div>
 
-      <RegisterForm />
+      <Card className="p-6 md:p-8">
+        <RegisterForm />
+      </Card>
 
       <div className="mt-8 text-center text-sm">
         Already have an account?{' '}
