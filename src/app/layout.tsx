@@ -14,7 +14,12 @@ const inter = Inter({
 
 const fraunces = Fraunces({
   subsets: ['latin'],
-  weight: ['400', '500', '600'],
+  // `weight` must be 'variable' (not a fixed array) whenever `axes` is set —
+  // Fraunces is a variable font, so this still gives every weight from
+  // 100-900 (font-medium/font-semibold utility classes keep working) plus
+  // the optical-size axis the spec calls for, without the invalid combo
+  // that broke the production build (`next/font` throws at build time).
+  weight: 'variable',
   style: ['normal', 'italic'],
   variable: '--font-fraunces',
   display: 'swap',
