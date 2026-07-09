@@ -5,7 +5,12 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { email, source } = body;
+  const { email, source, website } = body; // website is a honeypot
+
+  // Honeypot: bots fill hidden fields. Pretend success without inserting.
+  if (website) {
+    return NextResponse.json({ success: true });
+  }
 
   if (!email || !EMAIL_RE.test(email)) {
     return NextResponse.json({ error: 'Please enter a valid email address.' }, { status: 400 });

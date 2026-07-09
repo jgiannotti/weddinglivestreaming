@@ -22,7 +22,9 @@ export function AnnouncementForm() {
       <p className="text-sm text-muted-foreground mb-4">
         Broadcast a message to every vendor. Email sending is not yet wired up.
       </p>
+      <label htmlFor="announcement-message" className="sr-only">Announcement message</label>
       <textarea
+        id="announcement-message"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         rows={4}

@@ -35,7 +35,9 @@ export function CategoryForm() {
     <div className="rounded-xl border bg-card p-5 mb-6">
       <h2 className="font-semibold mb-3">Add category</h2>
       <div className="flex gap-2">
+        <label htmlFor="new-category-name" className="sr-only">Category name</label>
         <input
+          id="new-category-name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="e.g. Outdoor Weddings"

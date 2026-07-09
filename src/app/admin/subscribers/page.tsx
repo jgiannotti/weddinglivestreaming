@@ -31,7 +31,7 @@ export default async function AdminSubscribersPage() {
         </div>
       ) : (
         <div className="rounded-xl border bg-card overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" aria-label="Subscribers">
             <thead>
               <tr className="border-b bg-muted/40 text-left text-xs uppercase tracking-wider text-muted-foreground">
                 <th className="px-4 py-3 font-medium">Email</th>

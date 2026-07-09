@@ -34,6 +34,7 @@ const FOOTER_NAV = [
       { label: 'About',                href: '/about' },
       { label: 'Contact',              href: '/contact' },
       { label: 'Privacy Policy',       href: '/privacy-policy' },
+      { label: 'Terms',                href: '/terms' },
     ],
   },
   {
