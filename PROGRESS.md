@@ -84,3 +84,7 @@ buttons). Mapbox public token obtained and set in Vercel + `.env.local` + `.cred
    in a browser, spot-check mobile autocomplete.
 3. Redeploy/trigger a fresh build if needed so `NEXT_PUBLIC_MAPBOX_TOKEN` (already set in Vercel env
    vars) actually takes effect.
+4. Run a real PageSpeed/Lighthouse check on `/directory` and a city page once live — couldn't be done
+   this session since there was nothing deployed yet to test (the whole feature was still local/
+   unpushed) and this sandbox has no way to run Lighthouse against a non-existent build. Confirm the
+   new autocomplete JS doesn't tank mobile performance, per the original Phase G ask.
