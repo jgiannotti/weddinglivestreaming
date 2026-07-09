@@ -44,6 +44,14 @@ export interface Listing {
   createdAt: string;
   updatedAt: string;
   expiresAt: string;
+  // Milestone 2 — coverage radius / location intelligence
+  serviceRadiusMiles: number;
+  travelsNationwide: boolean;
+  // Only populated by getListingsByLocation() (radius search) — undefined
+  // for plain state/category listing queries.
+  distanceMiles?: number;
+  /** 1 = within the vendor's own radius, 2 = same-state fallback, 3 = travels nationwide */
+  searchTier?: 1 | 2 | 3;
   // Joined vendor info
   vendor?: Vendor;
 }

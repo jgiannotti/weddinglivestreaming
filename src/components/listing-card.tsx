@@ -47,6 +47,13 @@ export function ListingCard({ listing, priority = false }: ListingCardProps) {
           <span className="truncate">
             {listing.city}, {listing.state}
           </span>
+          {listing.distanceMiles !== undefined && (
+            <span className="shrink-0 text-xs font-medium text-muted-foreground/80">
+              {listing.searchTier === 3
+                ? '· Travels to you'
+                : `· ~${Math.round(listing.distanceMiles)} mi away`}
+            </span>
+          )}
         </div>
 
         {listing.categories.length > 0 && (

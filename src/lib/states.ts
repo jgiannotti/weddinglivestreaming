@@ -68,3 +68,7 @@ export function getStateBySlug(slug: string) {
 export function getStateByName(name: string) {
   return US_STATES.find((s) => s.name.toLowerCase() === name.toLowerCase());
 }
+
+export function getStateByAbbreviation(code: string) {
+  return US_STATES.find((s) => s.abbreviation === code.toUpperCase());
+}

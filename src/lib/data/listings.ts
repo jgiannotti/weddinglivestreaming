@@ -7,6 +7,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import type { Listing, Vendor, Category } from '@/lib/types';
+import { resolveLocation } from '@/lib/data/geo';
 
 // Nested select: pulls the parent vendor (FK listings.vendor_id -> vendors.id)
 // and every category linked through the listing_categories join table.
@@ -81,6 +82,8 @@ function mapListing(row: any): Listing {
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     expiresAt: row.expires_at,
+    serviceRadiusMiles: row.service_radius_miles ?? 60,
+    travelsNationwide: row.travels_nationwide ?? false,
     vendor: row.vendor ? mapVendor(row.vendor) : undefined,
   };
 }
@@ -93,6 +96,88 @@ function sortByTierFirst(listings: Listing[]): Listing[] {
     if (a.tier !== b.tier) return a.tier === 'featured' ? -1 : 1;
     return 0;
   });
+}
+
+// ----------------------------------------------------------------------------
+// Milestone 2 — tiered radius search. Replaces ilike city/state string
+// matching (which silently missed e.g. a St. Petersburg vendor covering a
+// Tampa search). Resolves the free-text location to coordinates via the
+// own-DB cities/zips backbone, then calls the search_listings_by_location
+// Postgres function (migration 0005) which does the tier1/2/3 ranking.
+// ----------------------------------------------------------------------------
+export interface RadiusSearchResult {
+  listings: Listing[];
+  resolvedLabel: string | null;
+  /** True when tier1 (in-radius) results were thin and tier2/3 were included. */
+  expanded: boolean;
+}
+
+export async function getListingsByLocation(
+  locationInput: string,
+  opts: { category?: string; limit?: number } = {}
+): Promise<RadiusSearchResult> {
+  const resolved = await resolveLocation(locationInput);
+  if (!resolved) {
+    return { listings: [], resolvedLabel: null, expanded: false };
+  }
+
+  const supabase = await createClient();
+  const { data: rpcRows, error: rpcError } = await supabase.rpc('search_listings_by_location', {
+    search_lat: resolved.lat,
+    search_lng: resolved.lng,
+    search_state: resolved.stateName,
+    category_slug: opts.category ?? null,
+    result_limit: opts.limit ?? 60,
+  });
+
+  if (rpcError || !rpcRows || rpcRows.length === 0) {
+    return { listings: [], resolvedLabel: resolved.label, expanded: false };
+  }
+
+  const rows = rpcRows as {
+    listing_id: string;
+    distance_miles: number;
+    search_tier: 1 | 2 | 3;
+    is_featured: boolean;
+  }[];
+
+  // Tier1-only unless tier1 is thin (<5), matching the plan's display rule:
+  // "Tier 2 (if <5 results): expand ... Tier 3: always available as a
+  // last-resort 'Travels to you' section." Tier 3 is always appended
+  // separately by the caller if desired — here we return everything the
+  // RPC gave us (already capped) and let the UI decide section headers via
+  // searchTier; but we drop tier2 entirely when tier1 already has >=5.
+  const tier1Count = rows.filter((r) => r.search_tier === 1).length;
+  const filteredRows = tier1Count >= 5 ? rows.filter((r) => r.search_tier !== 2) : rows;
+  const expanded = filteredRows.some((r) => r.search_tier !== 1);
+
+  const ids = filteredRows.map((r) => r.listing_id);
+  const { data, error } = await supabase
+    .from('listings')
+    .select(LISTING_SELECT)
+    .in('id', ids);
+
+  if (error || !data) {
+    return { listings: [], resolvedLabel: resolved.label, expanded: false };
+  }
+
+  const byId = new Map((data as any[]).map((row) => [row.id, row]));
+  const distanceById = new Map(filteredRows.map((r) => [r.listing_id, r.distance_miles]));
+  const tierById = new Map(filteredRows.map((r) => [r.listing_id, r.search_tier]));
+
+  // Preserve the RPC's tier/distance/featured ordering exactly — it already
+  // applied the correct sort (tier asc, featured desc, distance asc).
+  const listings = ids
+    .map((id) => byId.get(id))
+    .filter((row): row is any => !!row)
+    .map((row) => {
+      const listing = mapListing(row);
+      listing.distanceMiles = distanceById.get(row.id);
+      listing.searchTier = tierById.get(row.id);
+      return listing;
+    });
+
+  return { listings, resolvedLabel: resolved.label, expanded };
 }
 
 export async function getListings(

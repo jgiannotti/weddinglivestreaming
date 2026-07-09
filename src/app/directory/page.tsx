@@ -1,12 +1,12 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Suspense } from 'react';
+import { Fragment, Suspense } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { SearchBar } from '@/components/search-bar';
 import { ListingCard } from '@/components/listing-card';
 import { LeadForm } from '@/components/lead-form';
 import { Button } from '@/components/ui/button';
-import { getListings } from '@/lib/data/listings';
+import { getListings, getListingsByLocation } from '@/lib/data/listings';
 import { CATEGORIES } from '@/lib/categories';
 import { BreadcrumbJsonLd, ListingsItemListJsonLd } from '@/components/json-ld';
 import { cn } from '@/lib/utils';
@@ -34,14 +34,27 @@ interface PageProps {
 export default async function DirectoryPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const page = Math.max(1, parseInt(params.page || '1', 10));
-  const all = await getListings({
-    state: params.location,
-    category: params.category,
-    sortBy: params.sort || 'date',
-  });
+
+  // Milestone 2: a typed location goes through tiered radius search (own-DB
+  // city/ZIP resolution -> covers-you / same-state / nationwide), which
+  // replaces the old ilike string match that could never find e.g. a
+  // St. Petersburg vendor for a Tampa search. No location -> plain browse,
+  // still sortable by date/title. Radius results are always
+  // tier-then-distance sorted; the sort control only applies to plain browse.
+  let all;
+  let locationResolved = true;
+  if (params.location?.trim()) {
+    const result = await getListingsByLocation(params.location, { category: params.category });
+    all = result.listings;
+    locationResolved = result.resolvedLabel !== null;
+  } else {
+    all = await getListings({ category: params.category, sortBy: params.sort || 'date' });
+  }
 
   const totalPages = Math.ceil(all.length / PAGE_SIZE);
   const listings = all.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const tier2StartIndex = listings.findIndex((l) => l.searchTier === 2);
+  const tier3StartIndex = listings.findIndex((l) => l.searchTier === 3);
 
   return (
     <div className="container py-10 md:py-14">
@@ -103,7 +116,10 @@ export default async function DirectoryPage({ searchParams }: PageProps) {
             </ul>
           </div>
 
-          <div className="hidden md:block">
+          {/* Sort only applies to a plain (no-location) browse — a location
+              search is always tier-then-distance sorted, which is the point
+              of the search, so the control would be misleading there. */}
+          <div className={cn('hidden md:block', params.location && 'md:hidden')}>
             <h3 className="eyebrow mb-3">Sort</h3>
             <ul className="space-y-1">
               {[
@@ -137,9 +153,15 @@ export default async function DirectoryPage({ searchParams }: PageProps) {
           {listings.length === 0 ? (
             <div className="rounded-3xl bg-accent/30 border border-accent p-8 md:p-12">
               <div className="max-w-lg mx-auto text-center mb-8">
-                <h3 className="font-display text-2xl md:text-3xl mb-3">Vendors are joining city by city</h3>
+                <h3 className="font-display text-2xl md:text-3xl mb-3">
+                  {params.location && !locationResolved
+                    ? `We couldn't find "${params.location}"`
+                    : 'Vendors are joining city by city'}
+                </h3>
                 <p className="text-muted-foreground">
-                  Tell us your date and city and we&rsquo;ll connect you as soon as a vendor covers your area — free.
+                  {params.location && !locationResolved
+                    ? 'Try a city name, "City, ST", or a 5-digit ZIP code — or tell us below and we’ll do the rest.'
+                    : 'Tell us your date and city and we’ll connect you as soon as a vendor covers your area — free.'}
                 </p>
               </div>
               <div className="max-w-xl mx-auto">
@@ -155,8 +177,27 @@ export default async function DirectoryPage({ searchParams }: PageProps) {
           ) : (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                {listings.map((listing) => (
-                  <ListingCard key={listing.id} listing={listing} />
+                {listings.map((listing, i) => (
+                  <Fragment key={listing.id}>
+                    {/* Section headers use `!== -1` (not `> 0`) so a tier still
+                        gets an honest label even when it's the very first
+                        result — e.g. no vendor's coverage circle reaches the
+                        searched location, so results open directly on tier 2
+                        (same-state, beyond radius). Without this, those
+                        results rendered with no header at all, which could
+                        read as "these vendors cover you" when they don't. */}
+                    {i === tier2StartIndex && tier2StartIndex !== -1 && (
+                      <p className={cn('col-span-full text-sm font-medium text-muted-foreground', tier2StartIndex > 0 ? 'mt-2 pt-4 border-t' : 'mb-1')}>
+                        More vendors in the area
+                      </p>
+                    )}
+                    {i === tier3StartIndex && tier3StartIndex !== -1 && (
+                      <p className={cn('col-span-full text-sm font-medium text-muted-foreground', tier3StartIndex > 0 ? 'mt-2 pt-4 border-t' : 'mb-1')}>
+                        Travels to you
+                      </p>
+                    )}
+                    <ListingCard listing={listing} />
+                  </Fragment>
                 ))}
               </div>
 

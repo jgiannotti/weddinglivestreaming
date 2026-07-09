@@ -7,7 +7,7 @@ export default async function AdminListingsPage() {
   const supabase = await createClient();
   const { data: pending } = await supabase
     .from('listings')
-    .select('id, title, slug, city, state, created_at, vendor:vendors(business_name)')
+    .select('id, title, slug, city, state, created_at, service_radius_miles, travels_nationwide, vendor:vendors(business_name)')
     .eq('status', 'pending')
     .order('created_at', { ascending: true });
 
@@ -29,6 +29,10 @@ export default async function AdminListingsPage() {
                   <h3 className="font-semibold mb-1">{l.title}</h3>
                   <p className="text-sm text-muted-foreground">
                     {l.city}, {l.state} · {l.vendor?.business_name} · Submitted {formatDate(l.created_at)}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Coverage:{' '}
+                    {l.travels_nationwide ? 'Nationwide' : `${l.service_radius_miles ?? 60} mi radius`}
                   </p>
                   <Link href={`/listing/${l.slug}`} className="text-sm text-primary hover:underline mt-1 inline-block">
                     View →

@@ -5,7 +5,7 @@ import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ListingCard } from '@/components/listing-card';
 import { getStateBySlug } from '@/lib/states';
-import { getListings, getCitiesWithListings } from '@/lib/data/listings';
+import { getListings, getListingsByLocation, getCitiesWithListings } from '@/lib/data/listings';
 import { slugify } from '@/lib/utils';
 import { BreadcrumbJsonLd, ListingsItemListJsonLd } from '@/components/json-ld';
 
@@ -48,7 +48,16 @@ export default async function CityPage({ params }: PageProps) {
   if (!resolved) notFound();
   const { stateInfo, cityName } = resolved;
 
-  const listings = await getListings({ state: stateInfo.name, city: cityName });
+  // Milestone 2: radius search from this city's own-DB centroid, not an
+  // exact city-name match — a Clearwater page now correctly surfaces a
+  // Tampa vendor whose coverage radius reaches Clearwater, which also
+  // fattens thin city pages instead of leaving them empty. Falls back to
+  // the old exact-match query if the city can't be resolved in the cities
+  // table (rare — it would already need a real listing to have a page).
+  const radiusResult = await getListingsByLocation(`${cityName}, ${stateInfo.abbreviation}`);
+  const listings = radiusResult.resolvedLabel
+    ? radiusResult.listings
+    : await getListings({ state: stateInfo.name, city: cityName });
 
   return (
     <div>

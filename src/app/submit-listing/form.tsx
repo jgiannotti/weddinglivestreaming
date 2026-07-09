@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase/client';
 import { slugify } from '@/lib/utils';
 import { Loader2, Upload } from 'lucide-react';
 import type { Category } from '@/lib/types';
+import { suggestRadiusDefaults } from '@/lib/categories';
 
 interface Props {
   categories: Category[];
@@ -27,11 +28,25 @@ export function SubmitListingForm({ categories, userId }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // Milestone 2 — coverage radius. Pre-filled from category selection
+  // (radiusTouched guards against clobbering a manual edit once the vendor
+  // has interacted with the slider themselves).
+  const [radiusMiles, setRadiusMiles] = useState(60);
+  const [nationwide, setNationwide] = useState(false);
+  const [radiusTouched, setRadiusTouched] = useState(false);
+
   function toggleCategory(id: string) {
     const next = new Set(selectedCategories);
     if (next.has(id)) next.delete(id);
     else next.add(id);
     setSelectedCategories(next);
+
+    if (!radiusTouched) {
+      const slugs = categories.filter((c) => next.has(c.id)).map((c) => c.slug);
+      const { radiusMiles: suggested, nationwide: suggestedNationwide } = suggestRadiusDefaults(slugs);
+      setRadiusMiles(suggested);
+      setNationwide(suggestedNationwide);
+    }
   }
 
   async function geocode(city: string, state: string): Promise<{ lat: number; lng: number } | null> {
@@ -97,6 +112,8 @@ export function SubmitListingForm({ categories, userId }: Props) {
           lng: coords?.lng,
           status: 'pending',
           tier: 'basic',
+          service_radius_miles: radiusMiles,
+          travels_nationwide: nationwide,
         })
         .select('id, slug')
         .single();
@@ -172,6 +189,49 @@ export function SubmitListingForm({ categories, userId }: Props) {
       </section>
 
       <section className="rounded-2xl border bg-card p-6 space-y-4">
+        <h2 className="font-display text-xl font-semibold">How far will you travel?</h2>
+        <p className="text-sm text-muted-foreground">
+          Couples searching within this distance of your city will find you. We picked a starting
+          number based on your categories below — adjust it to fit how you actually work.
+        </p>
+
+        <label className="flex items-center gap-2 px-3 py-2.5 rounded-full border cursor-pointer hover:bg-muted transition-colors w-fit">
+          <input
+            type="checkbox"
+            checked={nationwide}
+            onChange={(e) => {
+              setNationwide(e.target.checked);
+              setRadiusTouched(true);
+            }}
+            className="rounded"
+          />
+          <span className="text-sm font-medium">I travel nationwide for destination weddings</span>
+        </label>
+
+        {!nationwide && (
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label htmlFor="radius" className="text-sm font-medium">Service radius</label>
+              <span className="text-sm text-muted-foreground">{radiusMiles} miles</span>
+            </div>
+            <input
+              id="radius"
+              type="range"
+              min={10}
+              max={500}
+              step={10}
+              value={radiusMiles}
+              onChange={(e) => {
+                setRadiusMiles(parseInt(e.target.value, 10));
+                setRadiusTouched(true);
+              }}
+              className="w-full accent-primary"
+            />
+          </div>
+        )}
+      </section>
+
+      <section className="rounded-2xl border bg-card p-6 space-y-4">
         <h2 className="font-display text-xl font-semibold">Categories</h2>
         <p className="text-sm text-muted-foreground">Pick all that apply — couples will filter by these.</p>
         <div className="grid grid-cols-2 gap-2">
@@ -216,9 +276,12 @@ export function SubmitListingForm({ categories, userId }: Props) {
         </div>
       )}
 
-      <div className="flex items-center justify-between pt-4 border-t">
+      <div className="flex items-center justify-between pt-4 border-t gap-4 flex-wrap">
         <p className="text-sm text-muted-foreground">
-          Your listing will be reviewed and live within 24 hours.
+          Your listing will be reviewed and live within 24 hours, on our free Basic plan.{' '}
+          <a href="/pricing" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+            See what Featured placement includes →
+          </a>
         </p>
         <Button type="submit" size="lg" disabled={loading || !businessName || !city || !state}>
           {loading && <Loader2 className="h-4 w-4 animate-spin" />}

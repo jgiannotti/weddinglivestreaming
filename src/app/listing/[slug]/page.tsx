@@ -154,9 +154,13 @@ export default async function ListingPage({ params }: PageProps) {
                   Message Vendor
                 </Link>
               </Button>
-              <Button variant="outline" size="lg" className="w-full mb-2">
+              {/* No favorites system exists yet (no onClick, nothing persisted) —
+                  a live button here would silently do nothing when tapped,
+                  which is worse than not having it. Disabled + honest label
+                  until Milestone 3 builds real shortlisting. */}
+              <Button variant="outline" size="lg" className="w-full mb-2" disabled title="Favorites are coming soon">
                 <Heart className="h-4 w-4" />
-                Add to Favorites
+                Save for Later (Coming Soon)
               </Button>
               {listing.websiteUrl && (
                 <Button asChild variant="ghost" size="lg" className="w-full">
