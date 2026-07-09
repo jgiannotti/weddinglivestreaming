@@ -56,7 +56,7 @@ export default async function StatePage({ params }: PageProps) {
       <section className="bg-accent/30 border-b">
         <div className="container py-16 md:py-20">
           <div className="max-w-3xl">
-            <p className="text-sm font-medium tracking-wider uppercase text-primary mb-3">Directory</p>
+            <p className="eyebrow mb-3">Directory</p>
             <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-medium leading-tight">
               Wedding Live Streaming<br />in {info.name}
             </h1>
@@ -84,20 +84,31 @@ export default async function StatePage({ params }: PageProps) {
       {/* VENDORS */}
       <section className="container py-16">
         <div className="mb-10">
-          <p className="text-sm font-medium tracking-wider uppercase text-primary mb-2">{info.name} Directory</p>
+          <p className="eyebrow mb-2">{info.name} Directory</p>
           <h2 className="font-display text-3xl md:text-4xl font-medium">
             Live Streaming Vendors in {info.name}
           </h2>
         </div>
 
         {listings.length === 0 ? (
-          <div className="text-center py-16 border-2 border-dashed rounded-xl">
-            <p className="text-muted-foreground mb-6">
-              We don&rsquo;t have vendors listed in {info.name} yet — but we&rsquo;re growing fast.
+          <div className="rounded-3xl bg-accent/30 border border-accent p-8 md:p-12">
+            <div className="max-w-lg mx-auto text-center mb-8">
+              <h3 className="font-display text-2xl md:text-3xl mb-3">
+                Vendors are joining {info.name} city by city
+              </h3>
+              <p className="text-muted-foreground">
+                Tell us your date and city and we&rsquo;ll connect you as soon as a vendor covers your area — free.
+              </p>
+            </div>
+            <div className="max-w-xl mx-auto">
+              <LeadForm venueState={info.name} title="Get Free Quotes" />
+            </div>
+            <p className="text-center text-sm text-muted-foreground mt-8">
+              Serve this area?{' '}
+              <Link href="/submit-listing" className="italic text-primary font-medium hover:underline">
+                List your business free.
+              </Link>
             </p>
-            <Button asChild>
-              <Link href="/submit-listing">Are you a {info.name} vendor? List your business →</Link>
-            </Button>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -135,7 +146,7 @@ export default async function StatePage({ params }: PageProps) {
           </h2>
           <div className="space-y-3">
             {content.faqs.map((item) => (
-              <details key={item.question} className="group rounded-xl border bg-card p-5 transition-shadow open:shadow-md">
+              <details key={item.question} className="group rounded-2xl border bg-card p-5 transition-shadow open:shadow-md">
                 <summary className="cursor-pointer font-semibold flex items-center justify-between list-none">
                   {item.question}
                   <span className="text-muted-foreground transition-transform group-open:rotate-45 text-xl">+</span>
@@ -147,17 +158,21 @@ export default async function StatePage({ params }: PageProps) {
         </section>
       )}
 
-      {/* LEAD FORM */}
-      <section className="container py-16 border-t max-w-xl">
-        <div className="mb-8">
-          <p className="text-sm font-medium tracking-wider uppercase text-primary mb-2">Planning in {info.name}?</p>
-          <h2 className="font-display text-3xl font-medium mb-2">Get Matched With Vendors</h2>
-          <p className="text-muted-foreground">
-            Tell us about your wedding and we&rsquo;ll connect you with {info.name} live streaming vendors.
-          </p>
-        </div>
-        <LeadForm venueState={info.name} title="Get Free Quotes" />
-      </section>
+      {/* LEAD FORM — only shown here when the state already has listings;
+          when it doesn't, the accent-wash empty-state panel above already
+          embeds the same LeadForm, so we avoid rendering it twice. */}
+      {listings.length > 0 && (
+        <section className="container py-16 border-t max-w-xl">
+          <div className="mb-8">
+            <p className="eyebrow mb-2">Planning in {info.name}?</p>
+            <h2 className="font-display text-3xl font-medium mb-2">Get Matched With Vendors</h2>
+            <p className="text-muted-foreground">
+              Tell us about your wedding and we&rsquo;ll connect you with {info.name} live streaming vendors.
+            </p>
+          </div>
+          <LeadForm venueState={info.name} title="Get Free Quotes" />
+        </section>
+      )}
 
       {/* CTA */}
       <section className="container py-16">

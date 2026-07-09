@@ -64,7 +64,7 @@ export default async function CityPage({ params }: PageProps) {
       <section className="bg-accent/30 border-b">
         <div className="container py-16 md:py-20">
           <div className="max-w-3xl">
-            <p className="text-sm font-medium tracking-wider uppercase text-primary mb-3">
+            <p className="eyebrow mb-3">
               {stateInfo.name} Directory
             </p>
             <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-medium leading-tight">

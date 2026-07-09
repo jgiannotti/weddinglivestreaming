@@ -23,6 +23,19 @@ const nextConfig = {
   async redirects() {
     return [];
   },
+  // The state/city directory pages live under src/app/state/[state]/... —
+  // Next.js App Router does not support "partial" dynamic segments like
+  // `wedding-live-streaming-[state]` (a segment must be entirely `[param]`
+  // to be dynamic), which made every /wedding-live-streaming-{state} URL
+  // 404 in production despite the page code being correct. Rewrite (not
+  // redirect) so the public URL shape — already the canonical URL and the
+  // one used across the sitemap, footer, and internal links — never changes.
+  async rewrites() {
+    return [
+      { source: '/wedding-live-streaming-:state/:city', destination: '/state/:state/:city' },
+      { source: '/wedding-live-streaming-:state', destination: '/state/:state' },
+    ];
+  },
 };
 
 export default nextConfig;
