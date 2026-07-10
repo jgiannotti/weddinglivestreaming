@@ -1,0 +1,18 @@
+# existing-live-slugs.txt
+# Generated 2026-07-10 for dedup purposes (SEED-VENDORS.md §2).
+#
+# FINDING: /sitemap.xml contains ONLY static pages + /wedding-live-streaming-[state]
+# pages — zero /listing/ or /vendor/ URLs. The live /directory page and every
+# state page (checked: Florida) render a "Vendors are joining city by city" empty
+# state with a lead-capture form, even when searching "Florida" directly — i.e.
+# the production site currently displays ZERO vendor listings to any visitor,
+# despite project memory recording ~104 vendors migrated from WordPress.
+#
+# This is flagged in QUESTIONS-FOR-JOE.md as a likely production bug (out of
+# scope for this seed chat to fix — no src/ changes per §1.3). For this session,
+# treating existing-live-slugs as EMPTY. Dedup will instead rely on business-name
+# + domain fuzzy matching recorded in this file's "known WLS vendor names" list
+# below, sourced from anything recognizable in scrape results, plus a re-check
+# once Joe confirms the directory is fixed.
+#
+# known-live-domains: (none confirmed renderable as of 2026-07-10)

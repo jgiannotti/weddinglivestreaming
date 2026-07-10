@@ -126,8 +126,11 @@ export function SubmitListingForm({ categories, userId }: Props) {
         );
       }
 
-      // Update profile role to vendor
-      await supabase.from('profiles').update({ role: 'vendor' }).eq('id', userId);
+      // Update profile role to vendor. Direct role updates are blocked by
+      // column-level grants (migration 0009 — privilege-escalation fix);
+      // this SECURITY DEFINER function only ever does couple -> vendor on
+      // the caller's own row.
+      await supabase.rpc('become_vendor');
 
       router.push(`/dashboard?welcome=1`);
       router.refresh();

@@ -1,13 +1,14 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
-import { LayoutDashboard, ListChecks, Users, Flag, UserPlus, Mail, Tags } from 'lucide-react';
+import { LayoutDashboard, ListChecks, Users, Flag, UserPlus, Mail, Tags, ShieldCheck } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
 const NAV = [
   { label: 'Overview',         href: '/admin',              icon: LayoutDashboard },
   { label: 'Pending Listings', href: '/admin/listings',     icon: ListChecks },
+  { label: 'Profile Claims',   href: '/admin/claims',       icon: ShieldCheck },
   { label: 'Vendors',          href: '/admin/vendors',      icon: Users },
   { label: 'Reports',          href: '/admin/reports',      icon: Flag },
   { label: 'Leads',            href: '/admin/leads',        icon: UserPlus },

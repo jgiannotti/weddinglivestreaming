@@ -38,7 +38,7 @@ export default async function HomePage() {
             {/* Left: copy + search */}
             <div>
               <p className="eyebrow mb-4">The Wedding Livestream Directory</p>
-              <h1 className="font-display text-5xl md:text-6xl lg:text-7xl leading-[1.05]">
+              <h1 className="font-display text-[2.65rem] leading-[1.08] sm:text-5xl md:text-6xl lg:text-7xl sm:leading-[1.05]">
                 Every love story deserves{' '}
                 <em className="italic text-primary">every guest</em>
               </h1>
@@ -72,7 +72,7 @@ export default async function HomePage() {
                   sizes="(max-width: 1024px) 60vw, 30vw"
                   className="rounded-2xl object-cover shadow-xl"
                 />
-                <div className="absolute -bottom-8 -left-8 w-[42%] aspect-square rounded-2xl overflow-hidden border-4 border-background shadow-xl">
+                <div className="absolute -bottom-6 -left-3 sm:-bottom-8 sm:-left-8 w-[42%] aspect-square rounded-2xl overflow-hidden border-4 border-background shadow-xl">
                   <Image
                     src="/images/hero-c.jpg"
                     alt="A wedding guest smiling while watching the ceremony live from home"
@@ -81,7 +81,7 @@ export default async function HomePage() {
                     className="object-cover"
                   />
                 </div>
-                <div className="absolute -top-4 right-2 sm:right-6 flex items-center gap-2 rounded-full bg-background/90 backdrop-blur px-4 py-2 shadow-lg">
+                <div className="absolute -top-4 right-2 sm:right-6 flex items-center gap-2 rounded-full bg-background/90 backdrop-blur px-4 py-2 shadow-lg motion-safe:animate-float">
                   <span className="relative flex h-2 w-2">
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" />
                     <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" />
@@ -97,9 +97,12 @@ export default async function HomePage() {
       {/* TRUST STRIP */}
       <section className="border-y border-border/70 bg-secondary/20">
         <div className="container py-6">
-          <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-3 text-sm text-muted-foreground divide-x divide-border">
-            {['Vetted professionals', 'Direct contact — no middlemen', 'Free for couples'].map((item, i) => (
-              <span key={item} className={i > 0 ? 'pl-10 flex items-center gap-2' : 'flex items-center gap-2'}>
+          {/* No divide-x here — when the row wraps on phones the leftover
+              left-borders + padding read as random indents. Plain centered
+              gaps wrap cleanly at every width. */}
+          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2.5 text-sm text-muted-foreground">
+            {['Vetted professionals', 'Direct contact — no middlemen', 'Free for couples'].map((item) => (
+              <span key={item} className="flex items-center gap-2">
                 <Check className="h-4 w-4 text-primary shrink-0" />
                 {item}
               </span>
@@ -246,17 +249,17 @@ export default async function HomePage() {
       <section className="bg-ink text-ink-foreground">
         <div className="container py-20 md:py-24 text-center">
           <p className="eyebrow text-gold mb-4">For Vendors</p>
-          <h2 className="font-display text-4xl md:text-5xl mb-4">
+          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl mb-4">
             Get discovered by couples searching in your area
           </h2>
           <p className="text-ink-foreground/70 max-w-2xl mx-auto mb-8">
             Create a listing in minutes and start receiving direct inquiries from couples planning their wedding. Free to list — upgrade to Featured for top placement.
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <Button asChild size="lg" className="bg-background text-foreground hover:bg-background/90">
+          <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3">
+            <Button asChild size="lg" className="w-full sm:w-auto bg-background text-foreground hover:bg-background/90">
               <Link href="/submit-listing">List Your Business — Free</Link>
             </Button>
-            <Button asChild variant="ghost" size="lg" className="text-ink-foreground hover:bg-white/10 hover:text-ink-foreground">
+            <Button asChild variant="ghost" size="lg" className="w-full sm:w-auto text-ink-foreground hover:bg-white/10 hover:text-ink-foreground">
               <Link href="/pricing">See Featured pricing</Link>
             </Button>
           </div>

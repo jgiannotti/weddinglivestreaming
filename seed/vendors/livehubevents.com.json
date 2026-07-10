@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "identity": {
+    "business_name": "Live Hub Events",
+    "suggested_slug": "live-hub-events-orlando-fl",
+    "website": "https://livehubevents.com",
+    "tagline": "A simple way to live stream your wedding and keep your family members & loved ones connected",
+    "founded_year": null,
+    "owner_names": [],
+    "team_size_hint": "multi-person team (camera operator, live stream director, professional staff referenced)",
+    "languages": [],
+    "is_solo_operator": false
+  },
+  "location": {
+    "hq_city": "Orlando",
+    "hq_state": "FL",
+    "hq_zip": null,
+    "country": "United States",
+    "lat": null,
+    "lng": null,
+    "service_area_text": "Based in Orlando FL but services nationwide",
+    "service_radius_miles_estimate": null,
+    "travels_nationwide": true,
+    "does_destination_weddings": null,
+    "additional_locations": []
+  },
+  "contact": {
+    "emails": [ { "address": "info@livehubevents.com", "type": "general", "name": null, "source": "https://livehubevents.com/wedding-live-streaming-service" } ],
+    "phones": ["407-487-8260"],
+    "contact_form_url": "https://livehubevents.com/contact-us",
+    "booking_link": null
+  },
+  "social": {
+    "instagram": "https://www.instagram.com/livehubevents/",
+    "facebook": "https://www.facebook.com/livehubevents/",
+    "youtube": "https://www.youtube.com/channel/UC2NBm9Gmh-7cZsL560zgDdg",
+    "vimeo": null, "tiktok": null, "linkedin": null, "x": null,
+    "instagram_followers_approx": null, "last_activity_seen": null
+  },
+  "services": {
+    "livestream_is_core_business": true,
+    "other_services": ["audio-visual production", "temporary wifi rentals for events", "virtual event production"],
+    "camera_count_options": "1 angle (Professional) to 3 angles (Deluxe), additional angles available in Custom tier",
+    "platforms_streamed_to": ["private custom viewing page", "Facebook", "YouTube"],
+    "private_viewing_page": true,
+    "backup_internet": true,
+    "recording_included": true,
+    "replay_available": true,
+    "replay_duration": null,
+    "onsite_operator": true,
+    "remote_operated_option": null,
+    "guest_interaction_features": "\"Virtual Wedding Toast\" add-on lets a remote guest video-call in and interact live with the couple while other virtual/in-person guests watch",
+    "same_day_edit": null,
+    "av_or_hybrid_events": true,
+    "multilingual_streams": null,
+    "religious_ceremony_experience": null,
+    "venue_types_mentioned": [],
+    "insurance_mentioned": null,
+    "equipment_highlights": ["cameras ranging from GoPros to high-end cinema cameras (e.g. RED, Blackmagic)", "multiple wireless microphones"]
+  },
+  "pricing": {
+    "starting_price": 645,
+    "price_range_low": 645,
+    "price_range_high": 965,
+    "packages": [
+      { "name": "Professional Wedding Package", "price": 645, "duration_hours": null, "includes": ["1 live stream angle", "basic audio", "private pre-scheduled YouTube link", "professional operator", "HD video download of ceremony"], "source": "https://livehubevents.com/wedding-live-streaming-service" },
+      { "name": "Deluxe Wedding Package", "price": 965, "duration_hours": null, "includes": ["3 live stream angles", "professional audio", "custom personalized landing page", "1080p stream", "camera operator + live stream director", "footage of formal pictures", "HD download", "professionally edited highlight video"], "source": "https://livehubevents.com/wedding-live-streaming-service" },
+      { "name": "Custom", "price": null, "duration_hours": null, "includes": ["reception coverage", "offline record of getting-ready/first look", "primary + backup internet", "additional camera angles/operators", "stream to Facebook/YouTube", "200+ viewer support"], "source": "https://livehubevents.com/wedding-live-streaming-service" }
+    ],
+    "travel_fee_notes": "Pricing is dependent on venue internet; if connectivity is limited, internet cost is added to package price based on broadcast length",
+    "pricing_page_public": true,
+    "pricing_notes": "$75 non-refundable retainer + signed contract required to book; balance due 5 days before the wedding"
+  },
+  "proof": {
+    "sample_video_urls": [],
+    "featured_wedding_urls": [],
+    "testimonials": [],
+    "ratings": [],
+    "awards_press": [],
+    "years_of_weddings_claimed": null,
+    "weddings_count_claimed": null
+  },
+  "content": {
+    "description_seo": "Live Hub Events is an Orlando, Florida-based live streaming company that covers weddings nationwide. The team provides on-site camera operators, wireless audio, and a custom private viewing page so remote guests can watch the ceremony in real time. Packages range from a single-camera stream with a private YouTube link to a three-camera Deluxe package with a dedicated stream director and an edited highlight video, and the company can add reception coverage, backup internet, and multi-platform streaming for larger guest counts. A notable extra is an optional \"virtual wedding toast,\" letting one remote guest join a live video call that both in-person and streaming guests can see.",
+    "one_line_summary": "Orlando-based, nationwide-traveling wedding livestream company offering 1-3 camera packages, a private viewing page, and an optional virtual guest video-call toast.",
+    "faq_items": [
+      { "q": "Do the cameras get in the way?", "a_summary": "No — zoom lenses let cameras be placed at the back/sides of the room, coordinated with the couple's photographer/videographer." },
+      { "q": "Is there a person at each camera?", "a_summary": "No, tripods with multiple angles are used; setup is battery powered and portable." },
+      { "q": "Can I rent the equipment and stream it myself?", "a_summary": "No, it's a turnkey service — an operator, camera, and audio gear are included." },
+      { "q": "Do I need internet at my venue?", "a_summary": "Not required; they can bring alternative connectivity, though cost varies with required stream quality." },
+      { "q": "How many people can watch simultaneously?", "a_summary": "Up to 200 people included; more possible via Facebook/YouTube Live." }
+    ],
+    "raw_about_text": "INTERNAL ONLY — no dedicated About page fetched this session; homepage copy: 'Get your wedding online quickly and easily with our wedding live streaming packages! No Stress and nothing else to think about on your wedding day... We include everything needed to share your wedding day, including a videographer, and professional video and audio equipment.'"
+  },
+  "media": {
+    "logo_url": null,
+    "og_image_url": "https://livehubevents.com/wp-content/uploads/2020/10/Sierrafordphotography-Couple-3.jpg",
+    "gallery_image_urls": [
+      "https://livehubevents.com/wp-content/uploads/2020/05/Live-Hub-Events-Wedding-Live-Streaming-Company-2-4-scaled.jpg",
+      "https://livehubevents.com/wp-content/uploads/2020/05/Wedding-Webpage-Custom.jpg"
+    ],
+    "video_embed_urls": [],
+    "display_rights": "unclaimed-none"
+  },
+  "category_mapping": {
+    "existing_categories": ["full-service-production", "multi-camera-cinematic"],
+    "suggested_new_tags": ["hybrid-av", "virtual-guest-interaction", "reception-add-on"]
+  },
+  "meta": {
+    "discovered_via": "wedding livestream service Florida (WebSearch)",
+    "scrape_date": "2026-07-10",
+    "pages_fetched": ["https://livehubevents.com/wedding-live-streaming-service"],
+    "sources": [ { "url": "https://livehubevents.com/wedding-live-streaming-service", "supports": "identity, location, services, pricing, contact, FAQ, media" } ],
+    "scrape_quality": "full",
+    "activity_confidence": "high",
+    "completeness_score": 0.85,
+    "field_notes": "Cross-sells a 'sister company' (Absolute Amusements) for wedding entertainment rentals — unrelated to livestreaming, not recorded as a service. Only one page fetched this session (time-boxed); a follow-up pass could pull /about-us for founder name/year and reviews."
+  }
+}

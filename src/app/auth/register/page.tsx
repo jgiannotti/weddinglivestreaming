@@ -5,7 +5,15 @@ import { Card } from '@/components/ui/card';
 
 export const metadata: Metadata = { title: 'Register' };
 
-export default function RegisterPage() {
+export default async function RegisterPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ next?: string }>;
+}) {
+  const { next } = await searchParams;
+  // Only allow same-site relative redirects.
+  const safeNext = next && next.startsWith('/') && !next.startsWith('//') ? next : undefined;
+
   return (
     <div className="container max-w-md py-20">
       <div className="text-center mb-10">
@@ -14,12 +22,15 @@ export default function RegisterPage() {
       </div>
 
       <Card className="p-6 md:p-8">
-        <RegisterForm />
+        <RegisterForm next={safeNext} />
       </Card>
 
       <div className="mt-8 text-center text-sm">
         Already have an account?{' '}
-        <Link href="/auth/sign-in" className="text-primary font-medium hover:underline">
+        <Link
+          href={safeNext ? `/auth/sign-in?next=${encodeURIComponent(safeNext)}` : '/auth/sign-in'}
+          className="text-primary font-medium hover:underline"
+        >
           Sign In
         </Link>
       </div>

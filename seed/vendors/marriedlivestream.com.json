@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "identity": {
+    "business_name": "Married Livestream",
+    "suggested_slug": "married-livestream-spokane-wa",
+    "website": "https://www.marriedlivestream.com",
+    "tagline": "Make sure nobody misses your wedding",
+    "founded_year": 2017,
+    "owner_names": [],
+    "team_size_hint": "small team plus an onsite producer per wedding",
+    "languages": [],
+    "is_solo_operator": false
+  },
+  "location": {
+    "hq_city": "Spokane",
+    "hq_state": "WA",
+    "hq_zip": "99201",
+    "country": "United States",
+    "lat": null,
+    "lng": null,
+    "service_area_text": "Has captured weddings in 14-15 different states; travels widely from Spokane HQ",
+    "service_radius_miles_estimate": null,
+    "travels_nationwide": true,
+    "does_destination_weddings": null,
+    "additional_locations": []
+  },
+  "contact": {
+    "emails": [ { "address": "connect@marriedlivestream.com", "type": "general", "name": null, "source": "https://www.marriedlivestream.com/ (JSON-LD LocalBusiness)" } ],
+    "phones": [],
+    "contact_form_url": "https://www.marriedlivestream.com/pricing",
+    "booking_link": "https://www.marriedlivestream.com/pricing"
+  },
+  "social": {
+    "instagram": "https://www.instagram.com/marriedlivestream/",
+    "facebook": null, "youtube": null, "vimeo": null, "tiktok": null, "linkedin": null, "x": null,
+    "instagram_followers_approx": null, "last_activity_seen": null
+  },
+  "services": {
+    "livestream_is_core_business": true,
+    "other_services": ["wedding films (videography)", "photography"],
+    "camera_count_options": "3-4 cameras onsite",
+    "platforms_streamed_to": ["private custom viewing page"],
+    "private_viewing_page": true,
+    "backup_internet": true,
+    "recording_included": true,
+    "replay_available": true,
+    "replay_duration": null,
+    "onsite_operator": true,
+    "remote_operated_option": null,
+    "guest_interaction_features": "Optional add-ons: Digital Guest Book, Virtual Guest Interviews",
+    "same_day_edit": null,
+    "av_or_hybrid_events": null,
+    "multilingual_streams": null,
+    "religious_ceremony_experience": null,
+    "venue_types_mentioned": [],
+    "insurance_mentioned": null,
+    "equipment_highlights": ["multiple wireless hotspots + ethernet cable + cellular bonding technology for connectivity", "Starlink available for remote venues", "own professional microphones or integrates with DJ audio"]
+  },
+  "pricing": {
+    "starting_price": 2499,
+    "price_range_low": 2499, "price_range_high": null,
+    "packages": [],
+    "travel_fee_notes": null,
+    "pricing_page_public": true,
+    "pricing_notes": "Pricing page shows a single \"starting at $2,499\" figure behind a custom-quote form rather than itemized live-stream-only vs. film vs. bundle pricing — unclear which service tier this floor price applies to; flagged in field_notes rather than assumed."
+  },
+  "proof": {
+    "sample_video_urls": [],
+    "featured_wedding_urls": [],
+    "testimonials": [
+      { "quote": "The high quality video was great to have, and most importantly it was so special to have grandparents who couldn't be there be able to watch our ceremony in real time!", "attribution": "Andrea & Serge Chernetskiy", "source": "https://www.marriedlivestream.com/", "display": false },
+      { "quote": "For those of us unable to travel to the ceremony, the live stream provided the opportunity to share the experience and be moved by the occasion.", "attribution": "Walter C.", "source": "https://www.marriedlivestream.com/", "display": false }
+    ],
+    "ratings": [ { "platform": "google", "rating": null, "review_count": "50+", "source": "https://www.marriedlivestream.com/ (site states \"over 50 five star Google reviews\" without publishing an aggregate score)" } ],
+    "awards_press": ["USA Today", "Budget Savvy Bride", "Bridal Musings", "featured on YouTuber Jamie Wolfer's channel", "Side Hustle School podcast"],
+    "years_of_weddings_claimed": 8,
+    "weddings_count_claimed": 150
+  },
+  "content": {
+    "description_seo": "Married Livestream is a Spokane, Washington-based wedding livestreaming, videography, and photography company founded in 2017. The team has covered more than 150 weddings across roughly 14 states, using 3-4 onsite cameras, dedicated microphones, and a combination of cellular bonding and Starlink connectivity to keep the stream running even at venues without reliable Wi-Fi. Guests watch through a private, link-only viewing page with no app or plug-in required, and couples can add extras like a digital guest book or virtual guest interviews. The company has been featured in outlets including USA Today, Budget Savvy Bride, and Bridal Musings.",
+    "one_line_summary": "Spokane, WA-based livestream/film/photo company (est. 2017) with 150+ weddings across 14 states and a bonded-cellular/Starlink connectivity setup.",
+    "faq_items": [
+      { "q": "How does live streaming work?", "a_summary": "A private custom viewing page is created; an onsite producer switches between 3-4 cameras and integrates DJ or dedicated mics for audio." },
+      { "q": "What if my venue doesn't have Wi-Fi?", "a_summary": "Multi-carrier hotspots with cellular bonding are used, with Starlink available for very remote venues." },
+      { "q": "Can random people watch my live stream?", "a_summary": "No — the viewing page is private and shared only with people the couple gives the link to." },
+      { "q": "Can we book multiple services?", "a_summary": "Yes, combining photo/video/livestream packages comes with a discount." }
+    ],
+    "raw_about_text": "INTERNAL ONLY: 'Our business began in 2017 with a simple idea: helping couples share their wedding day with their entire family, even those who couldn't be there in person. Seven years later, that vision has taken us to weddings in 14 different states and expanded into full photography and videography services.'"
+  },
+  "media": {
+    "logo_url": "https://images.squarespace-cdn.com/content/v1/596d780ea5790aaa89ebb878/1505807002856-LCRDIXLME7PYF7ILNYL3/logo_no_words.png?format=1500w",
+    "og_image_url": "http://static1.squarespace.com/static/596d780ea5790aaa89ebb878/t/59c0ca9a197aeab158698eb2/1505807003307/logo_no_words.png?format=1500w",
+    "gallery_image_urls": [],
+    "video_embed_urls": [],
+    "display_rights": "unclaimed-none"
+  },
+  "category_mapping": {
+    "existing_categories": ["multi-camera-cinematic", "full-service-production"],
+    "suggested_new_tags": ["hybrid-av", "guest-interaction-addons", "starlink-connectivity"]
+  },
+  "meta": {
+    "discovered_via": "wedding livestream service Florida (WebSearch) — actually HQ'd in WA, surfaced nationally",
+    "scrape_date": "2026-07-10",
+    "pages_fetched": ["https://www.marriedlivestream.com/", "https://www.marriedlivestream.com/pricing"],
+    "sources": [
+      { "url": "https://www.marriedlivestream.com/", "supports": "identity, services, testimonials, awards, founding story" },
+      { "url": "https://www.marriedlivestream.com/pricing", "supports": "pricing" }
+    ],
+    "scrape_quality": "full",
+    "activity_confidence": "high",
+    "completeness_score": 0.80,
+    "field_notes": "A testimonial names 'Dale' as 'our wedding videographer' — likely a principal/founder, but role isn't explicitly stated on-site, so not recorded in owner_names per the no-inference rule. The $2,499 'starting at' price on the pricing page isn't broken out by service line (live-only vs. film vs. bundle) — worth clarifying on a follow-up pass."
+  }
+}

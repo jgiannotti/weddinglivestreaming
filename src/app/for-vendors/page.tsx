@@ -26,11 +26,11 @@ export default function ForVendorsPage() {
       <section className="bg-accent/30 border-b">
         <div className="container py-16 md:py-20 text-center">
           <p className="eyebrow mb-3">Grow Your Business</p>
-          <h1 className="font-display text-4xl md:text-5xl lg:text-6xl leading-tight">For Wedding Live Streaming Vendors</h1>
+          <h1 className="font-display text-[2.15rem] sm:text-4xl md:text-5xl lg:text-6xl leading-tight">For Wedding Live Streaming Vendors</h1>
           <p className="mt-5 text-lg text-muted-foreground max-w-2xl mx-auto">
             Connect with couples actively searching for your services. List your business in minutes and start receiving direct inquiries.
           </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <div className="mt-8 flex flex-col sm:flex-row flex-wrap justify-center gap-3 max-w-sm sm:max-w-none mx-auto">
             <Button asChild size="lg"><Link href="/submit-listing">List Your Business Free</Link></Button>
             <Button asChild size="lg" variant="outline"><Link href="/pricing">View Pricing →</Link></Button>
           </div>

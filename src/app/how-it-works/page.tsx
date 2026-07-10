@@ -27,7 +27,7 @@ export default function HowItWorksPage() {
       <section className="bg-accent/30 border-b">
         <div className="container py-16 md:py-20 text-center">
           <p className="eyebrow mb-3">The Process</p>
-          <h1 className="font-display text-4xl md:text-5xl lg:text-6xl leading-tight">How It Works</h1>
+          <h1 className="font-display text-[2.15rem] sm:text-4xl md:text-5xl lg:text-6xl leading-tight">How It Works</h1>
           <p className="mt-5 text-lg text-muted-foreground max-w-2xl mx-auto">
             Finding the perfect live streaming vendor for your wedding is simple. Here&rsquo;s everything you need to know.
           </p>

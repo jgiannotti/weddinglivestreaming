@@ -72,7 +72,7 @@ export default async function ListingPage({ params }: PageProps) {
               Featured
             </span>
           )}
-          <h1 className="font-display text-4xl md:text-6xl font-medium text-white">{listing.title}</h1>
+          <h1 className="font-display text-3xl sm:text-4xl md:text-6xl font-medium text-white">{listing.title}</h1>
           <div className="mt-3 flex items-center gap-1.5 text-white/90">
             <MapPin className="h-4 w-4" />
             <span>{listing.city}, {listing.state}</span>
@@ -142,7 +142,9 @@ export default async function ListingPage({ params }: PageProps) {
                   <div>
                     <p className="font-semibold text-sm">{listing.vendor.businessName}</p>
                     <p className="text-xs text-muted-foreground">
-                      Member since {formatDate(listing.vendor.memberSince)}
+                      {listing.vendor.userId
+                        ? `Member since ${formatDate(listing.vendor.memberSince)}`
+                        : 'Unclaimed profile'}
                     </p>
                   </div>
                 </Link>
@@ -172,10 +174,30 @@ export default async function ListingPage({ params }: PageProps) {
               )}
             </div>
 
+            {/* Seeded, ownerless profiles get a real claim CTA — the single
+                growth loop for converting scraped vendors into accounts. */}
+            {listing.vendor && !listing.vendor.userId && (
+              <div className="rounded-2xl border border-primary/25 bg-accent/40 p-5">
+                <p className="font-display text-lg leading-snug mb-1">
+                  Is {listing.vendor.businessName} your business?
+                </p>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Claim this free profile to edit it, add photos, and receive couple inquiries
+                  directly.
+                </p>
+                <Button asChild size="sm" className="w-full">
+                  <Link href={`/claim/${listing.slug}`}>
+                    <ShieldCheck className="h-4 w-4" />
+                    Claim This Profile — Free
+                  </Link>
+                </Button>
+              </div>
+            )}
+
             <div className="rounded-2xl border bg-card p-5 text-sm space-y-3">
               <div className="flex items-center gap-2 text-muted-foreground">
                 <ShieldCheck className="h-4 w-4 text-primary" />
-                <span>Verified vendor</span>
+                <span>{listing.vendor?.userId ? 'Verified vendor' : 'Profile from public sources'}</span>
               </div>
               <div className="flex items-center gap-2 text-muted-foreground">
                 <span>Listed on {formatDate(listing.createdAt)}</span>
@@ -183,15 +205,25 @@ export default async function ListingPage({ params }: PageProps) {
             </div>
 
             <div className="flex gap-2 text-xs">
-              <button className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1">
-                <ShieldCheck className="h-3.5 w-3.5" />
-                Claim Listing
-              </button>
-              <span className="text-muted-foreground">·</span>
-              <button className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1">
+              {listing.vendor && !listing.vendor.userId && (
+                <>
+                  <Link
+                    href={`/claim/${listing.slug}`}
+                    className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
+                  >
+                    <ShieldCheck className="h-3.5 w-3.5" />
+                    Claim Listing
+                  </Link>
+                  <span className="text-muted-foreground">·</span>
+                </>
+              )}
+              <Link
+                href={`/contact?about=${encodeURIComponent(listing.slug)}`}
+                className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
+              >
                 <Flag className="h-3.5 w-3.5" />
                 Report
-              </button>
+              </Link>
             </div>
 
             <LeadForm

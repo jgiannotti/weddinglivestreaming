@@ -16,3 +16,4 @@ dist
 .shot*.png
 *.tsbuildinfo
 migration/geonames-cache/
+.audit/

@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { createClient } from '@/lib/supabase/client';
 import { Loader2 } from 'lucide-react';
 
-export function RegisterForm() {
+export function RegisterForm({ next }: { next?: string } = {}) {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -28,7 +28,7 @@ export function RegisterForm() {
         password,
         options: {
           data: { display_name: name, role },
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          emailRedirectTo: `${window.location.origin}/auth/callback${next ? `?next=${encodeURIComponent(next)}` : ''}`,
         },
       });
       if (signUpErr) {
@@ -40,7 +40,8 @@ export function RegisterForm() {
       if (data.user && !data.session) {
         setSuccess(true);
       } else {
-        router.push(role === 'vendor' ? '/submit-listing' : '/dashboard');
+        // `next` (e.g. a claim-profile flow) outranks the default landing.
+        router.push(next || (role === 'vendor' ? '/submit-listing' : '/dashboard'));
         router.refresh();
       }
     } catch (err) {

@@ -1,0 +1,129 @@
+{
+  "schema_version": 1,
+  "identity": {
+    "business_name": "Wedding Livestreams",
+    "suggested_slug": "wedding-livestreams-san-diego-ca",
+    "website": "https://weddinglivestreams.com",
+    "tagline": "Professional wedding livestreaming and cinematic wedding films — so guests can feel present, whether they're in the room or across the world",
+    "founded_year": null,
+    "owner_names": ["Horacio Jones"],
+    "team_size_hint": "Founder-led (Horacio Jones), with 1-2 videographers on higher-tier packages",
+    "languages": [],
+    "is_solo_operator": false
+  },
+  "location": {
+    "hq_city": "San Diego",
+    "hq_state": "CA",
+    "hq_zip": null,
+    "country": "United States",
+    "lat": null,
+    "lng": null,
+    "service_area_text": "Based in San Diego, serving San Diego, Orange County, and Los Angeles; travel fees may apply outside San Diego County",
+    "service_radius_miles_estimate": null,
+    "travels_nationwide": null,
+    "does_destination_weddings": null,
+    "additional_locations": []
+  },
+  "contact": {
+    "emails": [],
+    "phones": ["(619) 800-4632"],
+    "contact_form_url": "https://weddinglivestreams.com/contact/",
+    "booking_link": "https://weddinglivestreams.com/contact/"
+  },
+  "social": {
+    "instagram": "https://www.instagram.com/weddinglivestreams",
+    "facebook": "https://www.facebook.com/weddinglivestreams",
+    "youtube": "https://www.youtube.com/@weddinglivestreams4506",
+    "vimeo": null, "tiktok": null, "linkedin": null, "x": null,
+    "instagram_followers_approx": null, "last_activity_seen": null
+  },
+  "services": {
+    "livestream_is_core_business": true,
+    "other_services": ["cinematic wedding films"],
+    "camera_count_options": "1 camera (Essential) to 2-camera (Standard) to expanded/backup multi-camera (Premium, custom quote)",
+    "platforms_streamed_to": ["private link (no app or plug-in required)"],
+    "private_viewing_page": true,
+    "backup_internet": true,
+    "recording_included": true,
+    "replay_available": true,
+    "replay_duration": null,
+    "onsite_operator": true,
+    "remote_operated_option": null,
+    "guest_interaction_features": null,
+    "same_day_edit": true,
+    "av_or_hybrid_events": true,
+    "multilingual_streams": null,
+    "religious_ceremony_experience": "Site states experience across \"churches and outdoor ceremonies to private venues and formal receptions\"",
+    "venue_types_mentioned": ["churches", "outdoor ceremonies", "private venues"],
+    "insurance_mentioned": null,
+    "equipment_highlights": ["bonded cellular internet + Starlink for venues with no/poor Wi-Fi", "redundant cables/power/media as backup gear"]
+  },
+  "pricing": {
+    "starting_price": 995,
+    "price_range_low": 995, "price_range_high": 6995,
+    "packages": [
+      { "name": "Livestream Essential", "price": 995, "duration_hours": null, "includes": ["1 camera", "clean audio", "private link", "same-day recording"], "source": "https://weddinglivestreams.com/" },
+      { "name": "Livestream Standard", "price": 1495, "duration_hours": null, "includes": ["2-camera coverage", "professional audio", "livestream tech + videographer", "same-day recording"], "source": "https://weddinglivestreams.com/" },
+      { "name": "Livestream Premium", "price": null, "duration_hours": null, "includes": ["expanded cameras", "backup connectivity", "enhanced coverage for complex venues"], "source": "https://weddinglivestreams.com/" },
+      { "name": "Film Essential", "price": 1995, "duration_hours": 5, "includes": ["1 videographer", "up to 5 hours", "ceremony + partial reception", "highlight film up to 5 min"], "source": "https://weddinglivestreams.com/" },
+      { "name": "Film Signature", "price": 3495, "duration_hours": null, "includes": ["1-2 videographers", "multi-camera ceremony edit", "6-8 min highlight film"], "source": "https://weddinglivestreams.com/" },
+      { "name": "Film Cinematic", "price": 5995, "duration_hours": null, "includes": ["2 videographers", "3-camera ceremony edit", "10-15 min cinematic feature film"], "source": "https://weddinglivestreams.com/" },
+      { "name": "Hybrid Essential", "price": 2695, "duration_hours": null, "includes": ["ceremony livestream", "simple highlight film"], "source": "https://weddinglivestreams.com/" },
+      { "name": "Hybrid Signature", "price": 4495, "duration_hours": null, "includes": ["multi-camera livestream", "full edited ceremony film", "6-8 min highlight"], "source": "https://weddinglivestreams.com/" },
+      { "name": "Hybrid Cinematic", "price": 6995, "duration_hours": null, "includes": ["enhanced livestream with backups", "2 videographers", "10-15 min cinematic feature film"], "source": "https://weddinglivestreams.com/" }
+    ],
+    "travel_fee_notes": "Travel fees may apply for venues outside San Diego County",
+    "pricing_page_public": true,
+    "pricing_notes": "Hybrid/film packages finalized based on timeline and venue; raw footage available as an optional add-on"
+  },
+  "proof": {
+    "sample_video_urls": [],
+    "featured_wedding_urls": [],
+    "testimonials": [
+      { "quote": "The audio and video quality was superb, and the team was friendly, warm, and professional.", "attribution": "Tyrene J.", "source": "https://weddinglivestreams.com/", "display": false },
+      { "quote": "For those of us unable to travel to the ceremony, the live stream provided the opportunity to share the experience and be moved by the occasion.", "attribution": "Walter C.", "source": "https://weddinglivestreams.com/", "display": false }
+    ],
+    "ratings": [],
+    "awards_press": ["Featured vendor badge on The Knot"],
+    "years_of_weddings_claimed": null,
+    "weddings_count_claimed": null
+  },
+  "content": {
+    "description_seo": "Wedding Livestreams is a San Diego-based wedding livestreaming and cinematic film company led by Horacio Jones, founder of the video production company CinemaViva. The team serves San Diego, Orange County, and Los Angeles with tiered livestream-only, film-only, and hybrid packages, ranging from a single-camera $995 essential stream to a multi-camera cinematic hybrid package. Every livestream is delivered through a private link with no app or account required for guests, and the crew brings bonded cellular and Starlink internet so the stream keeps running even at venues with poor or no Wi-Fi. Same-day HD recordings are provided after the ceremony, and the company has been featured as a vendor on The Knot.",
+    "one_line_summary": "San Diego livestream + cinematic film company led by Horacio Jones of CinemaViva, with tiered live/film/hybrid packages from $995 and bonded-cellular/Starlink backup connectivity.",
+    "faq_items": [
+      { "q": "What if my venue doesn't have Wi-Fi?", "a_summary": "Bonded cellular and Starlink are brought to every wedding so the stream doesn't depend on venue Wi-Fi." },
+      { "q": "Can we combine livestream and a wedding film?", "a_summary": "Yes — Hybrid packages bundle a livestream with a full edited ceremony film and highlight video." },
+      { "q": "How soon do we get the recording?", "a_summary": "A same-day HD recording is provided right after the ceremony." }
+    ],
+    "raw_about_text": "INTERNAL ONLY: 'Horacio is the founder of CinemaViva, a San Diego-based video production company. That background brings broadcast-level reliability, thoughtful planning, and high-quality audio and visuals to every wedding we cover.'"
+  },
+  "media": {
+    "logo_url": "https://weddinglivestreams.com/wp-content/uploads/2025/09/cropped-weddinglivestreamslogo.jpeg",
+    "og_image_url": "https://weddinglivestreams.com/wp-content/uploads/2025/09/IMG_4408-1.jpeg",
+    "gallery_image_urls": [
+      "https://weddinglivestreams.com/wp-content/uploads/2025/09/IMG_0763-scaled.jpeg",
+      "https://weddinglivestreams.com/wp-content/uploads/2025/09/IMG_0708-scaled.jpeg",
+      "https://weddinglivestreams.com/wp-content/uploads/2025/09/IMG_0759-scaled.jpeg"
+    ],
+    "video_embed_urls": [],
+    "display_rights": "unclaimed-none"
+  },
+  "category_mapping": {
+    "existing_categories": ["multi-camera-cinematic", "full-service-production"],
+    "suggested_new_tags": ["hybrid-av", "starlink-connectivity", "same-day-edit"]
+  },
+  "meta": {
+    "discovered_via": "wedding livestream service California (WebSearch)",
+    "scrape_date": "2026-07-10",
+    "pages_fetched": ["https://weddinglivestreams.com/", "https://weddinglivestreams.com/about/"],
+    "sources": [
+      { "url": "https://weddinglivestreams.com/", "supports": "identity, services, pricing, testimonials, contact" },
+      { "url": "https://weddinglivestreams.com/about/", "supports": "founder identity, location detail" }
+    ],
+    "scrape_quality": "full",
+    "activity_confidence": "high",
+    "completeness_score": 0.85,
+    "field_notes": "Strong, clean profile — one of the best-documented vendors this batch. No email address found on-site (contact is phone + form only)."
+  }
+}

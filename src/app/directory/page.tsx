@@ -83,7 +83,7 @@ export default async function DirectoryPage({ searchParams }: PageProps) {
         <aside className="space-y-6">
           <div>
             <h3 className="eyebrow mb-3">Categories</h3>
-            <ul className="flex md:flex-col gap-2 md:gap-1 overflow-x-auto md:overflow-visible pb-2 md:pb-0 -mx-4 px-4 md:mx-0 md:px-0">
+            <ul className="flex md:flex-col gap-2 md:gap-1 overflow-x-auto md:overflow-visible no-scrollbar scroll-fade-r md:[mask-image:none] pb-2 md:pb-0 -mx-4 px-4 md:mx-0 md:px-0">
               <li className="shrink-0 md:shrink">
                 <Link
                   href={`/directory${params.location ? `?location=${encodeURIComponent(params.location)}` : ''}`}

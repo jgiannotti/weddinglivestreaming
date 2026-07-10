@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "identity": {
+    "business_name": "Tampa Livestream Pros",
+    "suggested_slug": "tampa-livestream-pros-tampa-fl",
+    "website": "https://tampalivestreampros.com",
+    "tagline": "Stream Your Event with Tampa Livestream Pros",
+    "founded_year": null,
+    "owner_names": [],
+    "team_size_hint": "\"talented team of videographers\" (claims ~10 years of experience as of scrape date, not a confirmed founding year)",
+    "languages": [],
+    "is_solo_operator": false
+  },
+  "location": {
+    "hq_city": "Tampa",
+    "hq_state": "FL",
+    "hq_zip": null,
+    "country": "United States",
+    "lat": null,
+    "lng": null,
+    "service_area_text": "Tampa-focused; site references sibling city-branded sites (Jacksonville, Brooklyn NY, Omaha, Port St. Lucie) as \"partners\" — see field_notes",
+    "service_radius_miles_estimate": null,
+    "travels_nationwide": null,
+    "does_destination_weddings": null,
+    "additional_locations": []
+  },
+  "contact": {
+    "emails": [],
+    "phones": [],
+    "contact_form_url": "https://tampalivestreampros.com/",
+    "booking_link": null
+  },
+  "social": {
+    "instagram": null, "facebook": null, "youtube": null, "vimeo": null, "tiktok": null, "linkedin": null, "x": null,
+    "instagram_followers_approx": null, "last_activity_seen": null
+  },
+  "services": {
+    "livestream_is_core_business": true,
+    "other_services": ["corporate event streaming", "funeral/memorial streaming", "sports event streaming"],
+    "camera_count_options": "1-camera simple stream up to a full 3-5 camera setup with a sound desk and live graphics",
+    "platforms_streamed_to": ["Facebook", "YouTube", "Zoom", "Google Meet", "Microsoft Teams", "personal/private website", "Vimeo (post-event hosting)"],
+    "private_viewing_page": null,
+    "backup_internet": null,
+    "recording_included": true,
+    "replay_available": true,
+    "replay_duration": null,
+    "onsite_operator": true,
+    "remote_operated_option": null,
+    "guest_interaction_features": "Can run a concurrent Zoom session so remote guests can participate/be visible during the ceremony, not just watch passively",
+    "same_day_edit": null,
+    "av_or_hybrid_events": true,
+    "multilingual_streams": null,
+    "religious_ceremony_experience": null,
+    "venue_types_mentioned": [],
+    "insurance_mentioned": null,
+    "equipment_highlights": []
+  },
+  "pricing": {
+    "starting_price": null, "price_range_low": null, "price_range_high": null,
+    "packages": [],
+    "travel_fee_notes": null,
+    "pricing_page_public": false,
+    "pricing_notes": "Site states cost \"varies according to the size of the event, the number of cameras required, the duration of the event, and the difficulty\" — no public price list, quote-only."
+  },
+  "proof": {
+    "sample_video_urls": [], "featured_wedding_urls": [], "testimonials": [], "ratings": [],
+    "awards_press": [], "years_of_weddings_claimed": null, "weddings_count_claimed": null
+  },
+  "content": {
+    "description_seo": "Tampa Livestream Pros is a Tampa, Florida videography team offering live streaming for weddings alongside corporate events, funerals, and sports. Coverage ranges from a single-camera setup to a full multi-camera production with a sound desk and live graphics, streamed to platforms like Facebook, YouTube, Zoom, Google Meet, or Microsoft Teams, or hosted on a private link. For weddings specifically, the company can run a concurrent Zoom session so remote guests are able to participate in the ceremony rather than only watch, and footage is preserved on Vimeo for the couple after the event.",
+    "one_line_summary": "Tampa-based multi-event livestream company (weddings, corporate, funerals, sports) offering 1-5 camera setups and optional concurrent Zoom guest participation.",
+    "faq_items": [
+      { "q": "How is Tampa livestreaming done?", "a_summary": "Ranges from a simple 1-camera stream to a full 3-5 camera setup with a sound desk and live graphics; a unique URL (public or private) is provided." },
+      { "q": "How much does it cost?", "a_summary": "Varies by event size, camera count, duration, and complexity — quote-only, no published price list." },
+      { "q": "What happens to the video after the event?", "a_summary": "Saved to a Vimeo link; can be edited/updated afterward; the client retains ownership." }
+    ],
+    "raw_about_text": "INTERNAL ONLY: 'Tampa Livestream Pros is a talented team of videographers who specialize in online video live streaming... With nearly ten years of experience, we only produce high-quality content and strive for professionalism in all of our assignments.'"
+  },
+  "media": {
+    "logo_url": null, "og_image_url": null, "gallery_image_urls": [], "video_embed_urls": [],
+    "display_rights": "unclaimed-none"
+  },
+  "category_mapping": {
+    "existing_categories": ["full-service-production"],
+    "suggested_new_tags": ["hybrid-av", "zoom-guest-participation", "funeral-livestreaming"]
+  },
+  "meta": {
+    "discovered_via": "wedding livestream Tampa (WebSearch)",
+    "scrape_date": "2026-07-10",
+    "pages_fetched": ["https://tampalivestreampros.com/"],
+    "sources": [ { "url": "https://tampalivestreampros.com/", "supports": "identity, location, services, FAQ" } ],
+    "scrape_quality": "thin",
+    "activity_confidence": "low",
+    "completeness_score": 0.55,
+    "field_notes": "SCRAPE_QUALITY/CONFIDENCE FLAG: the 'Weddings Events Tampa' section still contains unedited page-builder placeholder text ('Your content will be placed here. This text can be edited or removed inline...'), and the site's 'Our Partners' section links out to near-identically-templated sister sites for other cities (Jacksonville, Brooklyn NY, Omaha, Port St. Lucie) — a pattern consistent with a templated local-SEO microsite network rather than distinct independently-run businesses. No email or phone was found in two attempts (homepage + /contact-us and /contact/, both returned no usable content). Recommend a human glance before this one goes live; the underlying wedding-livestream service offering itself does appear genuine and in-scope."
+  }
+}

@@ -13,13 +13,17 @@ export interface Category {
 
 export interface Vendor {
   id: string;
-  userId: string;
+  /** null = seeded/unclaimed profile — no account owns it yet. */
+  userId: string | null;
   businessName: string;
   slug: string;
   bio: string | null;
   websiteUrl: string | null;
   phone: string | null;
   memberSince: string;
+  /** Provenance: created via signup, or seeded from the public web. */
+  source?: 'signup' | 'seeded';
+  claimedAt?: string | null;
 }
 
 export interface Listing {

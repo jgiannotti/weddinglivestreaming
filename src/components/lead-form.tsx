@@ -100,7 +100,7 @@ export function LeadForm({ venueState, venueCity, sourceListingId, title }: Prop
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label htmlFor="lead-name" className="block text-sm font-medium mb-1.5">Name *</label>
           <Input id="lead-name" required value={name} onChange={(e) => setName(e.target.value)} />
@@ -111,7 +111,7 @@ export function LeadForm({ venueState, venueCity, sourceListingId, title }: Prop
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label htmlFor="lead-phone" className="block text-sm font-medium mb-1.5">Phone</label>
           <Input id="lead-phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
@@ -122,7 +122,7 @@ export function LeadForm({ venueState, venueCity, sourceListingId, title }: Prop
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label htmlFor="lead-city" className="block text-sm font-medium mb-1.5">Venue city</label>
           <Input id="lead-city" value={city} onChange={(e) => setCity(e.target.value)} />
@@ -142,7 +142,7 @@ export function LeadForm({ venueState, venueCity, sourceListingId, title }: Prop
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label htmlFor="lead-guests" className="block text-sm font-medium mb-1.5">Guest count</label>
           <Input

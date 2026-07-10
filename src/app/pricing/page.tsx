@@ -58,7 +58,7 @@ export default function PricingPage() {
       <section className="bg-accent/30 border-b">
         <div className="container py-16 md:py-20 text-center">
           <p className="eyebrow mb-3">Vendor Plans</p>
-          <h1 className="font-display text-4xl md:text-5xl lg:text-6xl leading-tight">
+          <h1 className="font-display text-[2.15rem] sm:text-4xl md:text-5xl lg:text-6xl leading-tight">
             Simple, Transparent Pricing
           </h1>
           <p className="mt-5 text-lg text-muted-foreground max-w-2xl mx-auto">

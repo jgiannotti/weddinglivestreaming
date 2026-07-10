@@ -29,13 +29,15 @@ function mapCategory(row: any): Category {
 function mapVendor(row: any): Vendor {
   return {
     id: row.id,
-    userId: row.user_id,
+    userId: row.user_id ?? null,
     businessName: row.business_name,
     slug: row.slug,
     bio: row.bio,
     websiteUrl: row.website_url,
     phone: row.phone,
     memberSince: row.member_since,
+    source: row.source ?? 'signup',
+    claimedAt: row.claimed_at ?? null,
   };
 }
 

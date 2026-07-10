@@ -57,7 +57,7 @@ export default async function StatePage({ params }: PageProps) {
         <div className="container py-16 md:py-20">
           <div className="max-w-3xl">
             <p className="eyebrow mb-3">Directory</p>
-            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-medium leading-tight">
+            <h1 className="font-display text-[2.15rem] sm:text-4xl md:text-5xl lg:text-6xl font-medium leading-tight">
               Wedding Live Streaming<br />in {info.name}
             </h1>
             <p className="mt-5 text-lg text-muted-foreground max-w-2xl font-medium">

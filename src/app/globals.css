@@ -47,6 +47,18 @@
     @apply border-border;
   }
 
+  /* Safety net: no single stray element may ever give the page a horizontal
+     scrollbar on phones (the pre-2026-07 header did exactly that, pushing
+     every page 84px wider than the viewport). `clip` not `hidden` so
+     position:sticky still works. */
+  html, body {
+    overflow-x: clip;
+  }
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
@@ -54,10 +66,22 @@
 
   h1, h2, h3, h4 {
     @apply font-display font-medium tracking-tight;
+    text-wrap: balance;
   }
 
   h1, h2 {
     letter-spacing: -0.02em;
+  }
+
+  ::selection {
+    background: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
   }
 }
 
@@ -91,6 +115,18 @@
      `border-dashed` usage is neutralized site-wide. */
   .border-dashed {
     border-style: solid;
+  }
+
+  /* Horizontal chip scrollers (directory category row): scrollable but with
+     no visible scrollbar, plus a right-edge fade hinting at more content. */
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .scroll-fade-r {
+    mask-image: linear-gradient(to right, black calc(100% - 2.5rem), transparent);
   }
 }
 

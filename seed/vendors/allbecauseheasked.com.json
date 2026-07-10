@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "identity": {
+    "business_name": "All Because He Asked",
+    "suggested_slug": "all-because-he-asked-orange-county-ca",
+    "website": "https://allbecauseheasked.com",
+    "tagline": "Live Stream + Wedding Videographer, Orange County and Los Angeles",
+    "founded_year": 2007,
+    "owner_names": ["Jamie Hobert"],
+    "team_size_hint": "6 named team members (Jamie Hobert, Danielle Hobert, Guillermo Luna, Kaitlynn Williams, Joey Rassool, Thomas Della Bella)",
+    "languages": [],
+    "is_solo_operator": false
+  },
+  "location": {
+    "hq_city": "Orange County",
+    "hq_state": "CA",
+    "hq_zip": null,
+    "country": "United States",
+    "lat": null,
+    "lng": null,
+    "service_area_text": "Based in Orange County/Southern California; site also lists Los Angeles, San Diego, Santa Barbara, Napa, and NYC, plus prior destination weddings in Seattle, Napa, Hawaii, Wyoming, Rhode Island, and the US Virgin Islands",
+    "service_radius_miles_estimate": null,
+    "travels_nationwide": null,
+    "does_destination_weddings": true,
+    "additional_locations": ["Los Angeles, CA", "San Diego, CA", "Santa Barbara, CA", "Napa, CA", "New York, NY"]
+  },
+  "contact": {
+    "emails": [ { "address": "info@allbecauseheasked.com", "type": "general", "name": null, "source": "https://allbecauseheasked.com/" } ],
+    "phones": ["(310) 779-0665"],
+    "contact_form_url": "https://allbecauseheasked.com/contact",
+    "booking_link": null
+  },
+  "social": {
+    "instagram": "https://www.instagram.com/allbecauseheasked/",
+    "facebook": "https://www.facebook.com/AllBecauseHeAsked/",
+    "youtube": null, "vimeo": null, "tiktok": null, "linkedin": null, "x": null,
+    "instagram_followers_approx": null, "last_activity_seen": null
+  },
+  "services": {
+    "livestream_is_core_business": false,
+    "other_services": ["wedding videography", "photography", "video editing", "\"Signature Couples Video\" comedic reception video"],
+    "camera_count_options": "multiple cameras (exact count not published)",
+    "platforms_streamed_to": [],
+    "private_viewing_page": null,
+    "backup_internet": true,
+    "recording_included": true,
+    "replay_available": null,
+    "replay_duration": null,
+    "onsite_operator": true,
+    "remote_operated_option": null,
+    "guest_interaction_features": null,
+    "same_day_edit": null,
+    "av_or_hybrid_events": null,
+    "multilingual_streams": null,
+    "religious_ceremony_experience": null,
+    "venue_types_mentioned": [],
+    "insurance_mentioned": null,
+    "equipment_highlights": ["drone intros", "network bonding for connection reliability", "professional audio"]
+  },
+  "pricing": {
+    "starting_price": null, "price_range_low": null, "price_range_high": null,
+    "packages": [],
+    "travel_fee_notes": null, "pricing_page_public": null, "pricing_notes": null
+  },
+  "proof": {
+    "sample_video_urls": [],
+    "featured_wedding_urls": [],
+    "testimonials": [],
+    "ratings": [],
+    "awards_press": ["\"Best of The Knot\" award for wedding videographers, 2013-2021 (9 consecutive years)", "The Knot Hall of Fame", "Project Wedding Perfect Rating, 2013", "Wedding Wire Bride's Choice, 2015", "\"Best Wedding Live Stream Videographer\" award (The Knot), 2021"],
+    "years_of_weddings_claimed": null,
+    "weddings_count_claimed": null
+  },
+  "content": {
+    "description_seo": "All Because He Asked is an Orange County, California wedding videography and livestreaming studio founded around 2007-2008 by Jamie Hobert, a UCLA film graduate with a broadcast-television editing background. The six-person team covers weddings across Los Angeles, Orange County, San Diego, Santa Barbara, and Napa, plus past destination weddings in states like Hawaii, Wyoming, and Rhode Island. Alongside traditional wedding films and photography, the studio offers live streaming with multiple cameras, drone intros, and network-bonded internet for connection reliability, and has been a repeat \"Best of The Knot\" winner across nine consecutive years, including a specific 2021 award for live stream videography.",
+    "one_line_summary": "Long-running Orange County wedding videography studio (est. ~2007) offering multi-camera livestreaming alongside cinematic wedding films; 9-time \"Best of The Knot\" winner.",
+    "faq_items": [],
+    "raw_about_text": "INTERNAL ONLY: 'Jamie is a Graduate of UCLA School of Theater, Film & TV... with over 15 years professional videography and editing experience (MLB, Fox Sports, and MTV)... Born in Massachusetts, he grew up in Orange County, lived in LA for 15 years and is now back in the OC.'"
+  },
+  "media": {
+    "logo_url": "https://allbecauseheasked.com/sites/all/themes/abha/logo.png",
+    "og_image_url": "https://allbecauseheasked.com/sites/default/files/page/field_file_attachment/wedding-videographer-photographer-los-angeles-orange-county_horiz2.jpg",
+    "gallery_image_urls": [],
+    "video_embed_urls": [],
+    "display_rights": "unclaimed-none"
+  },
+  "category_mapping": {
+    "existing_categories": ["multi-camera-cinematic", "full-service-production"],
+    "suggested_new_tags": ["drone-coverage", "destination-experienced", "long-tenured-2007"]
+  },
+  "meta": {
+    "discovered_via": "wedding livestream service California (WebSearch)",
+    "scrape_date": "2026-07-10",
+    "pages_fetched": ["https://allbecauseheasked.com/", "https://allbecauseheasked.com/about"],
+    "sources": [
+      { "url": "https://allbecauseheasked.com/", "supports": "identity, contact, social, awards, livestream mention" },
+      { "url": "https://allbecauseheasked.com/about", "supports": "team, founder bio, founding history" }
+    ],
+    "scrape_quality": "partial-js",
+    "activity_confidence": "medium",
+    "completeness_score": 0.70,
+    "field_notes": "The dedicated livestream page (https://allbecauseheasked.com/live) was NOT fetched this session — pricing, private-link setup, and platform details for the livestream product specifically are still unknown and left null rather than assumed from the general videography copy. Follow-up fetch of /live recommended before this profile is considered complete. Site is on an older Drupal 7 theme; homepage layout suggests it may not have been updated recently despite the tagline still being current."
+  }
+}
