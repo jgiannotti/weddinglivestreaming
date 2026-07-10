@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
-import { LayoutDashboard, FileText, MessageSquare, CreditCard, LogOut } from 'lucide-react';
+import { LayoutDashboard, FileText, MessageSquare, CreditCard, LogOut, ShieldCheck } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,6 +10,7 @@ const NAV = [
   { label: 'My Listings',  href: '/dashboard/listings', icon: FileText },
   { label: 'Inquiries',    href: '/dashboard/messages', icon: MessageSquare },
   { label: 'Plan',         href: '/dashboard/plan',     icon: CreditCard },
+  { label: 'Security',     href: '/dashboard/security', icon: ShieldCheck },
 ];
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {

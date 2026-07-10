@@ -33,8 +33,27 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
   if (profile?.role !== 'admin') redirect('/');
 
+  // Strongly prompt 2FA for the admin account — it controls the whole site.
+  const { data: mfaData } = await supabase.auth.mfa.listFactors();
+  const hasTwoFactor = (mfaData?.totp || []).some((f) => f.status === 'verified');
+
   return (
     <div className="container py-10">
+      {!hasTwoFactor && (
+        <div className="mb-8 p-4 rounded-2xl border border-primary/30 bg-primary/5 text-sm flex flex-wrap items-center justify-between gap-3">
+          <p className="m-0">
+            <span className="font-semibold">Protect your admin account:</span> this account can
+            approve vendors, read leads, and manage the whole site — turn on two-factor
+            authentication.
+          </p>
+          <Link
+            href="/dashboard/security"
+            className="shrink-0 inline-flex items-center gap-1.5 font-medium text-primary hover:underline"
+          >
+            <ShieldCheck className="h-4 w-4" /> Set up 2FA
+          </Link>
+        </div>
+      )}
       <div className="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-10">
         <aside>
           <p className="text-xs uppercase tracking-wider text-muted-foreground mb-3">Admin</p>

@@ -17,9 +17,36 @@ export function RegisterForm({ next }: { next?: string } = {}) {
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  function passwordProblem(pw: string): string | null {
+    // Mirrors the server-side policy (Supabase: min 8, lower + upper + digit)
+    // so users get instant, friendly feedback instead of a server error.
+    if (pw.length < 8) return 'Password must be at least 8 characters.';
+    if (!/[a-z]/.test(pw)) return 'Password must include a lowercase letter.';
+    if (!/[A-Z]/.test(pw)) return 'Password must include an uppercase letter.';
+    if (!/[0-9]/.test(pw)) return 'Password must include a number.';
+    return null;
+  }
+
+  function friendlyError(message: string): string {
+    if (/rate limit/i.test(message)) {
+      return 'Too many signup attempts right now — please wait a minute and try again.';
+    }
+    if (/already registered/i.test(message)) {
+      return 'An account with this email already exists. Try signing in instead.';
+    }
+    return message;
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+
+    const pwIssue = passwordProblem(password);
+    if (pwIssue) {
+      setError(pwIssue);
+      return;
+    }
+
     setLoading(true);
     try {
       const supabase = createClient();
@@ -32,7 +59,15 @@ export function RegisterForm({ next }: { next?: string } = {}) {
         },
       });
       if (signUpErr) {
-        setError(signUpErr.message);
+        setError(friendlyError(signUpErr.message));
+        setLoading(false);
+        return;
+      }
+      // Supabase anti-enumeration: signing up with an email that already has an
+      // account returns a fake success with an empty identities array. Catch it
+      // so people aren't left waiting for a confirmation email that never comes.
+      if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+        setError('An account with this email already exists. Try signing in instead — or use "Forgot password?" if you can’t get in.');
         setLoading(false);
         return;
       }
@@ -97,7 +132,9 @@ export function RegisterForm({ next }: { next?: string } = {}) {
       <div>
         <label htmlFor="password" className="block text-sm font-medium mb-1.5">Password</label>
         <Input id="password" type="password" autoComplete="new-password" minLength={8} required value={password} onChange={(e) => setPassword(e.target.value)} />
-        <p className="mt-1 text-xs text-muted-foreground">At least 8 characters.</p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          At least 8 characters, with an uppercase letter, a lowercase letter, and a number.
+        </p>
       </div>
       {error && <p className="text-sm text-destructive">{error}</p>}
       <Button type="submit" size="lg" className="w-full" disabled={loading}>
