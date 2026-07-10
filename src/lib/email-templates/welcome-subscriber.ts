@@ -1,4 +1,5 @@
-// Prep only — not yet wired to Resend. See src/app/api/leads/route.ts and api/subscribe/route.ts for TODO markers where these will be used once RESEND_API_KEY is configured.
+// Sent to new email subscribers. Wired in src/app/api/subscribe/route.ts.
+// Callers must pass pre-escaped values.
 
 interface WelcomeSubscriberParams {
   email: string;

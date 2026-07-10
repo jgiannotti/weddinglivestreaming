@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
+import { sendEmail, escapeHtml } from '@/lib/email';
+import { welcomeSubscriberEmail } from '@/lib/email-templates/welcome-subscriber';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -26,6 +28,12 @@ export async function POST(request: Request) {
   // never leak "already exists" to the client.
   if (insertErr && insertErr.code !== '23505') {
     return NextResponse.json({ error: insertErr.message }, { status: 500 });
+  }
+
+  // Welcome email — only for genuinely new subscribers (skip duplicate signups
+  // so re-submitting the form can't be used to spam someone's inbox).
+  if (!insertErr) {
+    await sendEmail({ to: email, ...welcomeSubscriberEmail({ email: escapeHtml(email) }) });
   }
 
   return NextResponse.json({ success: true });

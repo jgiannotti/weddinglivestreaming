@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { sendEmail, escapeHtml, ADMIN_EMAIL } from '@/lib/email';
 
 // POST /api/claims — submit a claim for a seeded (unclaimed) vendor profile.
 export async function POST(request: Request) {
@@ -66,6 +67,19 @@ export async function POST(request: Request) {
   });
 
   if (error) return NextResponse.json({ error: 'Could not submit your claim. Please try again.' }, { status: 500 });
+
+  // Owner alert — claims need manual review in /admin/claims.
+  await sendEmail({
+    to: ADMIN_EMAIL,
+    replyTo: user.email || undefined,
+    subject: 'New profile claim awaiting review',
+    html: `
+      <h2>New claim request</h2>
+      <p><strong>Claimant:</strong> ${escapeHtml(user.email || user.id)}</p>
+      <p style="white-space:pre-line">${escapeHtml(details)}</p>
+      <p><a href="https://weddinglivestreaming.com/admin/claims">Review in the claims queue</a></p>
+    `,
+  });
 
   return NextResponse.json({ ok: true });
 }

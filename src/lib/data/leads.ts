@@ -70,11 +70,8 @@ export async function matchVendorsForLead({ state, city }: MatchArgs): Promise<s
     if (vendorIds.length >= 3) break;
   }
 
-  // TODO(Resend deferred): once RESEND_API_KEY is configured, notify each
-  // matched vendor by email that a new lead is waiting for them. This
-  // function intentionally does not send email — it only selects vendors.
-  // Callers (e.g. src/app/api/leads/route.ts) check RESEND_API_KEY and
-  // no-op gracefully if it's unset; this function never throws either way.
+  // Email notifications for matched vendors are sent by the caller
+  // (src/app/api/leads/route.ts) — this function only selects vendors.
 
   return vendorIds;
 }

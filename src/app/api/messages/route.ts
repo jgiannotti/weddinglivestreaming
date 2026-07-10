@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { Resend } from 'resend';
+import { sendEmail, escapeHtml } from '@/lib/email';
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -30,36 +30,29 @@ export async function POST(request: Request) {
     /* counter increment is non-critical */
   }
 
-  // Send email notification to vendor
-  if (process.env.RESEND_API_KEY) {
-    try {
-      const { data: vendor } = await supabase
-        .from('vendors')
-        .select('business_name, user_id, profiles!inner(email)')
-        .eq('id', vendorId)
-        .single();
-      const vendorEmail = (vendor as any)?.profiles?.email;
-      if (vendorEmail) {
-        const resend = new Resend(process.env.RESEND_API_KEY);
-        await resend.emails.send({
-          from: process.env.RESEND_FROM_EMAIL || 'noreply@weddinglivestreaming.com',
-          to: vendorEmail,
-          replyTo: user.email!,
-          subject: `New inquiry: ${subject}`,
-          html: `
-            <h2>New inquiry on WeddingLiveStreaming.com</h2>
-            <p><strong>From:</strong> ${name} (${user.email})${phone ? ` · ${phone}` : ''}</p>
-            <p><strong>Subject:</strong> ${subject}</p>
-            <hr/>
-            <p style="white-space:pre-line">${messageBody}</p>
-            <hr/>
-            <p>Reply directly to this email to respond.</p>
-          `,
-        });
-      }
-    } catch (err) {
-      console.error('Email failed:', err);
-    }
+  // Send email notification to vendor (sendEmail no-ops without RESEND_API_KEY
+  // and swallows failures — the message row above is already stored).
+  const { data: vendor } = await supabase
+    .from('vendors')
+    .select('business_name, user_id, profiles!inner(email)')
+    .eq('id', vendorId)
+    .single();
+  const vendorEmail = (vendor as any)?.profiles?.email;
+  if (vendorEmail) {
+    await sendEmail({
+      to: vendorEmail,
+      replyTo: user.email!,
+      subject: `New inquiry: ${subject}`,
+      html: `
+        <h2>New inquiry on WeddingLiveStreaming.com</h2>
+        <p><strong>From:</strong> ${escapeHtml(String(name || ''))} (${escapeHtml(user.email || '')})${phone ? ` · ${escapeHtml(String(phone))}` : ''}</p>
+        <p><strong>Subject:</strong> ${escapeHtml(String(subject || ''))}</p>
+        <hr/>
+        <p style="white-space:pre-line">${escapeHtml(String(messageBody || ''))}</p>
+        <hr/>
+        <p>Reply directly to this email to respond.</p>
+      `,
+    });
   }
 
   return NextResponse.json({ ok: true });

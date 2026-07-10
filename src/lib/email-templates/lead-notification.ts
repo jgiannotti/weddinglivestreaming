@@ -1,4 +1,5 @@
-// Prep only — not yet wired to Resend. See src/app/api/leads/route.ts and api/subscribe/route.ts for TODO markers where these will be used once RESEND_API_KEY is configured.
+// Sent to matched vendors when a couple submits the Get Free Quotes form.
+// Wired in src/app/api/leads/route.ts. Callers must pass pre-escaped values.
 
 interface LeadNotificationParams {
   vendorName: string;
@@ -54,8 +55,11 @@ export function leadNotificationEmail(params: LeadNotificationParams): { subject
               ? `<p style="margin: 0 0 20px; font-size: 14px; color: #35272c; line-height: 1.5;"><strong>Message:</strong> ${message}</p>`
               : ''
           }
-          <a href="https://weddinglivestreaming.com/admin/leads" style="display: inline-block; background-color: #d49a35; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: bold;">
-            View lead details
+          <p style="margin: 0 0 20px; font-size: 14px; color: #35272c; line-height: 1.5;">
+            Reply directly to this email to reach the couple, or manage your listing from your dashboard.
+          </p>
+          <a href="https://weddinglivestreaming.com/dashboard" style="display: inline-block; background-color: #d49a35; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: bold;">
+            Open your dashboard
           </a>
         </td>
       </tr>

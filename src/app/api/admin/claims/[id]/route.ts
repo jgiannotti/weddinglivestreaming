@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { sendEmail, escapeHtml } from '@/lib/email';
 
 // PATCH /api/admin/claims/[id] — approve or reject a claim request.
 // Approval runs through approve_claim_request() (migration 0008), which
@@ -19,6 +20,27 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   if (action === 'approve') {
     const { error } = await supabase.rpc('approve_claim_request', { claim_id: id });
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+    // Tell the claimant their profile is now theirs. Non-critical — approval
+    // has already committed; sendEmail logs and swallows failures.
+    const { data: claim } = await supabase
+      .from('claim_requests')
+      .select('user_id, listing:listings(title, slug), profile:profiles(email)')
+      .eq('id', id)
+      .single();
+    const claimantEmail = (claim as any)?.profile?.email;
+    const listing = (claim as any)?.listing;
+    if (claimantEmail) {
+      await sendEmail({
+        to: claimantEmail,
+        subject: 'Your vendor profile claim was approved 🎉',
+        html: `
+          <h2>Your profile is yours!</h2>
+          <p>Your claim${listing?.title ? ` for <strong>${escapeHtml(listing.title)}</strong>` : ''} has been approved. You now manage this listing.</p>
+          <p><a href="https://weddinglivestreaming.com/dashboard">Open your dashboard</a>${listing?.slug ? ` · <a href="https://weddinglivestreaming.com/listing/${listing.slug}">View your public listing</a>` : ''}</p>
+        `,
+      });
+    }
     return NextResponse.json({ ok: true });
   }
 
