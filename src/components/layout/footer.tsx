@@ -64,7 +64,7 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 mb-12">
           {FOOTER_NAV.map((section) => (
             <div key={section.heading}>
-              <h4 className="eyebrow text-ink-foreground/50 mb-4">{section.heading}</h4>
+              <p className="eyebrow text-ink-foreground/50 mb-4">{section.heading}</p>
               <ul className="space-y-2.5">
                 {section.links.map((link) => (
                   <li key={link.href}>
@@ -83,7 +83,7 @@ export function Footer() {
 
         <div className="border-t border-white/10 pt-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-10">
           <div className="max-w-md">
-            <h4 className="font-display text-xl font-medium mb-1">Get vendor tips &amp; deals</h4>
+            <p className="font-display text-xl font-medium mb-1">Get vendor tips &amp; deals</p>
             <p className="text-sm text-ink-foreground/60 mb-3">
               Occasional emails for couples planning a wedding live stream.
             </p>

@@ -23,6 +23,23 @@ const nextConfig = {
   async redirects() {
     return [];
   },
+  // Security headers on every response. CSP is intentionally omitted for now —
+  // a strict policy needs a nonce pipeline for Next's inline runtime scripts
+  // plus allowances for Supabase/Stripe/Vercel Analytics; do it as its own
+  // carefully-tested change rather than shipping a lax placeholder.
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'X-Frame-Options', value: 'DENY' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=()' },
+        ],
+      },
+    ];
+  },
   // The state/city directory pages live under src/app/state/[state]/... —
   // Next.js App Router does not support "partial" dynamic segments like
   // `wedding-live-streaming-[state]` (a segment must be entirely `[param]`

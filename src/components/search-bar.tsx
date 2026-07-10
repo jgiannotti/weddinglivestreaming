@@ -301,7 +301,7 @@ export function SearchBar({ variant = 'hero', defaultLocation = '', defaultCateg
       <div className="hidden md:block h-6 w-px bg-border shrink-0" />
 
       <Select value={category} onValueChange={setCategory}>
-        <SelectTrigger className="h-11 border-0 md:w-[180px] shrink-0 focus:ring-0">
+        <SelectTrigger aria-label="Category" className="h-11 border-0 md:w-[180px] shrink-0 focus:ring-0">
           <SelectValue placeholder="All Categories" />
         </SelectTrigger>
         <SelectContent>
