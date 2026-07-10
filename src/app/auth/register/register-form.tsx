@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { createClient } from '@/lib/supabase/client';
+import { GoogleButton, OrDivider } from '@/components/auth/google-button';
 import { Loader2 } from 'lucide-react';
 
 export function RegisterForm({ next }: { next?: string } = {}) {
@@ -97,7 +98,10 @@ export function RegisterForm({ next }: { next?: string } = {}) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <div>
+      <GoogleButton next={next} label="Sign up with Google" />
+      <OrDivider />
+      <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-2 gap-2 p-1 rounded-full bg-muted">
         <button
           type="button"
@@ -141,6 +145,7 @@ export function RegisterForm({ next }: { next?: string } = {}) {
         {loading && <Loader2 className="h-4 w-4 animate-spin" />}
         Create Account
       </Button>
-    </form>
+      </form>
+    </div>
   );
 }

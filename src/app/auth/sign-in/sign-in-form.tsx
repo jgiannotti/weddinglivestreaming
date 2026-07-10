@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { createClient } from '@/lib/supabase/client';
+import { GoogleButton, OrDivider } from '@/components/auth/google-button';
 import { Loader2, ShieldCheck } from 'lucide-react';
 
 export function SignInForm({ next }: { next?: string }) {
@@ -133,7 +134,10 @@ export function SignInForm({ next }: { next?: string }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <div>
+      <GoogleButton next={next} />
+      <OrDivider />
+      <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label htmlFor="email" className="block text-sm font-medium mb-1.5">Email</label>
         <Input
@@ -161,6 +165,7 @@ export function SignInForm({ next }: { next?: string }) {
         {loading && <Loader2 className="h-4 w-4 animate-spin" />}
         Sign In
       </Button>
-    </form>
+      </form>
+    </div>
   );
 }
