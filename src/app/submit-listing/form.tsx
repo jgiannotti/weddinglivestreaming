@@ -9,6 +9,8 @@ import { slugify } from '@/lib/utils';
 import { Loader2, Upload } from 'lucide-react';
 import type { Category } from '@/lib/types';
 import { suggestRadiusDefaults } from '@/lib/categories';
+import { US_STATES } from '@/lib/states';
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
 
 interface Props {
   categories: Category[];
@@ -185,7 +187,19 @@ export function SubmitListingForm({ categories, userId }: Props) {
           </div>
           <div>
             <label htmlFor="state" className="block text-sm font-medium mb-1.5">State *</label>
-            <Input id="state" required value={state} onChange={(e) => setState(e.target.value)} />
+            {/* Select, not free text: state pages and search filter on the full
+                state name, so "CA" or "Calif." made a listing invisible on
+                /wedding-live-streaming-california. */}
+            <Select value={state} onValueChange={setState}>
+              <SelectTrigger id="state" className="rounded-md">
+                <SelectValue placeholder="Select a state" />
+              </SelectTrigger>
+              <SelectContent>
+                {US_STATES.map((s) => (
+                  <SelectItem key={s.slug} value={s.name}>{s.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
         <p className="text-xs text-muted-foreground">We&rsquo;ll auto-detect your coordinates from the city + state for map display.</p>
@@ -286,7 +300,7 @@ export function SubmitListingForm({ categories, userId }: Props) {
             See what Featured placement includes →
           </a>
         </p>
-        <Button type="submit" size="lg" disabled={loading || !businessName || !city || !state}>
+        <Button type="submit" size="lg" disabled={loading || !businessName || !description || !city || !state}>
           {loading && <Loader2 className="h-4 w-4 animate-spin" />}
           Submit Listing
         </Button>

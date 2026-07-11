@@ -9,7 +9,7 @@ import { ListingCard } from '@/components/listing-card';
 import { LeadForm } from '@/components/lead-form';
 import { getListingBySlug, getRelatedListings } from '@/lib/data/listings';
 import { formatDate } from '@/lib/utils';
-import { PLACEHOLDER_LISTING_IMAGE } from '@/lib/constants';
+import { getPlaceholderImage } from '@/lib/constants';
 import { ListingJsonLd, BreadcrumbJsonLd } from '@/components/json-ld';
 
 interface PageProps {
@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     openGraph: {
       title: listing.title,
       description: listing.description.slice(0, 160),
-      images: [{ url: listing.heroImageUrl ?? PLACEHOLDER_LISTING_IMAGE }],
+      images: [{ url: listing.heroImageUrl ?? getPlaceholderImage(listing.id) }],
     },
   };
 }
@@ -57,7 +57,7 @@ export default async function ListingPage({ params }: PageProps) {
       {/* HERO */}
       <div className="relative aspect-[16/8] md:aspect-[16/6] overflow-hidden bg-muted">
         <Image
-          src={listing.heroImageUrl ?? PLACEHOLDER_LISTING_IMAGE}
+          src={listing.heroImageUrl ?? getPlaceholderImage(listing.id)}
           alt={listing.title}
           fill
           priority
@@ -131,11 +131,10 @@ export default async function ListingPage({ params }: PageProps) {
           {/* SIDEBAR */}
           <aside className="lg:sticky lg:top-24 lg:self-start space-y-4">
             <div className="rounded-2xl border bg-card p-6">
+              {/* Plain div, not a Link — there is no /vendor/[slug] route, so
+                  linking here 404'd on every listing page. */}
               {listing.vendor && (
-                <Link
-                  href={`/vendor/${listing.vendor.slug}`}
-                  className="flex items-center gap-3 pb-4 border-b mb-4"
-                >
+                <div className="flex items-center gap-3 pb-4 border-b mb-4">
                   <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center text-primary font-semibold">
                     {listing.vendor.businessName.charAt(0)}
                   </div>
@@ -147,7 +146,7 @@ export default async function ListingPage({ params }: PageProps) {
                         : 'Unclaimed profile'}
                     </p>
                   </div>
-                </Link>
+                </div>
               )}
 
               <Button asChild size="lg" className="w-full mb-2">

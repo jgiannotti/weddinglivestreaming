@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { ContactForm } from './contact-form';
 import { getListingBySlug } from '@/lib/data/listings';
 import { createClient } from '@/lib/supabase/server';
-import { PLACEHOLDER_LISTING_IMAGE } from '@/lib/constants';
+import { getPlaceholderImage } from '@/lib/constants';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -40,7 +40,7 @@ export default async function ContactPage({ params }: PageProps) {
     <div className="container max-w-2xl py-12">
       <div className="mb-8 flex items-center gap-4 pb-6 border-b">
         <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-muted flex-shrink-0">
-          <Image src={listing.heroImageUrl ?? PLACEHOLDER_LISTING_IMAGE} alt={listing.title} fill className="object-cover" />
+          <Image src={listing.heroImageUrl ?? getPlaceholderImage(listing.id)} alt={listing.title} fill className="object-cover" />
         </div>
         <div>
           <p className="text-xs text-muted-foreground mb-1">Contacting</p>

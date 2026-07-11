@@ -88,9 +88,17 @@ export function Header() {
             <Link href="/auth/sign-in">Sign In</Link>
           </Button>
           {/* Hidden on phones — the menu carries this CTA prominently instead. */}
-          <Button asChild size="sm" className="hidden sm:inline-flex">
-            <Link href="/submit-listing">List Your Business</Link>
-          </Button>
+          <div className="hidden sm:flex flex-col items-center">
+            <Button asChild size="sm">
+              <Link href="/submit-listing">List Your Business</Link>
+            </Button>
+            <Link
+              href="/claim"
+              className="mt-0.5 text-[11px] leading-tight text-muted-foreground hover:text-primary transition-colors"
+            >
+              or claim your listing
+            </Link>
+          </div>
           <Button
             variant="ghost"
             size="icon"
@@ -160,6 +168,13 @@ export function Header() {
           <Button asChild size="lg" className="w-full" tabIndex={open ? 0 : -1}>
             <Link href="/submit-listing">List Your Business — Free</Link>
           </Button>
+          <Link
+            href="/claim"
+            tabIndex={open ? 0 : -1}
+            className="-mt-1 text-center text-sm text-muted-foreground hover:text-primary transition-colors"
+          >
+            or claim your existing listing
+          </Link>
           <Button asChild variant="outline" size="lg" className="w-full bg-card/60" tabIndex={open ? 0 : -1}>
             <Link href="/auth/sign-in">Sign In</Link>
           </Button>

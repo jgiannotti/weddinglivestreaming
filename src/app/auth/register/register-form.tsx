@@ -13,7 +13,13 @@ export function RegisterForm({ next }: { next?: string } = {}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const [role, setRole] = useState<'couple' | 'vendor'>('couple');
+  // Vendors arrive here via "List Your Business" → /auth/register?next=/submit-listing
+  // (and similar vendor-only destinations) — preselect the vendor tab for them
+  // instead of making every vendor notice and flip the toggle.
+  const vendorDestinations = ['/submit-listing', '/dashboard', '/claim'];
+  const [role, setRole] = useState<'couple' | 'vendor'>(
+    next && vendorDestinations.some((p) => next.startsWith(p)) ? 'vendor' : 'couple'
+  );
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);

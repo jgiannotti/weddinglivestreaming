@@ -1,4 +1,4 @@
-import { PLACEHOLDER_LISTING_IMAGE } from '@/lib/constants';
+import { getPlaceholderImage } from '@/lib/constants';
 import type { Listing } from '@/lib/types';
 
 // JSON.stringify does not escape '<', so vendor-controlled text (e.g. a listing
@@ -21,7 +21,7 @@ export function ListingJsonLd({ listing }: ListingJsonLdProps) {
     '@type': 'LocalBusiness',
     name: listing.title,
     description: listing.description,
-    image: listing.heroImageUrl ?? PLACEHOLDER_LISTING_IMAGE,
+    image: listing.heroImageUrl ?? getPlaceholderImage(listing.id),
     url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://weddinglivestreaming.com'}/listing/${listing.slug}`,
     address: {
       '@type': 'PostalAddress',

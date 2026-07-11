@@ -166,20 +166,25 @@ export default async function HomePage() {
       <Reveal>
         <section className="bg-secondary/30 py-20 md:py-24">
           <div className="container">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
-              <div>
-                <p className="eyebrow mb-2">Hand-Picked</p>
-                <h2 className="font-display text-3xl md:text-4xl">Featured Vendors</h2>
-              </div>
-              {featured.length > 0 && (
+            {/* Heading only renders when there are actual featured vendors —
+                otherwise a couple-facing "Hand-Picked / Featured Vendors" title
+                sat on top of a vendor-recruitment CTA, promising cards that
+                never appeared. The founding-vendor banner carries its own
+                heading. */}
+            {featured.length > 0 && (
+              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+                <div>
+                  <p className="eyebrow mb-2">Hand-Picked</p>
+                  <h2 className="font-display text-3xl md:text-4xl">Featured Vendors</h2>
+                </div>
                 <Button asChild variant="outline">
                   <Link href="/directory">
                     View All Vendors
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 </Button>
-              )}
-            </div>
+              </div>
+            )}
 
             {featured.length === 0 ? (
               <div className="relative overflow-hidden rounded-3xl">

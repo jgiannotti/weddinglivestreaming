@@ -7,6 +7,7 @@ import { ListingCard } from '@/components/listing-card';
 import { LeadForm } from '@/components/lead-form';
 import { Button } from '@/components/ui/button';
 import { getListings, getListingsByLocation } from '@/lib/data/listings';
+import { getStateByName, getStateByAbbreviation } from '@/lib/states';
 import { CATEGORIES } from '@/lib/categories';
 import { BreadcrumbJsonLd, ListingsItemListJsonLd } from '@/components/json-ld';
 import { cn } from '@/lib/utils';
@@ -21,6 +22,22 @@ export const metadata: Metadata = {
 };
 
 const PAGE_SIZE = 12;
+
+// Best-effort: turn a free-text search ("Orlando, FL", "florida", "FL") into a
+// full state name for prefilling the lead form's state Select — or undefined.
+function resolveStateName(location?: string): string | undefined {
+  if (!location) return undefined;
+  const trimmed = location.trim();
+  const direct = getStateByName(trimmed) ?? (trimmed.length === 2 ? getStateByAbbreviation(trimmed) : undefined);
+  if (direct) return direct.name;
+  const afterComma = trimmed.split(',').pop()?.trim();
+  if (afterComma && afterComma !== trimmed) {
+    const viaComma =
+      getStateByName(afterComma) ?? (afterComma.length === 2 ? getStateByAbbreviation(afterComma) : undefined);
+    if (viaComma) return viaComma.name;
+  }
+  return undefined;
+}
 
 interface PageProps {
   searchParams: Promise<{
@@ -165,7 +182,11 @@ export default async function DirectoryPage({ searchParams }: PageProps) {
                 </p>
               </div>
               <div className="max-w-xl mx-auto">
-                <LeadForm venueState={params.location} title="Get Free Quotes" />
+                {/* Only prefill the state when the searched location actually
+                    resolves to one — LeadForm's state field is a Select of full
+                    state names, so free text like "Orlando, FL" or a ZIP never
+                    matched and silently saved junk into venue_state. */}
+                <LeadForm venueState={resolveStateName(params.location)} title="Get Free Quotes" />
               </div>
               <p className="text-center text-sm text-muted-foreground mt-8">
                 Serve this area?{' '}

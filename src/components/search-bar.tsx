@@ -264,7 +264,7 @@ export function SearchBar({ variant = 'hero', defaultLocation = '', defaultCateg
           <ul
             id={listboxId}
             role="listbox"
-            className="absolute left-0 right-0 top-full mt-2 z-50 max-h-72 overflow-auto rounded-2xl border bg-popover shadow-lg py-1.5"
+            className="absolute left-0 right-0 top-full mt-2 z-50 max-h-72 overflow-auto rounded-2xl border bg-card text-card-foreground shadow-lg py-1.5"
           >
             {location.trim().length < 2 && (
               <li className="px-4 pt-1 pb-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">

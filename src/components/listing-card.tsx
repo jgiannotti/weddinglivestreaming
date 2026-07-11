@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { MapPin, Sparkles } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { PLACEHOLDER_LISTING_IMAGE } from '@/lib/constants';
+import { getPlaceholderImage } from '@/lib/constants';
 import type { Listing } from '@/lib/types';
 
 interface ListingCardProps {
@@ -20,7 +20,7 @@ export function ListingCard({ listing, priority = false }: ListingCardProps) {
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-muted">
         <Image
-          src={listing.heroImageUrl ?? PLACEHOLDER_LISTING_IMAGE}
+          src={listing.heroImageUrl ?? getPlaceholderImage(listing.id)}
           alt={listing.title}
           fill
           sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 100vw"
@@ -51,7 +51,9 @@ export function ListingCard({ listing, priority = false }: ListingCardProps) {
             <span className="shrink-0 text-xs font-medium text-muted-foreground/80">
               {listing.searchTier === 3
                 ? '· Travels to you'
-                : `· ~${Math.round(listing.distanceMiles)} mi away`}
+                : Math.round(listing.distanceMiles) < 1
+                  ? '· Nearby'
+                  : `· ~${Math.round(listing.distanceMiles)} mi away`}
             </span>
           )}
         </div>
