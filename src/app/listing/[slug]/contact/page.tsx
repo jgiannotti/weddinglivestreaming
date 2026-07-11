@@ -16,6 +16,13 @@ export default async function ContactPage({ params }: PageProps) {
   const listing = await getListingBySlug(slug);
   if (!listing) notFound();
 
+  // Unclaimed profiles have no inbox anyone reads — send couples to the
+  // lead form on the listing instead (no account required, and the vendor
+  // gets a claim-hook notification with the inquiry teaser).
+  if (listing.vendor && !listing.vendor.userId) {
+    redirect(`/listing/${slug}#get-quotes`);
+  }
+
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
     return (
       <div className="container max-w-md py-20 text-center">

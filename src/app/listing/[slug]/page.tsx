@@ -149,12 +149,25 @@ export default async function ListingPage({ params }: PageProps) {
                 </div>
               )}
 
-              <Button asChild size="lg" className="w-full mb-2">
-                <Link href={`/listing/${listing.slug}/contact`}>
-                  <MessageSquare className="h-4 w-4" />
-                  Message Vendor
-                </Link>
-              </Button>
+              {/* Unclaimed profiles: direct messages would land in a mailbox
+                  nobody reads (and forced couples through a signup wall first),
+                  so the primary CTA routes to the lead form below instead —
+                  no account needed, and the vendor gets a claim-hook email. */}
+              {listing.vendor && !listing.vendor.userId ? (
+                <Button asChild size="lg" className="w-full mb-2">
+                  <a href="#get-quotes">
+                    <MessageSquare className="h-4 w-4" />
+                    Request a Quote
+                  </a>
+                </Button>
+              ) : (
+                <Button asChild size="lg" className="w-full mb-2">
+                  <Link href={`/listing/${listing.slug}/contact`}>
+                    <MessageSquare className="h-4 w-4" />
+                    Message Vendor
+                  </Link>
+                </Button>
+              )}
               {/* No favorites system exists yet (no onClick, nothing persisted) —
                   a live button here would silently do nothing when tapped,
                   which is worse than not having it. Disabled + honest label
@@ -225,12 +238,14 @@ export default async function ListingPage({ params }: PageProps) {
               </Link>
             </div>
 
-            <LeadForm
-              venueState={listing.state}
-              venueCity={listing.city}
-              sourceListingId={listing.id}
-              title="Get Free Quotes"
-            />
+            <div id="get-quotes" className="scroll-mt-24">
+              <LeadForm
+                venueState={listing.state}
+                venueCity={listing.city}
+                sourceListingId={listing.id}
+                title="Get Free Quotes"
+              />
+            </div>
           </aside>
         </div>
 
