@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { FaqJsonLd, ArticleJsonLd } from '@/components/json-ld';
+import { FaqJsonLd, ArticleJsonLd, BreadcrumbJsonLd } from '@/components/json-ld';
 
 export const metadata: Metadata = {
   title: 'DIY vs. Professional Wedding Live Streaming: Which Should You Choose?',
@@ -44,6 +44,13 @@ export default function DiyVsProfessionalPage() {
       <ArticleJsonLd
         headline="DIY vs. Professional Wedding Live Streaming: Which Should You Choose?"
         description="A side-by-side comparison of DIY streaming apps versus hiring a professional wedding livestream vendor."
+      />
+      <BreadcrumbJsonLd
+        items={[
+          { name: 'Home', path: '/' },
+          { name: 'Guides', path: '/guides' },
+          { name: 'DIY vs. Professional', path: '/guides/diy-vs-professional-wedding-livestream' },
+        ]}
       />
       <FaqJsonLd items={FAQ_ITEMS} />
 

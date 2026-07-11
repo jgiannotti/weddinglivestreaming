@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { FaqJsonLd, ArticleJsonLd } from '@/components/json-ld';
+import { FaqJsonLd, ArticleJsonLd, BreadcrumbJsonLd } from '@/components/json-ld';
 
 export const metadata: Metadata = {
   title: 'Wedding Live Streaming Cost: What You’ll Actually Pay in 2026',
@@ -44,6 +44,13 @@ export default function WeddingLiveStreamingCostPage() {
       <ArticleJsonLd
         headline="Wedding Live Streaming Cost: What You'll Actually Pay"
         description="Professional wedding live streaming costs $400-$3,000, while DIY runs $0-$150. A full pricing breakdown by service tier."
+      />
+      <BreadcrumbJsonLd
+        items={[
+          { name: 'Home', path: '/' },
+          { name: 'Guides', path: '/guides' },
+          { name: 'Wedding Live Streaming Cost', path: '/guides/wedding-live-streaming-cost' },
+        ]}
       />
       <FaqJsonLd items={FAQ_ITEMS} />
 

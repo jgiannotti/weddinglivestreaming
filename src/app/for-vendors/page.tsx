@@ -79,6 +79,39 @@ export default function ForVendorsPage() {
         </section>
       </Reveal>
 
+      <Reveal>
+        <section className="container pb-20">
+          <div className="rounded-3xl border bg-card p-8 md:p-12 max-w-5xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-8 items-center">
+              <div>
+                <p className="eyebrow mb-3">Free For Listed Vendors</p>
+                <h2 className="font-display text-2xl md:text-3xl mb-4">
+                  Show Off Your &ldquo;Featured On&rdquo; Badge
+                </h2>
+                <p className="text-muted-foreground mb-6">
+                  Already listed? Add the official badge to your website for instant third-party
+                  credibility — it links couples straight to your directory profile.
+                </p>
+                <Button asChild variant="outline">
+                  <Link href="/vendor-badge">Get Your Badge →</Link>
+                </Button>
+              </div>
+              <div className="flex justify-center">
+                {/* Static preview of the light badge on the card surface */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/badge/featured-on-wls.svg"
+                  alt="Featured on WeddingLiveStreaming.com badge"
+                  width={260}
+                  height={64}
+                  loading="lazy"
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+      </Reveal>
+
       <section className="container pb-20">
         <div className="rounded-3xl bg-gradient-to-br from-primary/10 via-accent/30 to-background border p-10 md:p-14 text-center">
           <h2 className="font-display text-3xl md:text-4xl mb-3">Ready to Grow Your Business?</h2>

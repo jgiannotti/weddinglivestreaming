@@ -20,6 +20,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/faq',
     '/privacy-policy',
     '/submit-listing',
+    '/vendor-badge',
   ].map((path) => ({
     url: `${BASE}${path}`,
     lastModified: now,
@@ -28,10 +29,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   const guidePages = [
+    '/guides',
     '/guides/wedding-live-streaming-cost',
     '/guides/how-to-live-stream-a-wedding',
     '/guides/diy-vs-professional-wedding-livestream',
     '/guides/questions-to-ask-your-wedding-livestreamer',
+    '/guides/zoom-vs-youtube-vs-professional-wedding-livestream',
+    '/guides/how-to-livestream-a-church-wedding',
   ].map((path) => ({
     url: `${BASE}${path}`,
     lastModified: now,

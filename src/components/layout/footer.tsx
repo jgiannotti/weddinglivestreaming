@@ -17,11 +17,13 @@ const FOOTER_NAV = [
       { label: 'List Your Business',   href: '/submit-listing' },
       { label: 'For Vendors',          href: '/for-vendors' },
       { label: 'Vendor Pricing',       href: '/pricing' },
+      { label: 'Get Your Badge',       href: '/vendor-badge' },
     ],
   },
   {
     heading: 'Guides',
     links: [
+      { label: 'All Guides',             href: '/guides' },
       { label: 'Livestreaming Cost',     href: '/guides/wedding-live-streaming-cost' },
       { label: 'How to Live Stream',     href: '/guides/how-to-live-stream-a-wedding' },
       { label: 'DIY vs. Professional',   href: '/guides/diy-vs-professional-wedding-livestream' },

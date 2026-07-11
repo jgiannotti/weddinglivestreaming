@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { FaqJsonLd, ArticleJsonLd } from '@/components/json-ld';
+import { FaqJsonLd, ArticleJsonLd, BreadcrumbJsonLd } from '@/components/json-ld';
 
 export const metadata: Metadata = {
   title: 'Questions to Ask Your Wedding Live Streamer Before You Book',
@@ -92,6 +92,13 @@ export default function QuestionsToAskPage() {
       <ArticleJsonLd
         headline="Questions to Ask Your Wedding Live Streamer Before You Book"
         description="A vetting checklist of the questions every couple should ask a wedding live streaming vendor before booking."
+      />
+      <BreadcrumbJsonLd
+        items={[
+          { name: 'Home', path: '/' },
+          { name: 'Guides', path: '/guides' },
+          { name: 'Questions to Ask Your Live Streamer', path: '/guides/questions-to-ask-your-wedding-livestreamer' },
+        ]}
       />
       <FaqJsonLd items={FAQ_ITEMS} />
 

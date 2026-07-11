@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { FaqJsonLd, ArticleJsonLd, HowToJsonLd } from '@/components/json-ld';
+import { FaqJsonLd, ArticleJsonLd, HowToJsonLd, BreadcrumbJsonLd } from '@/components/json-ld';
 
 export const metadata: Metadata = {
   title: 'How to Live Stream a Wedding Yourself: Step-by-Step Guide',
@@ -84,6 +84,13 @@ export default function HowToLiveStreamAWeddingPage() {
         steps={STEPS.map((s) => ({ name: s.name, text: s.text }))}
       />
       <FaqJsonLd items={FAQ_ITEMS} />
+      <BreadcrumbJsonLd
+        items={[
+          { name: 'Home', path: '/' },
+          { name: 'Guides', path: '/guides' },
+          { name: 'How to Live Stream a Wedding', path: '/guides/how-to-live-stream-a-wedding' },
+        ]}
+      />
 
       <section className="bg-accent/30 border-b">
         <div className="container py-16 md:py-20">
