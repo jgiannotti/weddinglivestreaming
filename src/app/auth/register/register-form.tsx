@@ -82,6 +82,9 @@ export function RegisterForm({ next }: { next?: string } = {}) {
       if (data.user && !data.session) {
         setSuccess(true);
       } else {
+        // Confirmation is off → /auth/callback never runs, so trigger the
+        // one-time welcome email here (idempotent server-side guard).
+        try { await fetch('/api/welcome', { method: 'POST' }); } catch { /* non-blocking */ }
         // `next` (e.g. a claim-profile flow) outranks the default landing.
         router.push(next || (role === 'vendor' ? '/submit-listing' : '/dashboard'));
         router.refresh();

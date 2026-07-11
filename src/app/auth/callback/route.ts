@@ -1,7 +1,8 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { sendWelcomeIfNeeded } from '@/lib/welcome';
 
-// Email confirmation callback: ?code=xxx
+// Auth callback for Google OAuth and email-confirmation links: ?code=xxx
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
@@ -9,8 +10,11 @@ export async function GET(request: NextRequest) {
 
   if (code) {
     const supabase = await createClient();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      // First-ever sign-in gets a one-time welcome email (guarded by
+      // profiles.welcome_sent_at — no-op on every later sign-in).
+      if (data.user) await sendWelcomeIfNeeded(data.user);
       return NextResponse.redirect(`${origin}${next}`);
     }
   }
