@@ -75,7 +75,7 @@ export default async function HomePage() {
                 <div className="absolute -bottom-6 -left-3 sm:-bottom-8 sm:-left-8 w-[42%] aspect-square rounded-2xl overflow-hidden border-4 border-background shadow-xl">
                   <Image
                     src="/images/hero-c.jpg"
-                    alt="A wedding guest smiling while watching the ceremony live from home"
+                    alt="A family smiling while watching a wedding livestream together from home"
                     fill
                     sizes="20vw"
                     className="object-cover"
