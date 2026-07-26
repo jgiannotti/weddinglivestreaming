@@ -1,7 +1,8 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { createClient } from '@/lib/supabase/server';
 import { LayoutDashboard, ListChecks, Users, Flag, UserPlus, Mail, Tags, ShieldCheck } from 'lucide-react';
+import { requireAdmin } from '@/lib/auth';
+import { currentUser } from '@clerk/nextjs/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,16 +27,15 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     );
   }
 
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect('/auth/sign-in?next=/admin');
-
-  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
-  if (profile?.role !== 'admin') redirect('/');
+  // requireAdmin() provisions/loads the Clerk caller's profile and redirects
+  // signed-out users to sign-in, non-admins to home.
+  await requireAdmin();
 
   // Strongly prompt 2FA for the admin account — it controls the whole site.
-  const { data: mfaData } = await supabase.auth.mfa.listFactors();
-  const hasTwoFactor = (mfaData?.totp || []).some((f) => f.status === 'verified');
+  // Clerk tracks this on the user directly now (authenticator app or backup
+  // codes both count), so no MFA API round trip is needed.
+  const clerkUser = await currentUser();
+  const hasTwoFactor = clerkUser?.twoFactorEnabled ?? false;
 
   return (
     <div className="container py-10">

@@ -5,6 +5,7 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { OrganizationJsonLd, WebsiteJsonLd } from '@/components/json-ld';
 import { Analytics } from '@vercel/analytics/next';
+import { ClerkProvider } from '@clerk/nextjs';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -62,13 +63,27 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} ${fraunces.variable}`}>
+      {/* ClerkProvider goes INSIDE <body>, not wrapping <html> — wrapping the
+          html element breaks Next's font-variable classes and hydration. */}
       <body className="flex min-h-screen flex-col">
-        <OrganizationJsonLd />
-        <WebsiteJsonLd />
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
-        <Analytics />
+        <ClerkProvider
+          signInUrl="/auth/sign-in"
+          signUpUrl="/auth/register"
+          appearance={{
+            variables: {
+              colorPrimary: 'hsl(var(--primary))',
+              borderRadius: '0.75rem',
+              fontFamily: 'var(--font-inter)',
+            },
+          }}
+        >
+          <OrganizationJsonLd />
+          <WebsiteJsonLd />
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+          <Analytics />
+        </ClerkProvider>
       </body>
     </html>
   );

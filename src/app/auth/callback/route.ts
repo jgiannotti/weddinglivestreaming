@@ -1,25 +1,12 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { sendWelcomeIfNeeded } from '@/lib/welcome';
 
-// Auth callback for Google OAuth and email-confirmation links: ?code=xxx
+// Clerk handles the OAuth/email-link handshake entirely inside its own
+// components and middleware, so there is no code to exchange here any more.
+// The route survives only so that Google's cached redirect URI, old
+// confirmation emails, and any stale bookmark land somewhere sane instead
+// of 404ing.
 export async function GET(request: NextRequest) {
-  const { searchParams, origin } = new URL(request.url);
-  const code = searchParams.get('code');
-  const next = searchParams.get('next') ?? '/dashboard';
-
-  if (code) {
-    const supabase = await createClient();
-    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
-    if (!error) {
-      // First-ever sign-in gets a one-time welcome email (guarded by
-      // profiles.welcome_sent_at — no-op on every later sign-in).
-      if (data.user) await sendWelcomeIfNeeded(data.user);
-      return NextResponse.redirect(`${origin}${next}`);
-    }
-  }
-
-  return NextResponse.redirect(
-    `${origin}/auth/sign-in?error=${encodeURIComponent('Could not confirm your email. The link may have expired.')}`
-  );
+  const next = new URL(request.url).searchParams.get('next') ?? '/dashboard';
+  const safe = next.startsWith('/') ? next : '/dashboard';
+  return NextResponse.redirect(new URL(safe, request.url));
 }

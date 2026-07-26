@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { createClient } from '@/lib/supabase/server';
 import { getListingBySlug } from '@/lib/data/listings';
 import { ClaimForm } from './claim-form';
+import { ensureProfile } from '@/lib/auth';
 
 export const metadata: Metadata = {
   title: 'Claim Your Profile',
@@ -32,7 +33,9 @@ export default async function ClaimPage({ params }: PageProps) {
   if (listing.vendor.userId) redirect(`/listing/${listing.slug}`);
 
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  // Clerk session -> public.profiles row. profiles.id is the same uuid the
+  // old Supabase auth user carried, so every `user.id` below is unchanged.
+  const user = await ensureProfile();
 
   let existingClaim: { status: string } | null = null;
   if (user) {

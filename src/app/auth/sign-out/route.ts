@@ -1,8 +1,15 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
 
-export async function POST() {
-  const supabase = await createClient();
-  await supabase.auth.signOut();
-  return NextResponse.redirect(new URL('/', process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'));
+/**
+ * Clerk signs out client-side (it has to clear its own client state), so this
+ * server route can't do it directly. The old POST /auth/sign-out endpoint is
+ * kept as a redirect so any stale link lands somewhere sane; the header's
+ * <UserButton /> and <SignOutButton /> handle the real sign-out.
+ */
+export async function GET(request: Request) {
+  return NextResponse.redirect(new URL('/', request.url));
+}
+
+export async function POST(request: Request) {
+  return NextResponse.redirect(new URL('/', request.url), { status: 303 });
 }

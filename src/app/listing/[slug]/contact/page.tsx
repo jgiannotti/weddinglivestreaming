@@ -6,6 +6,7 @@ import { ContactForm } from './contact-form';
 import { getListingBySlug } from '@/lib/data/listings';
 import { createClient } from '@/lib/supabase/server';
 import { getPlaceholderImage } from '@/lib/constants';
+import { ensureProfile } from '@/lib/auth';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -38,7 +39,9 @@ export default async function ContactPage({ params }: PageProps) {
   }
 
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  // Clerk session -> public.profiles row. profiles.id is the same uuid the
+  // old Supabase auth user carried, so every `user.id` below is unchanged.
+  const user = await ensureProfile();
   if (!user) {
     redirect(`/auth/sign-in?next=/listing/${slug}/contact`);
   }

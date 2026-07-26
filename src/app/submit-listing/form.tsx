@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { createClient } from '@/lib/supabase/client';
+import { useSupabase } from '@/lib/supabase/client';
 import { slugify } from '@/lib/utils';
 import { Loader2, Upload } from 'lucide-react';
 import type { Category } from '@/lib/types';
@@ -19,6 +19,9 @@ interface Props {
 
 export function SubmitListingForm({ categories, userId }: Props) {
   const router = useRouter();
+  // Supabase client carrying the caller's Clerk token, so the insert lands
+  // under their own RLS identity rather than anonymously.
+  const supabase = useSupabase();
   const [businessName, setBusinessName] = useState('');
   const [description, setDescription] = useState('');
   const [websiteUrl, setWebsiteUrl] = useState('');
@@ -66,7 +69,7 @@ export function SubmitListingForm({ categories, userId }: Props) {
     setError(null);
     setLoading(true);
     try {
-      const supabase = createClient();
+      // (hoisted to the component body — hooks can't run inside a handler)
       const slug = slugify(businessName);
 
       // 1. Create vendor record

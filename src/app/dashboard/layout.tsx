@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { LayoutDashboard, MessageSquare, CreditCard, LogOut, ShieldCheck } from 'lucide-react';
+import { requireProfile } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -25,10 +26,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   }
 
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect('/auth/sign-in?next=/dashboard');
-
-  const { data: profile } = await supabase.from('profiles').select('display_name, email, role').eq('id', user.id).single();
+  const profile = await requireProfile();
 
   return (
     <div className="container py-10 md:py-12">

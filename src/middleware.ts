@@ -1,58 +1,33 @@
-import { NextResponse, type NextRequest } from 'next/server';
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import { NextResponse } from 'next/server';
 
-export async function middleware(request: NextRequest) {
-  const response = NextResponse.next({ request });
+const isProtected = createRouteMatcher(['/dashboard(.*)', '/admin(.*)']);
 
-  // If Supabase isn't configured yet, let the request through unauthenticated.
-  // This lets the public pages work before the database is wired up.
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    return response;
-  }
-
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet: { name: string; value: string; options: CookieOptions }[]) {
-          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
-          cookiesToSet.forEach(({ name, value, options }) =>
-            response.cookies.set(name, value, options)
-          );
-        },
-      },
-    }
-  );
-
-  // Refresh session if expired
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const path = request.nextUrl.pathname;
-
-  // Protect /dashboard and /admin
-  if (path.startsWith('/dashboard') && !user) {
-    return NextResponse.redirect(new URL('/auth/sign-in?next=/dashboard', request.url));
-  }
-
-  if (path.startsWith('/admin')) {
-    if (!user) {
-      return NextResponse.redirect(new URL('/auth/sign-in?next=/admin', request.url));
-    }
-    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
-    if (profile?.role !== 'admin') {
-      return NextResponse.redirect(new URL('/', request.url));
+/**
+ * Clerk replaces the old Supabase cookie-refresh middleware.
+ *
+ * Note this only enforces "signed in" — the admin ROLE check moved into
+ * src/app/admin/layout.tsx via requireAdmin(). The old middleware queried
+ * profiles.role on every matched request, which meant a database round trip
+ * on public pages too. Role lives with the layout that needs it; middleware
+ * just keeps anonymous traffic out.
+ */
+export default clerkMiddleware(async (auth, request) => {
+  if (isProtected(request)) {
+    const { userId } = await auth();
+    if (!userId) {
+      const next = request.nextUrl.pathname;
+      return NextResponse.redirect(
+        new URL(`/auth/sign-in?next=${encodeURIComponent(next)}`, request.url)
+      );
     }
   }
-
-  return response;
-}
+});
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/(api|trpc)(.*)',
+    '/__clerk/:path*',
+  ],
 };

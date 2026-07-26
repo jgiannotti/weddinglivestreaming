@@ -1,17 +1,28 @@
 import type { Metadata } from 'next';
-import { TwoFactorManager } from './two-factor-manager';
+import { UserProfile } from '@clerk/nextjs';
 
-export const metadata: Metadata = { title: 'Security' };
-export const dynamic = 'force-dynamic';
+export const metadata: Metadata = {
+  title: 'Account security',
+  robots: { index: false, follow: false },
+};
 
+/**
+ * Replaces the hand-rolled TOTP enrolment UI (two-factor-manager.tsx) built
+ * against supabase.auth.mfa. Clerk's UserProfile ships authenticator-app 2FA,
+ * backup codes, passkeys, connected accounts, and active-session management,
+ * all of which are enabled on the instance.
+ */
 export default function SecurityPage() {
   return (
     <div>
-      <h1 className="font-display text-2xl md:text-3xl font-medium mb-2">Security</h1>
+      <h1 className="font-display text-3xl md:text-4xl font-medium mb-2">Account &amp; security</h1>
       <p className="text-muted-foreground mb-8">
-        Add a second layer of protection to your account with an authenticator app.
+        Manage your sign-in methods, two-factor authentication, and active devices.
       </p>
-      <TwoFactorManager />
+      <UserProfile
+        routing="hash"
+        appearance={{ elements: { rootBox: 'w-full', cardBox: 'w-full max-w-none shadow-none border rounded-2xl' } }}
+      />
     </div>
   );
 }

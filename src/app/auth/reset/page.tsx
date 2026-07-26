@@ -1,26 +1,11 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
-import { ResetForm } from './reset-form';
-import { Card } from '@/components/ui/card';
+import { redirect } from 'next/navigation';
 
-export const metadata: Metadata = { title: 'Reset Password' };
-
+/**
+ * Password reset is part of Clerk's sign-in flow now ("Forgot password?" on
+ * the sign-in card), so this route no longer needs its own form. Kept as a
+ * redirect rather than deleted because the old reset emails, help docs, and
+ * any bookmarks still point at /auth/reset.
+ */
 export default function ResetPage() {
-  return (
-    <div className="container max-w-md py-20">
-      <div className="text-center mb-10">
-        <h1 className="font-display text-3xl md:text-4xl font-medium mb-2">Reset password</h1>
-        <p className="text-muted-foreground">We&rsquo;ll email you a link to set a new one.</p>
-      </div>
-      <Card className="p-6 md:p-8">
-        <ResetForm />
-      </Card>
-      <div className="mt-8 text-center text-sm">
-        Remembered it?{' '}
-        <Link href="/auth/sign-in" className="text-primary font-medium hover:underline">
-          Sign In
-        </Link>
-      </div>
-    </div>
-  );
+  redirect('/auth/sign-in');
 }

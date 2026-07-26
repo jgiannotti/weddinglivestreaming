@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { sendEmail, escapeHtml } from '@/lib/email';
+import { getAdminProfile } from '@/lib/auth';
 
 // PATCH /api/admin/claims/[id] — approve or reject a claim request.
 // Approval runs through approve_claim_request() (migration 0008), which
@@ -11,11 +12,10 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   const { action } = await request.json();
 
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: 'Not signed in' }, { status: 401 });
-
-  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
-  if (profile?.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  // One guard instead of two round trips. Returns null for signed-out AND
+  // non-admin alike, so the response can't be used to probe who is an admin.
+  const user = await getAdminProfile();
+  if (!user) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
   if (action === 'approve') {
     const { error } = await supabase.rpc('approve_claim_request', { claim_id: id });

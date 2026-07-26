@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { createClient } from '@/lib/supabase/client';
+import { useSupabase } from '@/lib/supabase/client';
 import { Loader2 } from 'lucide-react';
 import type { Category } from '@/lib/types';
 
@@ -27,6 +27,7 @@ interface Props {
 
 export function EditListingForm({ listing, categories, selectedCategoryIds }: Props) {
   const router = useRouter();
+  const supabase = useSupabase();
   const [title, setTitle] = useState(listing.title);
   const [description, setDescription] = useState(listing.description);
   const [websiteUrl, setWebsiteUrl] = useState(listing.websiteUrl);
@@ -52,7 +53,7 @@ export function EditListingForm({ listing, categories, selectedCategoryIds }: Pr
     setSaved(false);
     setSaving(true);
     try {
-      const supabase = createClient();
+      // (hoisted to the component body — hooks can't run inside a handler)
 
       const cityOrStateChanged = city !== listing.city || state !== listing.state;
       let coordUpdate: { lat?: number; lng?: number } = {};

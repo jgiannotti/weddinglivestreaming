@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { ensureProfile } from '@/lib/auth';
 
 // PayPal subscription creation. Uses REST API directly (no SDK needed).
 // Docs: https://developer.paypal.com/docs/api/subscriptions/v1/
@@ -33,7 +34,9 @@ export async function POST(request: Request) {
   }
 
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  // Clerk session -> public.profiles row. profiles.id is the same uuid the
+  // old Supabase auth user carried, so every `user.id` below is unchanged.
+  const user = await ensureProfile();
   if (!user) return NextResponse.json({ error: 'Not signed in' }, { status: 401 });
 
   const { data: vendor } = await supabase

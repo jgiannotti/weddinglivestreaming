@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/logo';
 import { Menu, X, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 
 const NAV = [
   { label: 'Find Vendors', href: '/directory' },
@@ -84,9 +85,20 @@ export function Header() {
         </nav>
 
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-          <Button asChild variant="ghost" size="sm" className="hidden md:inline-flex">
-            <Link href="/auth/sign-in">Sign In</Link>
-          </Button>
+          <SignedOut>
+            <Button asChild variant="ghost" size="sm" className="hidden md:inline-flex">
+              <Link href="/auth/sign-in">Sign In</Link>
+            </Button>
+          </SignedOut>
+          <SignedIn>
+            <Button asChild variant="ghost" size="sm" className="hidden md:inline-flex">
+              <Link href="/dashboard">Dashboard</Link>
+            </Button>
+            <UserButton
+              appearance={{ elements: { avatarBox: 'h-8 w-8' } }}
+              userProfileUrl="/dashboard/security"
+            />
+          </SignedIn>
           {/* Hidden on phones — the menu carries this CTA prominently instead. */}
           <div className="hidden sm:flex flex-col items-center">
             <Button asChild size="sm">
@@ -175,9 +187,16 @@ export function Header() {
           >
             or claim your existing listing
           </Link>
-          <Button asChild variant="outline" size="lg" className="w-full bg-card/60" tabIndex={open ? 0 : -1}>
-            <Link href="/auth/sign-in">Sign In</Link>
-          </Button>
+          <SignedOut>
+            <Button asChild variant="outline" size="lg" className="w-full bg-card/60" tabIndex={open ? 0 : -1}>
+              <Link href="/auth/sign-in">Sign In</Link>
+            </Button>
+          </SignedOut>
+          <SignedIn>
+            <Button asChild variant="outline" size="lg" className="w-full bg-card/60" tabIndex={open ? 0 : -1}>
+              <Link href="/dashboard">My Dashboard</Link>
+            </Button>
+          </SignedIn>
           <p className="mt-2 text-center font-display italic text-sm text-muted-foreground">
             Every love story deserves every guest.
           </p>

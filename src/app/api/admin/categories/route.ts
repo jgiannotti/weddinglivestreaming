@@ -1,12 +1,10 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { getAdminProfile } from '@/lib/auth';
 
 async function requireAdmin(supabase: Awaited<ReturnType<typeof createClient>>) {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: NextResponse.json({ error: 'Not signed in' }, { status: 401 }) };
-
-  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
-  if (profile?.role !== 'admin') return { error: NextResponse.json({ error: 'Forbidden' }, { status: 403 }) };
+  const user = await getAdminProfile();
+  if (!user) return { error: NextResponse.json({ error: 'Forbidden' }, { status: 403 }) };
 
   return { error: null };
 }

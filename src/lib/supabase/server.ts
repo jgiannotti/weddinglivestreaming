@@ -1,35 +1,40 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
-import { cookies } from 'next/headers';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
+import { auth } from '@clerk/nextjs/server';
 
+/**
+ * Request-scoped Supabase client, authorized by the caller's Clerk session.
+ *
+ * Deliberately keeps the same name and shape as the old @supabase/ssr version
+ * so the ~40 call sites that only ever do `supabase.from(...)` did not have to
+ * change during the Clerk migration. What changed is underneath: instead of
+ * Supabase Auth cookies, we hand Supabase the Clerk session token via
+ * `accessToken`. Postgres sees a normal `authenticated` role whose JWT `sub`
+ * is the Clerk user id, which is what every RLS policy now resolves through
+ * public.current_profile_id() (migration 0013).
+ *
+ * Signed out, getToken() returns null, the request is `anon`, and RLS falls
+ * back to the public-read policies exactly as before.
+ */
 export async function createClient() {
-  const cookieStore = await cookies();
+  const { getToken } = await auth();
 
-  return createServerClient(
+  return createSupabaseClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet: { name: string; value: string; options: CookieOptions }[]) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            );
-          } catch {
-            // Called from a Server Component - safe to ignore
-          }
-        },
-      },
+      accessToken: async () => (await getToken()) ?? null,
+      auth: { persistSession: false, autoRefreshToken: false },
     }
   );
 }
 
+/**
+ * Service-role client. Bypasses RLS entirely — server-only, never import this
+ * into a client component. Used for profile provisioning (ensureProfile),
+ * webhooks, lead matching, and the seed scripts.
+ */
 export async function createAdminClient() {
-  // Service-role client for admin operations and migrations
-  const { createClient } = await import('@supabase/supabase-js');
-  return createClient(
+  return createSupabaseClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
     { auth: { persistSession: false } }

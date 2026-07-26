@@ -3,10 +3,13 @@ import { Plus, Eye, MessageSquare, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { createClient } from '@/lib/supabase/server';
+import { ensureProfile } from '@/lib/auth';
 
 export default async function DashboardOverview() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  // Clerk session -> public.profiles row. profiles.id is the same uuid the
+  // old Supabase auth user carried, so every `user.id` below is unchanged.
+  const user = await ensureProfile();
   if (!user) return null;
 
   // Find vendor record for current user

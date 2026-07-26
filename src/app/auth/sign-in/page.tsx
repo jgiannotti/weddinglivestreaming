@@ -1,46 +1,39 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
-import { SignInForm } from './sign-in-form';
-import { Card } from '@/components/ui/card';
+import { SignIn } from '@clerk/nextjs';
 
-export const metadata: Metadata = { title: 'Sign In' };
+export const metadata: Metadata = {
+  title: 'Sign in',
+  description: 'Sign in to your WeddingLiveStreaming account.',
+  robots: { index: false, follow: false },
+};
 
-export default async function SignInPage({
+/**
+ * routing="hash" keeps every step of the flow (password, email code, passkey,
+ * 2FA challenge, forgot-password) on this one URL. That's deliberate: it means
+ * /auth/sign-in and /auth/register keep the exact paths they had under
+ * Supabase Auth, so no inbound links, bookmarks, or redirects break.
+ */
+export default function SignInPage({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string; error?: string }>;
+  searchParams: { next?: string };
 }) {
-  const { next, error } = await searchParams;
+  const next = searchParams?.next && searchParams.next.startsWith('/') ? searchParams.next : '/dashboard';
 
   return (
-    <div className="container max-w-md py-20">
-      <div className="text-center mb-10">
-        <h1 className="font-display text-3xl md:text-4xl font-medium mb-2">Welcome back</h1>
-        <p className="text-muted-foreground">Sign in to manage your listing or messages.</p>
-      </div>
-
-      <Card className="p-6 md:p-8">
-        {error && (
-          <div className="mb-6 p-4 rounded-2xl bg-destructive/10 text-destructive text-sm border border-destructive/20">
-            {decodeURIComponent(error)}
-          </div>
-        )}
-
-        <SignInForm next={next} />
-      </Card>
-
-      <div className="mt-8 space-y-3 text-center text-sm">
-        <p>
-          Don&rsquo;t have an account?{' '}
-          <Link href="/auth/register" className="text-primary font-medium hover:underline">
-            Register
-          </Link>
-        </p>
-        <p>
-          <Link href="/auth/reset" className="text-muted-foreground hover:text-foreground">
-            Forgot password?
-          </Link>
-        </p>
+    <div className="container flex justify-center py-16 md:py-24">
+      <div className="w-full max-w-md">
+        <div className="mb-8 text-center">
+          <h1 className="font-display text-3xl md:text-4xl font-medium mb-2">Welcome back</h1>
+          <p className="text-muted-foreground">Sign in to manage your listings and leads.</p>
+        </div>
+        <SignIn
+          routing="hash"
+          signUpUrl="/auth/register"
+          forceRedirectUrl={next}
+          fallbackRedirectUrl={next}
+          appearance={{ elements: { rootBox: 'mx-auto', card: 'shadow-none border rounded-2xl' } }}
+        />
       </div>
     </div>
   );

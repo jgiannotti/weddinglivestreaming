@@ -1,11 +1,14 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { sendEmail, escapeHtml, ADMIN_EMAIL } from '@/lib/email';
+import { ensureProfile } from '@/lib/auth';
 
 // POST /api/claims — submit a claim for a seeded (unclaimed) vendor profile.
 export async function POST(request: Request) {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  // Clerk session -> public.profiles row. profiles.id is the same uuid the
+  // old Supabase auth user carried, so every `user.id` below is unchanged.
+  const user = await ensureProfile();
   if (!user) return NextResponse.json({ error: 'You must be signed in to claim a profile.' }, { status: 401 });
 
   let body: any;

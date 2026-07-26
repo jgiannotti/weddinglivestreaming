@@ -6,12 +6,13 @@
 // guarded by profiles.welcome_sent_at, claimed atomically so concurrent
 // requests can never double-send.
 
-import type { User } from '@supabase/supabase-js';
 import { createAdminClient } from '@/lib/supabase/server';
 import { sendEmail, escapeHtml } from '@/lib/email';
 import { welcomeAccountEmail } from '@/lib/email-templates/welcome-account';
 
-export async function sendWelcomeIfNeeded(user: Pick<User, 'id' | 'email' | 'user_metadata'>): Promise<void> {
+type WelcomeTarget = { id: string; email: string | null };
+
+export async function sendWelcomeIfNeeded(user: WelcomeTarget): Promise<void> {
   if (!user.email) return;
 
   try {
@@ -34,12 +35,13 @@ export async function sendWelcomeIfNeeded(user: Pick<User, 'id' | 'email' | 'use
     }
     if (!claimed) return; // already sent (or claimed by a concurrent request)
 
-    // Prefer the role chosen on the register form (user metadata); profiles.role
-    // only becomes 'vendor' later, when a listing is submitted. Google signups
-    // carry no metadata role and default to the couple version.
-    const metaRole = user.user_metadata?.role;
-    const role = metaRole === 'vendor' ? 'vendor' : (claimed.role as 'couple' | 'vendor' | 'admin') ?? 'couple';
-    const displayName = claimed.display_name || user.user_metadata?.display_name || null;
+    // Pre-Clerk this preferred the role captured on our own register form
+    // (Supabase user_metadata). Clerk's hosted sign-up collects no such
+    // field, so the profile row is the only source now — new accounts are
+    // 'couple', which is the correct default copy. Vendors get the vendor
+    // wording once they submit a listing and become_vendor() promotes them.
+    const role = (claimed.role as 'couple' | 'vendor' | 'admin') ?? 'couple';
+    const displayName = claimed.display_name || null;
 
     const sent = await sendEmail({
       to: user.email,

@@ -2,6 +2,7 @@ import { notFound, redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { EditListingForm } from './form';
 import { CATEGORIES } from '@/lib/categories';
+import { ensureProfile } from '@/lib/auth';
 
 export const metadata = { title: 'Edit Listing' };
 export const dynamic = 'force-dynamic';
@@ -19,7 +20,9 @@ interface PageProps {
 export default async function EditListingPage({ params }: PageProps) {
   const { id } = await params;
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  // Clerk session -> public.profiles row. profiles.id is the same uuid the
+  // old Supabase auth user carried, so every `user.id` below is unchanged.
+  const user = await ensureProfile();
   if (!user) redirect(`/auth/sign-in?next=/dashboard/listings/${id}/edit`);
 
   const { data: vendor } = await supabase

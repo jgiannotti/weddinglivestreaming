@@ -17,3 +17,8 @@ dist
 *.tsbuildinfo
 migration/geonames-cache/
 .audit/
+
+# Local scratch from the Clerk migration (2026-07-25) — not part of the app
+_pre_clerk_backup/
+_to_delete/
+_typecheck_bundle.tgz
