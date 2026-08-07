@@ -83,6 +83,13 @@ const GUIDES = [
     href: '/guides/is-a-wedding-livestream-worth-it',
   },
   {
+    eyebrow: 'Music & Copyright',
+    title: 'Wedding Livestream Music & Copyright',
+    description:
+      'Why YouTube and Facebook mute wedding streams over music, which platforms are safer, and how to keep your songs without losing the replay.',
+    href: '/guides/wedding-livestream-music-copyright',
+  },
+  {
     eyebrow: 'Coverage Guide',
     title: 'Should You Livestream Your Wedding Reception?',
     description:
