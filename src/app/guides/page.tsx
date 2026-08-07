@@ -75,6 +75,13 @@ const GUIDES = [
       'For remote guests: how to join on any phone, tablet, computer, or TV — and the one-minute fix for every common problem.',
     href: '/guides/how-to-watch-a-wedding-livestream',
   },
+  {
+    eyebrow: 'Business Guide',
+    title: 'How to Start a Wedding Livestreaming Business',
+    description:
+      'Startup gear under $2,500, what to charge, how to land your first clients, and the runbook that keeps streams reliable.',
+    href: '/guides/how-to-start-a-wedding-livestreaming-business',
+  },
 ];
 
 export default function GuidesIndexPage() {
