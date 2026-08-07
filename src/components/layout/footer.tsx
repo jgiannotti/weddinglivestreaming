@@ -18,6 +18,7 @@ const FOOTER_NAV = [
       { label: 'For Vendors',          href: '/for-vendors' },
       { label: 'Vendor Pricing',       href: '/pricing' },
       { label: 'Get Your Badge',       href: '/vendor-badge' },
+      { label: 'Start a Livestream Business', href: '/guides/how-to-start-a-wedding-livestreaming-business' },
     ],
   },
   {
@@ -25,8 +26,10 @@ const FOOTER_NAV = [
     links: [
       { label: 'All Guides',             href: '/guides' },
       { label: 'Livestreaming Cost',     href: '/guides/wedding-live-streaming-cost' },
+      { label: 'Cost by State',          href: '/guides/wedding-live-streaming-cost-by-state' },
       { label: 'How to Live Stream',     href: '/guides/how-to-live-stream-a-wedding' },
-      { label: 'DIY vs. Professional',   href: '/guides/diy-vs-professional-wedding-livestream' },
+      { label: 'How to Watch a Stream',  href: '/guides/how-to-watch-a-wedding-livestream' },
+      { label: 'Invitation Wording',     href: '/guides/wedding-livestream-invitation-wording' },
       { label: 'Vendor Questions',       href: '/guides/questions-to-ask-your-wedding-livestreamer' },
     ],
   },
