@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { BreadcrumbJsonLd } from '@/components/json-ld';
+import { BreadcrumbJsonLd, PagesItemListJsonLd } from '@/components/json-ld';
 
 export const metadata: Metadata = {
   title: 'Wedding Live Streaming Guides',
@@ -107,6 +107,7 @@ export default function GuidesIndexPage() {
           { name: 'Guides', path: '/guides' },
         ]}
       />
+      <PagesItemListJsonLd items={GUIDES.map((g) => ({ name: g.title, path: g.href }))} />
 
       {/* HERO */}
       <section className="bg-accent/30 border-b">
