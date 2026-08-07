@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Reveal } from '@/components/reveal';
+import { BreadcrumbJsonLd } from '@/components/json-ld';
 
 export const metadata: Metadata = {
   title: 'How It Works',
@@ -24,6 +25,7 @@ const VENDOR_STEPS = [
 export default function HowItWorksPage() {
   return (
     <div>
+      <BreadcrumbJsonLd items={[{ name: 'Home', path: '/' }, { name: 'How It Works', path: '/how-it-works' }]} />
       <section className="bg-accent/30 border-b">
         <div className="container py-16 md:py-20 text-center">
           <p className="eyebrow mb-3">The Process</p>

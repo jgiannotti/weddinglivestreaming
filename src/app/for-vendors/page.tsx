@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Reveal } from '@/components/reveal';
 import { Target, MessageSquare, MapPin, Sparkles, Clock, Search } from 'lucide-react';
+import { BreadcrumbJsonLd } from '@/components/json-ld';
 
 export const metadata: Metadata = {
   title: 'For Vendors',
@@ -23,6 +24,7 @@ const REASONS = [
 export default function ForVendorsPage() {
   return (
     <div>
+      <BreadcrumbJsonLd items={[{ name: 'Home', path: '/' }, { name: 'For Vendors', path: '/for-vendors' }]} />
       <section className="bg-accent/30 border-b">
         <div className="container py-16 md:py-20 text-center">
           <p className="eyebrow mb-3">Grow Your Business</p>

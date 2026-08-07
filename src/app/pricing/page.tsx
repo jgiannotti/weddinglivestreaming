@@ -2,6 +2,56 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Check, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { BreadcrumbJsonLd, FaqJsonLd } from '@/components/json-ld';
+
+const BASE = process.env.NEXT_PUBLIC_SITE_URL || 'https://weddinglivestreaming.com';
+
+// Product + Offer schema for the vendor plans — makes the membership terms
+// machine-readable for search/AI engines answering "what does a listing on
+// weddinglivestreaming.com cost".
+function PricingJsonLd() {
+  const data = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: 'WeddingLiveStreaming Vendor Listing',
+    description:
+      'A vendor listing in the nationwide wedding live streaming directory. Basic listings are free; Featured listings get top placement in search results.',
+    url: `${BASE}/pricing`,
+    brand: { '@type': 'Organization', name: 'WeddingLiveStreaming' },
+    offers: [
+      {
+        '@type': 'Offer',
+        name: 'Basic Listing',
+        price: '0',
+        priceCurrency: 'USD',
+        description: 'Free vendor listing with full profile, search visibility, and direct messaging. 12-month duration.',
+        url: `${BASE}/submit-listing`,
+      },
+      {
+        '@type': 'Offer',
+        name: 'Featured Listing (Monthly)',
+        price: '29',
+        priceCurrency: 'USD',
+        description: 'Top placement in search results, gold Featured badge, homepage spotlight, instant lead access. Billed monthly.',
+        url: `${BASE}/submit-listing`,
+      },
+      {
+        '@type': 'Offer',
+        name: 'Featured Listing (Annual)',
+        price: '199',
+        priceCurrency: 'USD',
+        description: 'All Featured benefits, billed annually (save 43% vs. monthly).',
+        url: `${BASE}/submit-listing`,
+      },
+    ],
+  };
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, '\\u003c') }}
+    />
+  );
+}
 
 export const metadata: Metadata = {
   title: 'Vendor Pricing',
@@ -54,6 +104,9 @@ const FAQ = [
 export default function PricingPage() {
   return (
     <div>
+      <BreadcrumbJsonLd items={[{ name: 'Home', path: '/' }, { name: 'Vendor Pricing', path: '/pricing' }]} />
+      <FaqJsonLd items={FAQ.map((f) => ({ question: f.q, answer: f.a }))} />
+      <PricingJsonLd />
       {/* HERO */}
       <section className="bg-accent/30 border-b">
         <div className="container py-16 md:py-20 text-center">

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { BreadcrumbJsonLd } from '@/components/json-ld';
 
 export const metadata: Metadata = {
   title: 'About',
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <div className="container py-10 md:py-14">
+      <BreadcrumbJsonLd items={[{ name: 'Home', path: '/' }, { name: 'About', path: '/about' }]} />
       <p className="eyebrow mb-3">About Us</p>
       <h1 className="font-display text-3xl md:text-4xl lg:text-5xl mb-6">Every love story deserves every guest.</h1>
 
