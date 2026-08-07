@@ -83,6 +83,13 @@ const GUIDES = [
     href: '/guides/is-a-wedding-livestream-worth-it',
   },
   {
+    eyebrow: 'Coverage Guide',
+    title: 'Should You Livestream Your Wedding Reception?',
+    description:
+      'Ceremony-only is the right default — when toasts and first-dance coverage earn their cost, and what remote guests actually watch.',
+    href: '/guides/should-you-livestream-your-wedding-reception',
+  },
+  {
     eyebrow: 'Venue Guide',
     title: 'How to Livestream an Outdoor Wedding',
     description:

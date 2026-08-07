@@ -57,6 +57,7 @@ export async function GET() {
     `- [Is a Wedding Livestream Worth It?](${BASE}/guides/is-a-wedding-livestream-worth-it): honest decision guide — when it's worth paying for, when DIY is fine, when to skip it.`,
     `- [Wedding Livestream Equipment](${BASE}/guides/wedding-livestream-equipment): what you actually need at three budgets — phone setup ($150), prosumer kit ($1,500–$2,500), professional multi-camera rig.`,
     `- [How to Livestream an Outdoor Wedding](${BASE}/guides/how-to-livestream-an-outdoor-wedding): beach/garden/ranch streams — cellular internet without venue Wi-Fi, wind-proof audio, sun placement, power.`,
+    `- [Should You Livestream Your Wedding Reception?](${BASE}/guides/should-you-livestream-your-wedding-reception): ceremony-only vs. key reception moments — toasts, first dance, and how long a stream should run.`,
     '',
     '## State directories',
     '',
