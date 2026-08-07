@@ -250,6 +250,58 @@ export default async function HomePage() {
         </section>
       </Reveal>
 
+      {/* GUIDES — in-body links from the highest-authority page into the
+          content cluster (the footer alone is sitewide boilerplate; these
+          carry more crawl/link weight and real click-through). */}
+      <Reveal>
+        <section className="container py-20 md:py-24 border-t">
+          <div className="text-center mb-10">
+            <p className="eyebrow mb-2">Free Guides</p>
+            <h2 className="font-display text-3xl md:text-4xl">Answers Before You Book</h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-5xl mx-auto">
+            {[
+              {
+                title: 'What does it cost?',
+                blurb: 'Typical prices, and original median-price data for every state.',
+                href: '/guides/wedding-live-streaming-cost',
+              },
+              {
+                title: 'Is it worth it?',
+                blurb: 'An honest look at when to pay for a stream, DIY it, or skip it.',
+                href: '/guides/is-a-wedding-livestream-worth-it',
+              },
+              {
+                title: 'How do I vet a vendor?',
+                blurb: 'The ten questions that expose whether a vendor is the real deal.',
+                href: '/guides/questions-to-ask-your-wedding-livestreamer',
+              },
+              {
+                title: 'How do I invite remote guests?',
+                blurb: 'Copy-paste invitation wording for cards, websites, and texts.',
+                href: '/guides/wedding-livestream-invitation-wording',
+              },
+            ].map((g) => (
+              <Link
+                key={g.href}
+                href={g.href}
+                className="group rounded-2xl border bg-card p-6 transition-shadow hover:shadow-md"
+              >
+                <h3 className="font-display text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
+                  {g.title}
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{g.blurb}</p>
+              </Link>
+            ))}
+          </div>
+          <p className="text-center mt-8">
+            <Link href="/guides" className="text-primary font-medium hover:underline">
+              Browse all guides <ArrowRight className="inline h-4 w-4" />
+            </Link>
+          </p>
+        </section>
+      </Reveal>
+
       {/* VENDOR CTA — the ink moment */}
       <section className="bg-ink text-ink-foreground">
         <div className="container py-20 md:py-24 text-center">

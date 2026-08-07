@@ -159,6 +159,10 @@ export default function ChurchWeddingLivestreamPage() {
         </div>
         <p className="mt-10 text-muted-foreground">
           Related reading:{' '}
+          <Link href="/guides/how-to-livestream-an-outdoor-wedding" className="text-primary hover:underline">
+            livestreaming an outdoor wedding
+          </Link>
+          ,{' '}
           <Link href="/guides/wedding-live-streaming-cost" className="text-primary hover:underline">
             what live streaming costs
           </Link>

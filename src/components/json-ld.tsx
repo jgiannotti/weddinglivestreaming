@@ -138,6 +138,28 @@ export function ListingsItemListJsonLd({ listings }: { listings: Listing[] }) {
   );
 }
 
+// Generic ItemList for non-listing collections (e.g. the guides hub) — same
+// shape as ListingsItemListJsonLd but takes plain name/path pairs.
+export function PagesItemListJsonLd({ items }: { items: { name: string; path: string }[] }) {
+  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://weddinglivestreaming.com';
+  const data = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    itemListElement: items.map((item, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      url: `${base}${item.path}`,
+      name: item.name,
+    })),
+  };
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: safeJsonLd(data) }}
+    />
+  );
+}
+
 export interface FaqItem {
   question: string;
   answer: string;

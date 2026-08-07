@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Reveal } from '@/components/reveal';
 import { Target, MessageSquare, MapPin, Sparkles, Clock, Search } from 'lucide-react';
+import { BreadcrumbJsonLd } from '@/components/json-ld';
 
 export const metadata: Metadata = {
   title: 'For Vendors',
@@ -23,6 +24,7 @@ const REASONS = [
 export default function ForVendorsPage() {
   return (
     <div>
+      <BreadcrumbJsonLd items={[{ name: 'Home', path: '/' }, { name: 'For Vendors', path: '/for-vendors' }]} />
       <section className="bg-accent/30 border-b">
         <div className="container py-16 md:py-20 text-center">
           <p className="eyebrow mb-3">Grow Your Business</p>
@@ -117,6 +119,17 @@ export default function ForVendorsPage() {
           <h2 className="font-display text-3xl md:text-4xl mb-3">Ready to Grow Your Business?</h2>
           <p className="text-muted-foreground mb-8">Join hundreds of live streaming professionals connecting with couples on WeddingLiveStreaming.com.</p>
           <Button asChild size="lg"><Link href="/submit-listing">List Your Business Today</Link></Button>
+          <p className="text-sm text-muted-foreground mt-6">
+            New to livestreaming weddings? Read{' '}
+            <Link href="/guides/how-to-start-a-wedding-livestreaming-business" className="text-primary font-medium hover:underline">
+              how to start a wedding livestreaming business
+            </Link>{' '}
+            and benchmark your rates against{' '}
+            <Link href="/guides/wedding-live-streaming-cost-by-state" className="text-primary font-medium hover:underline">
+              median prices in your state
+            </Link>
+            .
+          </p>
         </div>
       </section>
     </div>

@@ -174,6 +174,44 @@ export default async function StatePage({ params }: PageProps) {
         </section>
       )}
 
+      {/* PLANNING RESOURCES — contextual guide links so every state page feeds
+          the guides (and vice versa via cost-by-state), instead of guides only
+          being reachable from the hub and footer. */}
+      <section className="container py-16 border-t max-w-3xl">
+        <h2 className="font-display text-2xl md:text-3xl font-medium mb-2">
+          Planning a Livestream in {info.name}?
+        </h2>
+        <p className="text-muted-foreground mb-8">
+          Start with these guides, then message vendors directly — free.
+        </p>
+        <ul className="space-y-4">
+          <li>
+            <Link href="/guides/wedding-live-streaming-cost-by-state" className="font-semibold text-primary hover:underline">
+              What livestreaming costs in {info.name}
+            </Link>
+            <span className="text-muted-foreground"> — median starting prices by state, from published vendor pricing in this directory.</span>
+          </li>
+          <li>
+            <Link href="/guides/questions-to-ask-your-wedding-livestreamer" className="font-semibold text-primary hover:underline">
+              Questions to ask before you book
+            </Link>
+            <span className="text-muted-foreground"> — the ten-question vetting checklist for any vendor you contact.</span>
+          </li>
+          <li>
+            <Link href="/guides/wedding-livestream-invitation-wording" className="font-semibold text-primary hover:underline">
+              How to invite remote guests
+            </Link>
+            <span className="text-muted-foreground"> — copy-paste invitation wording for insert cards, websites, and texts.</span>
+          </li>
+          <li>
+            <Link href="/guides/how-to-live-stream-a-wedding" className="font-semibold text-primary hover:underline">
+              How wedding livestreaming works
+            </Link>
+            <span className="text-muted-foreground"> — DIY vs. hiring a pro, and what a professional setup includes.</span>
+          </li>
+        </ul>
+      </section>
+
       {/* CTA */}
       <section className="container py-16">
         <div className="rounded-3xl bg-gradient-to-br from-primary/10 via-accent/30 to-background border p-10 md:p-14 text-center">

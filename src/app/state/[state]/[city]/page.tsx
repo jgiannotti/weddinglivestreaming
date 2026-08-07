@@ -111,6 +111,35 @@ export default async function CityPage({ params }: PageProps) {
         </div>
       </section>
 
+      {/* PLANNING RESOURCES — same rationale as the state page: city pages are
+          indexed long-tail entry points, so they should feed the guides too. */}
+      <section className="container py-16 border-t max-w-3xl">
+        <h2 className="font-display text-2xl md:text-3xl font-medium mb-2">
+          Planning a Livestream in {cityName}?
+        </h2>
+        <p className="text-muted-foreground mb-6">Three quick reads before you message vendors:</p>
+        <ul className="space-y-3">
+          <li>
+            <Link href="/guides/wedding-live-streaming-cost-by-state" className="font-semibold text-primary hover:underline">
+              What livestreaming costs in {stateInfo.name}
+            </Link>
+            <span className="text-muted-foreground"> — median starting prices from this directory&rsquo;s published vendor pricing.</span>
+          </li>
+          <li>
+            <Link href="/guides/questions-to-ask-your-wedding-livestreamer" className="font-semibold text-primary hover:underline">
+              Questions to ask before you book
+            </Link>
+            <span className="text-muted-foreground"> — the ten-question vetting checklist.</span>
+          </li>
+          <li>
+            <Link href="/guides/wedding-livestream-invitation-wording" className="font-semibold text-primary hover:underline">
+              How to invite remote guests
+            </Link>
+            <span className="text-muted-foreground"> — copy-paste wording for insert cards, websites, and texts.</span>
+          </li>
+        </ul>
+      </section>
+
       <section className="container py-16">
         <div className="rounded-3xl bg-gradient-to-br from-primary/10 via-accent/30 to-background border p-10 md:p-14 text-center">
           <h2 className="font-display text-2xl md:text-3xl font-medium mb-3">

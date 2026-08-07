@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { BreadcrumbJsonLd } from '@/components/json-ld';
+import { BreadcrumbJsonLd, PagesItemListJsonLd } from '@/components/json-ld';
 
 export const metadata: Metadata = {
   title: 'Wedding Live Streaming Guides',
@@ -61,6 +61,62 @@ const GUIDES = [
       'The ten questions that separate an experienced live streaming specialist from a side hustle — backups, audio, cameras, and pricing.',
     href: '/guides/questions-to-ask-your-wedding-livestreamer',
   },
+  {
+    eyebrow: 'Etiquette Guide',
+    title: 'Wedding Livestream Invitation Wording',
+    description:
+      'Copy-paste wording templates for telling guests about your livestream — formal insert cards, wedding websites, emails, and day-of reminder texts.',
+    href: '/guides/wedding-livestream-invitation-wording',
+  },
+  {
+    eyebrow: 'Guest Guide',
+    title: 'How to Watch a Wedding Livestream',
+    description:
+      'For remote guests: how to join on any phone, tablet, computer, or TV — and the one-minute fix for every common problem.',
+    href: '/guides/how-to-watch-a-wedding-livestream',
+  },
+  {
+    eyebrow: 'Decision Guide',
+    title: 'Is a Wedding Livestream Worth It?',
+    description:
+      'An honest look at when a livestream is worth paying for, when DIY is fine, and when to skip it entirely.',
+    href: '/guides/is-a-wedding-livestream-worth-it',
+  },
+  {
+    eyebrow: 'Music & Copyright',
+    title: 'Wedding Livestream Music & Copyright',
+    description:
+      'Why YouTube and Facebook mute wedding streams over music, which platforms are safer, and how to keep your songs without losing the replay.',
+    href: '/guides/wedding-livestream-music-copyright',
+  },
+  {
+    eyebrow: 'Coverage Guide',
+    title: 'Should You Livestream Your Wedding Reception?',
+    description:
+      'Ceremony-only is the right default — when toasts and first-dance coverage earn their cost, and what remote guests actually watch.',
+    href: '/guides/should-you-livestream-your-wedding-reception',
+  },
+  {
+    eyebrow: 'Venue Guide',
+    title: 'How to Livestream an Outdoor Wedding',
+    description:
+      'No venue Wi-Fi, wind on the mics, sun behind the couple — solving the four problems that make outdoor and beach weddings the hardest streams.',
+    href: '/guides/how-to-livestream-an-outdoor-wedding',
+  },
+  {
+    eyebrow: 'Equipment Guide',
+    title: 'Wedding Livestream Equipment: What You Actually Need',
+    description:
+      'Three honest equipment tiers — a $150 phone setup, a $2,500 prosumer kit, and what the pros bring — plus the two mistakes that sink most streams.',
+    href: '/guides/wedding-livestream-equipment',
+  },
+  {
+    eyebrow: 'Business Guide',
+    title: 'How to Start a Wedding Livestreaming Business',
+    description:
+      'Startup gear under $2,500, what to charge, how to land your first clients, and the runbook that keeps streams reliable.',
+    href: '/guides/how-to-start-a-wedding-livestreaming-business',
+  },
 ];
 
 export default function GuidesIndexPage() {
@@ -72,6 +128,7 @@ export default function GuidesIndexPage() {
           { name: 'Guides', path: '/guides' },
         ]}
       />
+      <PagesItemListJsonLd items={GUIDES.map((g) => ({ name: g.title, path: g.href }))} />
 
       {/* HERO */}
       <section className="bg-accent/30 border-b">
