@@ -55,6 +55,7 @@ export async function GET() {
     `- [How to Watch a Wedding Livestream](${BASE}/guides/how-to-watch-a-wedding-livestream): guest-side guide — joining on any device, fixing buffering/no-sound/private-video problems, watching on a TV.`,
     `- [How to Start a Wedding Livestreaming Business](${BASE}/guides/how-to-start-a-wedding-livestreaming-business): vendor-side guide — startup costs, pricing, first clients, reliability runbook.`,
     `- [Is a Wedding Livestream Worth It?](${BASE}/guides/is-a-wedding-livestream-worth-it): honest decision guide — when it's worth paying for, when DIY is fine, when to skip it.`,
+    `- [Wedding Livestream Equipment](${BASE}/guides/wedding-livestream-equipment): what you actually need at three budgets — phone setup ($150), prosumer kit ($1,500–$2,500), professional multi-camera rig.`,
     '',
     '## State directories',
     '',

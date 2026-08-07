@@ -83,6 +83,13 @@ const GUIDES = [
     href: '/guides/is-a-wedding-livestream-worth-it',
   },
   {
+    eyebrow: 'Equipment Guide',
+    title: 'Wedding Livestream Equipment: What You Actually Need',
+    description:
+      'Three honest equipment tiers — a $150 phone setup, a $2,500 prosumer kit, and what the pros bring — plus the two mistakes that sink most streams.',
+    href: '/guides/wedding-livestream-equipment',
+  },
+  {
     eyebrow: 'Business Guide',
     title: 'How to Start a Wedding Livestreaming Business',
     description:
