@@ -54,6 +54,7 @@ export async function GET() {
     `- [Wedding Livestream Invitation Wording](${BASE}/guides/wedding-livestream-invitation-wording): copy-paste invitation templates for insert cards, wedding websites, emails, and day-of texts.`,
     `- [How to Watch a Wedding Livestream](${BASE}/guides/how-to-watch-a-wedding-livestream): guest-side guide — joining on any device, fixing buffering/no-sound/private-video problems, watching on a TV.`,
     `- [How to Start a Wedding Livestreaming Business](${BASE}/guides/how-to-start-a-wedding-livestreaming-business): vendor-side guide — startup costs, pricing, first clients, reliability runbook.`,
+    `- [Is a Wedding Livestream Worth It?](${BASE}/guides/is-a-wedding-livestream-worth-it): honest decision guide — when it's worth paying for, when DIY is fine, when to skip it.`,
     '',
     '## State directories',
     '',

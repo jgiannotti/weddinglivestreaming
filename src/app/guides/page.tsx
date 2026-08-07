@@ -76,6 +76,13 @@ const GUIDES = [
     href: '/guides/how-to-watch-a-wedding-livestream',
   },
   {
+    eyebrow: 'Decision Guide',
+    title: 'Is a Wedding Livestream Worth It?',
+    description:
+      'An honest look at when a livestream is worth paying for, when DIY is fine, and when to skip it entirely.',
+    href: '/guides/is-a-wedding-livestream-worth-it',
+  },
+  {
     eyebrow: 'Business Guide',
     title: 'How to Start a Wedding Livestreaming Business',
     description:
