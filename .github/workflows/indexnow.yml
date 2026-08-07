@@ -1,0 +1,27 @@
+# Pings IndexNow (Bing/Yandex/Naver — and therefore ChatGPT search) with every
+# URL in the live sitemap after each production push, so new/changed pages hit
+# the crawl queue without anyone remembering to run the script by hand.
+#
+# No secrets needed: the IndexNow key is public by design (it ships at
+# public/f77e2a2052cc82cf1bd69aa479c71d1b.txt to prove host ownership).
+name: IndexNow ping
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      # Vercel builds + promotes production in ~1–2 minutes; wait so the ping
+      # reads the sitemap that includes this push's changes. Even if a slow
+      # build outlasts the wait, the ping is harmless — the next push re-pings.
+      - name: Wait for Vercel production deploy
+        run: sleep 150
+      - name: Submit sitemap URLs to IndexNow
+        run: node scripts/indexnow-submit.mjs
