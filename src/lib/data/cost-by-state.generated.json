@@ -1,0 +1,240 @@
+{
+  "generatedAt": "2026-08-07",
+  "dataYear": 2026,
+  "sampleSize": 65,
+  "directorySize": 200,
+  "stateCount": 28,
+  "national": {
+    "medianStart": 950,
+    "p25Start": 600,
+    "p75Start": 1500,
+    "minStart": 89,
+    "maxHigh": 6995
+  },
+  "states": [
+    {
+      "code": "AZ",
+      "name": "Arizona",
+      "vendorCount": 3,
+      "medianStart": 1200,
+      "minStart": 799,
+      "maxHigh": 2499
+    },
+    {
+      "code": "CA",
+      "name": "California",
+      "vendorCount": 5,
+      "medianStart": 1000,
+      "minStart": 149,
+      "maxHigh": 6995
+    },
+    {
+      "code": "CO",
+      "name": "Colorado",
+      "vendorCount": 2,
+      "medianStart": 600,
+      "minStart": 400,
+      "maxHigh": 5200
+    },
+    {
+      "code": "FL",
+      "name": "Florida",
+      "vendorCount": 6,
+      "medianStart": 675,
+      "minStart": 350,
+      "maxHigh": 6800
+    },
+    {
+      "code": "GA",
+      "name": "Georgia",
+      "vendorCount": 2,
+      "medianStart": 625,
+      "minStart": 600,
+      "maxHigh": 1995
+    },
+    {
+      "code": "HI",
+      "name": "Hawaii",
+      "vendorCount": 2,
+      "medianStart": 775,
+      "minStart": 350,
+      "maxHigh": 1200
+    },
+    {
+      "code": "LA",
+      "name": "Louisiana",
+      "vendorCount": 1,
+      "medianStart": 600,
+      "minStart": 595,
+      "maxHigh": 595
+    },
+    {
+      "code": "ME",
+      "name": "Maine",
+      "vendorCount": 1,
+      "medianStart": 700,
+      "minStart": 700,
+      "maxHigh": 4500
+    },
+    {
+      "code": "MD",
+      "name": "Maryland",
+      "vendorCount": 1,
+      "medianStart": 950,
+      "minStart": 950,
+      "maxHigh": 1295
+    },
+    {
+      "code": "MA",
+      "name": "Massachusetts",
+      "vendorCount": 1,
+      "medianStart": 2950,
+      "minStart": 2950,
+      "maxHigh": 6120
+    },
+    {
+      "code": "MI",
+      "name": "Michigan",
+      "vendorCount": 1,
+      "medianStart": 1500,
+      "minStart": 1499,
+      "maxHigh": 1999
+    },
+    {
+      "code": "MN",
+      "name": "Minnesota",
+      "vendorCount": 2,
+      "medianStart": 2150,
+      "minStart": 899,
+      "maxHigh": 5400
+    },
+    {
+      "code": "MO",
+      "name": "Missouri",
+      "vendorCount": 2,
+      "medianStart": 1150,
+      "minStart": 900,
+      "maxHigh": 1800
+    },
+    {
+      "code": "MT",
+      "name": "Montana",
+      "vendorCount": 1,
+      "medianStart": 750,
+      "minStart": 760,
+      "maxHigh": 3300
+    },
+    {
+      "code": "NV",
+      "name": "Nevada",
+      "vendorCount": 5,
+      "medianStart": 200,
+      "minStart": 89,
+      "maxHigh": 3000
+    },
+    {
+      "code": "NJ",
+      "name": "New Jersey",
+      "vendorCount": 2,
+      "medianStart": 1575,
+      "minStart": 650,
+      "maxHigh": 2500
+    },
+    {
+      "code": "NM",
+      "name": "New Mexico",
+      "vendorCount": 1,
+      "medianStart": 3000,
+      "minStart": 3000,
+      "maxHigh": 3000
+    },
+    {
+      "code": "NY",
+      "name": "New York",
+      "vendorCount": 3,
+      "medianStart": 500,
+      "minStart": 475,
+      "maxHigh": 4499
+    },
+    {
+      "code": "NC",
+      "name": "North Carolina",
+      "vendorCount": 2,
+      "medianStart": 725,
+      "minStart": 500,
+      "maxHigh": 2000
+    },
+    {
+      "code": "OH",
+      "name": "Ohio",
+      "vendorCount": 1,
+      "medianStart": 750,
+      "minStart": 750,
+      "maxHigh": 1000
+    },
+    {
+      "code": "OK",
+      "name": "Oklahoma",
+      "vendorCount": 2,
+      "medianStart": 2150,
+      "minStart": 1495,
+      "maxHigh": 2799
+    },
+    {
+      "code": "OR",
+      "name": "Oregon",
+      "vendorCount": 1,
+      "medianStart": 1500,
+      "minStart": 1495,
+      "maxHigh": 1995
+    },
+    {
+      "code": "PA",
+      "name": "Pennsylvania",
+      "vendorCount": 4,
+      "medianStart": 1725,
+      "minStart": 300,
+      "maxHigh": 6100
+    },
+    {
+      "code": "SC",
+      "name": "South Carolina",
+      "vendorCount": 2,
+      "medianStart": 1850,
+      "minStart": 699,
+      "maxHigh": 3000
+    },
+    {
+      "code": "TX",
+      "name": "Texas",
+      "vendorCount": 6,
+      "medianStart": 1000,
+      "minStart": 197,
+      "maxHigh": 6000
+    },
+    {
+      "code": "VA",
+      "name": "Virginia",
+      "vendorCount": 2,
+      "medianStart": 1450,
+      "minStart": 600,
+      "maxHigh": 3500
+    },
+    {
+      "code": "WA",
+      "name": "Washington",
+      "vendorCount": 2,
+      "medianStart": 2750,
+      "minStart": 2499,
+      "maxHigh": 6000
+    },
+    {
+      "code": "DC",
+      "name": "Washington, D.C.",
+      "vendorCount": 2,
+      "medianStart": 900,
+      "minStart": 800,
+      "maxHigh": 4000
+    }
+  ]
+}

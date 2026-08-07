@@ -13,6 +13,13 @@ export const metadata: Metadata = {
 
 const GUIDES = [
   {
+    eyebrow: 'Original Data',
+    title: 'Average Wedding Live Streaming Cost by State',
+    description:
+      'Real published pricing from 65 vendors across 28 states — median starting prices, full ranges, and which states are cheapest, from our own directory data.',
+    href: '/guides/wedding-live-streaming-cost-by-state',
+  },
+  {
     eyebrow: 'Cost Guide',
     title: 'How Much Does Wedding Live Streaming Cost?',
     description:

@@ -132,6 +132,17 @@ export default function WeddingLiveStreamingCostPage() {
           existing videographer (rather than providing the camera crew themselves) tend to run
           around $1,200.
         </p>
+
+        <p className="text-sm text-muted-foreground mt-4">
+          Wondering how your state compares? See our{' '}
+          <Link
+            href="/guides/wedding-live-streaming-cost-by-state"
+            className="underline underline-offset-4 hover:text-primary"
+          >
+            average cost by state
+          </Link>{' '}
+          — real published pricing from vendors in our directory, state by state.
+        </p>
       </section>
 
       <section className="bg-secondary/30 py-16">

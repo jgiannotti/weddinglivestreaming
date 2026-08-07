@@ -196,6 +196,44 @@ export function ArticleJsonLd({
   );
 }
 
+// Dataset schema for pages built from our own directory data (e.g. the
+// cost-by-state page). Original datasets are what blogs and AI engines cite —
+// marking it up as a Dataset makes the numbers discoverable in Google Dataset
+// Search and unambiguous to answer engines.
+export function DatasetJsonLd({
+  name,
+  description,
+  url,
+  dateModified,
+}: {
+  name: string;
+  description: string;
+  url: string; // path, e.g. "/guides/wedding-live-streaming-cost-by-state"
+  dateModified: string; // ISO date, e.g. "2026-08-07"
+}) {
+  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://weddinglivestreaming.com';
+  const data = {
+    '@context': 'https://schema.org',
+    '@type': 'Dataset',
+    name,
+    description,
+    url: `${base}${url}`,
+    dateModified,
+    license: 'https://creativecommons.org/licenses/by/4.0/',
+    creator: {
+      '@type': 'Organization',
+      name: 'WeddingLiveStreaming',
+      url: base,
+    },
+  };
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: safeJsonLd(data) }}
+    />
+  );
+}
+
 export interface HowToStep {
   name: string;
   text: string;
