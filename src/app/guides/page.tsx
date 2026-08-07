@@ -83,6 +83,13 @@ const GUIDES = [
     href: '/guides/is-a-wedding-livestream-worth-it',
   },
   {
+    eyebrow: 'Venue Guide',
+    title: 'How to Livestream an Outdoor Wedding',
+    description:
+      'No venue Wi-Fi, wind on the mics, sun behind the couple — solving the four problems that make outdoor and beach weddings the hardest streams.',
+    href: '/guides/how-to-livestream-an-outdoor-wedding',
+  },
+  {
     eyebrow: 'Equipment Guide',
     title: 'Wedding Livestream Equipment: What You Actually Need',
     description:

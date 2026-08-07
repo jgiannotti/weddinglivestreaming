@@ -42,6 +42,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/guides/how-to-start-a-wedding-livestreaming-business',
     '/guides/is-a-wedding-livestream-worth-it',
     '/guides/wedding-livestream-equipment',
+    '/guides/how-to-livestream-an-outdoor-wedding',
   ].map((path) => ({
     url: `${BASE}${path}`,
     lastModified: now,
