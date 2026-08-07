@@ -51,6 +51,7 @@ export async function GET() {
     `- [Questions to Ask Your Wedding Livestreamer](${BASE}/guides/questions-to-ask-your-wedding-livestreamer): a vetting checklist before booking.`,
     `- [Zoom vs. YouTube Live vs. Professional Streaming](${BASE}/guides/zoom-vs-youtube-vs-professional-wedding-livestream): platform comparison for streaming a wedding.`,
     `- [How to Live Stream a Church Wedding](${BASE}/guides/how-to-livestream-a-church-wedding): venue permission, camera placement, audio in churches.`,
+    `- [Wedding Livestream Invitation Wording](${BASE}/guides/wedding-livestream-invitation-wording): copy-paste invitation templates for insert cards, wedding websites, emails, and day-of texts.`,
     '',
     '## State directories',
     '',

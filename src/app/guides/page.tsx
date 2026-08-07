@@ -61,6 +61,13 @@ const GUIDES = [
       'The ten questions that separate an experienced live streaming specialist from a side hustle — backups, audio, cameras, and pricing.',
     href: '/guides/questions-to-ask-your-wedding-livestreamer',
   },
+  {
+    eyebrow: 'Etiquette Guide',
+    title: 'Wedding Livestream Invitation Wording',
+    description:
+      'Copy-paste wording templates for telling guests about your livestream — formal insert cards, wedding websites, emails, and day-of reminder texts.',
+    href: '/guides/wedding-livestream-invitation-wording',
+  },
 ];
 
 export default function GuidesIndexPage() {
