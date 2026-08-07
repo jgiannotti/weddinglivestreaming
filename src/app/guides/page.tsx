@@ -68,6 +68,13 @@ const GUIDES = [
       'Copy-paste wording templates for telling guests about your livestream — formal insert cards, wedding websites, emails, and day-of reminder texts.',
     href: '/guides/wedding-livestream-invitation-wording',
   },
+  {
+    eyebrow: 'Guest Guide',
+    title: 'How to Watch a Wedding Livestream',
+    description:
+      'For remote guests: how to join on any phone, tablet, computer, or TV — and the one-minute fix for every common problem.',
+    href: '/guides/how-to-watch-a-wedding-livestream',
+  },
 ];
 
 export default function GuidesIndexPage() {

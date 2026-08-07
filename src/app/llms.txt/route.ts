@@ -52,6 +52,7 @@ export async function GET() {
     `- [Zoom vs. YouTube Live vs. Professional Streaming](${BASE}/guides/zoom-vs-youtube-vs-professional-wedding-livestream): platform comparison for streaming a wedding.`,
     `- [How to Live Stream a Church Wedding](${BASE}/guides/how-to-livestream-a-church-wedding): venue permission, camera placement, audio in churches.`,
     `- [Wedding Livestream Invitation Wording](${BASE}/guides/wedding-livestream-invitation-wording): copy-paste invitation templates for insert cards, wedding websites, emails, and day-of texts.`,
+    `- [How to Watch a Wedding Livestream](${BASE}/guides/how-to-watch-a-wedding-livestream): guest-side guide — joining on any device, fixing buffering/no-sound/private-video problems, watching on a TV.`,
     '',
     '## State directories',
     '',
