@@ -7,6 +7,7 @@ import {
   DatasetJsonLd,
   FaqJsonLd,
 } from '@/components/json-ld';
+import { CiteThis } from '@/components/cite-this';
 import { US_STATES } from '@/lib/states';
 import costData from '@/lib/data/cost-by-state.generated.json';
 
@@ -228,14 +229,17 @@ export default function CostByStatePage() {
           presented as an average. Data is refreshed as the directory grows; this page was last
           updated {generatedAt}.
         </p>
-        <p className="text-muted-foreground leading-relaxed">
-          Journalists and bloggers: you&rsquo;re welcome to cite these figures with attribution and
-          a link to this page. For state-level detail or comment,{' '}
-          <Link href="/contact" className="underline underline-offset-4 hover:text-primary">
-            contact us
-          </Link>
-          .
-        </p>
+      </section>
+
+      <section className="container pb-16 max-w-3xl">
+        <CiteThis
+          path="/guides/wedding-live-streaming-cost-by-state"
+          title={`Average Wedding Live Streaming Cost by State (${dataYear} Data)`}
+          statValue={fmt(national.medianStart)}
+          statLabel="national median starting price"
+          year={dataYear}
+          updated={generatedAt}
+        />
       </section>
 
       <section className="container pb-16">

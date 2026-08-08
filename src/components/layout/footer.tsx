@@ -37,6 +37,7 @@ const FOOTER_NAV = [
     heading: 'Company',
     links: [
       { label: 'About',                href: '/about' },
+      { label: 'Press & Data',         href: '/press' },
       { label: 'Contact',              href: '/contact' },
       { label: 'Privacy Policy',       href: '/privacy-policy' },
       { label: 'Terms',                href: '/terms' },

@@ -41,6 +41,7 @@ export async function GET() {
     `- [FAQ](${BASE}/faq): common questions from couples and vendors.`,
     `- [About](${BASE}/about): who runs the directory and why it exists.`,
     `- [Submit a Listing](${BASE}/submit-listing): vendors add their business.`,
+    `- [Press & Data](${BASE}/press): CITABLE STATISTICS — headline wedding livestreaming figures, methodology, and licensing. All data free to reuse with attribution and a link.`,
     '',
     '## Guides (answer-first, for cost/how-to questions)',
     '',
