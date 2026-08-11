@@ -25,11 +25,24 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     // has already committed; sendEmail logs and swallows failures.
     const { data: claim } = await supabase
       .from('claim_requests')
-      .select('user_id, listing:listings(title, slug), profile:profiles(email)')
+      .select('user_id, listing:listings(title, slug, vendor_id), profile:profiles(email)')
       .eq('id', id)
       .single();
     const claimantEmail = (claim as any)?.profile?.email;
     const listing = (claim as any)?.listing;
+
+    // Leads already matched to this vendor make the approval email an
+    // immediate call to action instead of a shrug. Count failures are
+    // non-critical — worst case the email just omits the line.
+    let waitingLeads = 0;
+    if (listing?.vendor_id) {
+      const { count } = await supabase
+        .from('leads')
+        .select('id', { count: 'exact', head: true })
+        .contains('matched_vendor_ids', [listing.vendor_id]);
+      waitingLeads = count || 0;
+    }
+
     if (claimantEmail) {
       await sendEmail({
         to: claimantEmail,
@@ -37,6 +50,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
         html: `
           <h2>Your profile is yours!</h2>
           <p>Your claim${listing?.title ? ` for <strong>${escapeHtml(listing.title)}</strong>` : ''} has been approved. You now manage this listing.</p>
+          ${waitingLeads > 0 ? `<p><strong>You have ${waitingLeads} couple inquir${waitingLeads === 1 ? 'y' : 'ies'} waiting</strong> — couples who requested wedding livestream quotes in your area. Their contact details are in your dashboard: <a href="https://weddinglivestreaming.com/dashboard/leads">view your leads</a>.</p>` : ''}
           <p><a href="https://weddinglivestreaming.com/dashboard">Open your dashboard</a>${listing?.slug ? ` · <a href="https://weddinglivestreaming.com/listing/${listing.slug}">View your public listing</a>` : ''}</p>
         `,
       });

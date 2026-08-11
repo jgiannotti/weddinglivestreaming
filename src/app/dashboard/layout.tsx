@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
-import { LayoutDashboard, MessageSquare, CreditCard, LogOut, ShieldCheck } from 'lucide-react';
+import { LayoutDashboard, MessageSquare, Heart, CreditCard, LogOut, ShieldCheck } from 'lucide-react';
 import { requireProfile } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
@@ -11,6 +11,7 @@ const NAV = [
   // which already shows the vendor's listings — two nav items to one page.
   { label: 'Overview',     href: '/dashboard',          icon: LayoutDashboard },
   { label: 'Inquiries',    href: '/dashboard/messages', icon: MessageSquare },
+  { label: 'Leads',        href: '/dashboard/leads',    icon: Heart },
   { label: 'Plan',         href: '/dashboard/plan',     icon: CreditCard },
   { label: 'Security',     href: '/dashboard/security', icon: ShieldCheck },
 ];
