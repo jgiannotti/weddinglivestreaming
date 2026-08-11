@@ -1,15 +1,12 @@
+import type { CrewType } from './listing-facets';
+
+export type { CrewType };
+
 export type ListingTier = 'basic' | 'featured';
 export type ListingStatus = 'pending' | 'approved' | 'rejected';
 export type UserRole = 'couple' | 'vendor' | 'admin';
 export type SubscriptionPlan = 'monthly' | 'annual';
 export type PaymentProcessor = 'stripe' | 'paypal';
-
-export interface Category {
-  id: string;
-  name: string;
-  slug: string;
-  sortOrder: number;
-}
 
 export interface Vendor {
   id: string;
@@ -42,7 +39,6 @@ export interface Listing {
   tier: ListingTier;
   featuredUntil: string | null;
   websiteUrl: string | null;
-  categories: Category[];
   viewCount: number;
   inquiryCount: number;
   createdAt: string;
@@ -51,8 +47,13 @@ export interface Listing {
   // Milestone 2 — coverage radius / location intelligence
   serviceRadiusMiles: number;
   travelsNationwide: boolean;
+  // Vendor-declared facts (migration 0014, replacing categories). Both null
+  // until the vendor fills them in on their own listing — nothing is
+  // backfilled, and no scraped pricing is ever imported here.
+  startingPriceCents: number | null;
+  crewType: CrewType | null;
   // Only populated by getListingsByLocation() (radius search) — undefined
-  // for plain state/category listing queries.
+  // for plain state/filter listing queries.
   distanceMiles?: number;
   /** 1 = within the vendor's own radius, 2 = same-state fallback, 3 = travels nationwide */
   searchTier?: 1 | 2 | 3;

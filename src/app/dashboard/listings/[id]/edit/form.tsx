@@ -6,7 +6,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useSupabase } from '@/lib/supabase/client';
 import { Loader2 } from 'lucide-react';
-import type { Category } from '@/lib/types';
+import {
+  CREW_OPTIONS,
+  parsePriceInput,
+  priceCentsToInput,
+  type CrewType,
+} from '@/lib/listing-facets';
 
 interface EditableListing {
   id: string;
@@ -17,15 +22,15 @@ interface EditableListing {
   state: string;
   serviceRadiusMiles: number;
   travelsNationwide: boolean;
+  startingPriceCents: number | null;
+  crewType: CrewType | null;
 }
 
 interface Props {
   listing: EditableListing;
-  categories: Category[];
-  selectedCategoryIds: string[];
 }
 
-export function EditListingForm({ listing, categories, selectedCategoryIds }: Props) {
+export function EditListingForm({ listing }: Props) {
   const router = useRouter();
   const supabase = useSupabase();
   const [title, setTitle] = useState(listing.title);
@@ -35,22 +40,25 @@ export function EditListingForm({ listing, categories, selectedCategoryIds }: Pr
   const [state, setState] = useState(listing.state);
   const [radiusMiles, setRadiusMiles] = useState(listing.serviceRadiusMiles);
   const [nationwide, setNationwide] = useState(listing.travelsNationwide);
-  const [selected, setSelected] = useState<Set<string>>(new Set(selectedCategoryIds));
+  const [startingPrice, setStartingPrice] = useState(priceCentsToInput(listing.startingPriceCents));
+  const [priceError, setPriceError] = useState<string | null>(null);
+  const [crewType, setCrewType] = useState<CrewType | ''>(listing.crewType ?? '');
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-
-  function toggleCategory(id: string) {
-    const next = new Set(selected);
-    if (next.has(id)) next.delete(id);
-    else next.add(id);
-    setSelected(next);
-  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     setSaved(false);
+
+    const parsedPrice = parsePriceInput(startingPrice);
+    if (parsedPrice.error) {
+      setPriceError(parsedPrice.error);
+      return;
+    }
+    setPriceError(null);
+
     setSaving(true);
     try {
       // (hoisted to the component body — hooks can't run inside a handler)
@@ -80,19 +88,14 @@ export function EditListingForm({ listing, categories, selectedCategoryIds }: Pr
           state,
           service_radius_miles: radiusMiles,
           travels_nationwide: nationwide,
+          // Clearing the field is a real edit — send null rather than skipping
+          // the column, so a vendor can withdraw a price they no longer honour.
+          starting_price_cents: parsedPrice.cents,
+          crew_type: crewType || null,
           ...coordUpdate,
         })
         .eq('id', listing.id);
       if (updateErr) throw updateErr;
-
-      // Replace category links wholesale — simplest correct approach for a
-      // small, human-sized set of checkboxes.
-      await supabase.from('listing_categories').delete().eq('listing_id', listing.id);
-      if (selected.size > 0) {
-        await supabase.from('listing_categories').insert(
-          [...selected].map((categoryId) => ({ listing_id: listing.id, category_id: categoryId }))
-        );
-      }
 
       setSaved(true);
       router.refresh();
@@ -178,26 +181,78 @@ export function EditListingForm({ listing, categories, selectedCategoryIds }: Pr
         )}
       </section>
 
-      <section className="rounded-2xl border bg-card p-6 space-y-4">
-        <h2 className="font-display text-xl font-semibold">Categories</h2>
-        <div className="grid grid-cols-2 gap-2">
-          {categories.map((cat) => (
-            <label
-              key={cat.id}
-              className={`flex items-center gap-2 px-3 py-2 rounded-full border cursor-pointer transition-colors ${
-                selected.has(cat.id) ? 'border-primary bg-accent' : 'border-input hover:bg-muted'
-              }`}
-            >
-              <input
-                type="checkbox"
-                checked={selected.has(cat.id)}
-                onChange={() => toggleCategory(cat.id)}
-                className="rounded"
-              />
-              <span className="text-sm">{cat.name}</span>
-            </label>
-          ))}
+      <section className="rounded-2xl border bg-card p-6 space-y-5">
+        <div>
+          <h2 className="font-display text-xl font-semibold">Pricing &amp; crew</h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            Both optional, and both filterable — couples can narrow the directory by starting price
+            and crew size, and listings without them sit outside those filters.
+          </p>
         </div>
+
+        <div>
+          <label htmlFor="startingPrice" className="block text-sm font-medium mb-1.5">
+            Packages start at
+          </label>
+          <div className="relative max-w-[200px]">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
+            <Input
+              id="startingPrice"
+              inputMode="decimal"
+              value={startingPrice}
+              onChange={(e) => {
+                setStartingPrice(e.target.value);
+                if (priceError) setPriceError(null);
+              }}
+              placeholder="1200"
+              className="pl-7"
+              aria-invalid={priceError ? true : undefined}
+              aria-describedby={priceError ? 'startingPrice-error' : 'startingPrice-help'}
+            />
+          </div>
+          {priceError ? (
+            <p id="startingPrice-error" className="text-xs text-destructive mt-1.5">{priceError}</p>
+          ) : (
+            <p id="startingPrice-help" className="text-xs text-muted-foreground mt-1.5">
+              Your lowest wedding package. Clear the field to remove the price from your listing.
+            </p>
+          )}
+        </div>
+
+        <fieldset>
+          <legend className="block text-sm font-medium mb-2">Crew size</legend>
+          <div className="space-y-2">
+            {CREW_OPTIONS.map((option) => (
+              <label
+                key={option.value}
+                className={`flex items-start gap-3 px-3 py-2.5 rounded-xl border cursor-pointer transition-colors ${
+                  crewType === option.value ? 'border-primary bg-accent' : 'border-input hover:bg-muted'
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="crewType"
+                  checked={crewType === option.value}
+                  onChange={() => setCrewType(option.value)}
+                  className="mt-0.5"
+                />
+                <span>
+                  <span className="block text-sm font-medium">{option.label}</span>
+                  <span className="block text-xs text-muted-foreground">{option.description}</span>
+                </span>
+              </label>
+            ))}
+          </div>
+          {crewType && (
+            <button
+              type="button"
+              onClick={() => setCrewType('')}
+              className="text-xs text-muted-foreground hover:text-foreground underline mt-2"
+            >
+              Clear selection
+            </button>
+          )}
+        </fieldset>
       </section>
 
       {error && (

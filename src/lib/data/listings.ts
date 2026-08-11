@@ -1,30 +1,20 @@
 // Live Supabase data-access layer for public-facing listing/vendor reads.
 //
-// Replaces src/data/mock-listings.ts. Always queries through the anon/cookie-aware
-// client (createClient) — never the service-role client — because RLS already
-// scopes these tables correctly for public consumption (approved listings only,
-// plus their categories/photos/vendor). Every function here is async.
+// Always queries through the anon/cookie-aware client (createClient) — never
+// the service-role client — because RLS already scopes these tables correctly
+// for public consumption (approved listings only, plus their photos/vendor).
+// Every function here is async.
 
 import { createClient } from '@/lib/supabase/server';
-import type { Listing, Vendor, Category } from '@/lib/types';
+import type { Listing, Vendor } from '@/lib/types';
+import { getPriceBand, type CrewType } from '@/lib/listing-facets';
 import { resolveLocation } from '@/lib/data/geo';
 
-// Nested select: pulls the parent vendor (FK listings.vendor_id -> vendors.id)
-// and every category linked through the listing_categories join table.
+// Nested select: pulls the parent vendor (FK listings.vendor_id -> vendors.id).
 const LISTING_SELECT = `
   *,
-  vendor:vendors(*),
-  listing_categories(categories(*))
+  vendor:vendors(*)
 `;
-
-function mapCategory(row: any): Category {
-  return {
-    id: row.id,
-    name: row.name,
-    slug: row.slug,
-    sortOrder: row.sort_order,
-  };
-}
 
 function mapVendor(row: any): Vendor {
   return {
@@ -54,12 +44,6 @@ function effectiveTier(row: any): 'basic' | 'featured' {
 }
 
 function mapListing(row: any): Listing {
-  const categories: Category[] = (row.listing_categories ?? [])
-    .map((lc: any) => lc.categories)
-    .filter((c: any): c is any => !!c)
-    .map(mapCategory)
-    .sort((a: Category, b: Category) => a.sortOrder - b.sortOrder);
-
   const tier = effectiveTier(row);
 
   return {
@@ -78,7 +62,6 @@ function mapListing(row: any): Listing {
     tier,
     featuredUntil: tier === 'featured' ? row.featured_until : null,
     websiteUrl: row.website_url,
-    categories,
     viewCount: row.view_count,
     inquiryCount: row.inquiry_count,
     createdAt: row.created_at,
@@ -86,6 +69,8 @@ function mapListing(row: any): Listing {
     expiresAt: row.expires_at,
     serviceRadiusMiles: row.service_radius_miles ?? 60,
     travelsNationwide: row.travels_nationwide ?? false,
+    startingPriceCents: row.starting_price_cents ?? null,
+    crewType: (row.crew_type as CrewType | null) ?? null,
     vendor: row.vendor ? mapVendor(row.vendor) : undefined,
   };
 }
@@ -114,21 +99,38 @@ export interface RadiusSearchResult {
   expanded: boolean;
 }
 
+/**
+ * Vendor-declared filters (migration 0014), shared by radius search and plain
+ * browse. A listing that hasn't declared a value can't match a filter on it —
+ * "under $1,000" means vendors known to be under $1,000, never "everyone we
+ * have no price for."
+ */
+export interface ListingFilters {
+  /** A PRICE_BANDS slug. Unknown slugs are ignored rather than returning nothing. */
+  priceBand?: string;
+  /** A CrewType value. */
+  crew?: string;
+}
+
 export async function getListingsByLocation(
   locationInput: string,
-  opts: { category?: string; limit?: number } = {}
+  opts: ListingFilters & { limit?: number } = {}
 ): Promise<RadiusSearchResult> {
   const resolved = await resolveLocation(locationInput);
   if (!resolved) {
     return { listings: [], resolvedLabel: null, expanded: false };
   }
 
+  const band = getPriceBand(opts.priceBand);
+
   const supabase = await createClient();
   const { data: rpcRows, error: rpcError } = await supabase.rpc('search_listings_by_location', {
     search_lat: resolved.lat,
     search_lng: resolved.lng,
     search_state: resolved.stateName,
-    category_slug: opts.category ?? null,
+    min_price_cents: band?.minCents ?? null,
+    max_price_cents: band?.maxCents ?? null,
+    crew_filter: opts.crew ?? null,
     result_limit: opts.limit ?? 60,
   });
 
@@ -183,38 +185,15 @@ export async function getListingsByLocation(
 }
 
 export async function getListings(
-  opts: {
+  opts: ListingFilters & {
     state?: string;
     city?: string;
-    category?: string;
     search?: string;
     limit?: number;
     sortBy?: 'date' | 'title';
   } = {}
 ): Promise<Listing[]> {
   const supabase = await createClient();
-
-  // Category filter: resolve to a set of listing ids first, since filtering
-  // through a many-to-many join in a single embedded query is unreliable
-  // in supabase-js's query builder.
-  let listingIds: string[] | null = null;
-  if (opts.category) {
-    const { data: categoryRow } = await supabase
-      .from('categories')
-      .select('id')
-      .eq('slug', opts.category)
-      .maybeSingle();
-
-    if (!categoryRow) return [];
-
-    const { data: linkRows } = await supabase
-      .from('listing_categories')
-      .select('listing_id')
-      .eq('category_id', categoryRow.id);
-
-    listingIds = (linkRows ?? []).map((r: any) => r.listing_id);
-    if (listingIds.length === 0) return [];
-  }
 
   // Expired listings drop from every public page (query-time enforcement,
   // no cron dependency) but stay visible in the vendor's own dashboard via
@@ -235,8 +214,22 @@ export async function getListings(
     query = query.ilike('city', opts.city);
   }
 
-  if (listingIds) {
-    query = query.in('id', listingIds);
+  // Vendor-declared filters. Both compare against a nullable column, and
+  // Postgres drops NULL rows from `>=` / `<=` / `=` comparisons on its own —
+  // which is exactly the intended semantics (no declared value = no match).
+  const band = getPriceBand(opts.priceBand);
+  if (band) {
+    if (band.minCents !== null) query = query.gte('starting_price_cents', band.minCents);
+    if (band.maxCents !== null) query = query.lte('starting_price_cents', band.maxCents);
+    // An open-ended band on both sides would otherwise let priceless rows
+    // through, since neither bound was applied.
+    if (band.minCents === null && band.maxCents === null) {
+      query = query.not('starting_price_cents', 'is', null);
+    }
+  }
+
+  if (opts.crew) {
+    query = query.eq('crew_type', opts.crew);
   }
 
   if (opts.search) {
@@ -372,30 +365,69 @@ export async function getCitiesWithListings(): Promise<{ state: string; city: st
   return pairs;
 }
 
+/**
+ * "Other vendors you might consider" on a listing page.
+ *
+ * Previously matched on shared category, which produced near-random pairings:
+ * 94 listings shared the Multi-Camera & Cinematic label, so a Florida vendor
+ * was routinely "related" to one in Oregon. Now it matches on the same state
+ * first — a couple looking at a Tampa vendor can plausibly book any of these —
+ * and tops up with nationwide-travelling vendors when the state is thin.
+ *
+ * Featured listings sort ahead of basic within each group, consistent with
+ * every other listing surface on the site.
+ */
 export async function getRelatedListings(listing: Listing, limit = 3): Promise<Listing[]> {
-  if (listing.categories.length === 0) return [];
-
   const supabase = await createClient();
-  const categoryIds = listing.categories.map((c) => c.id);
+  const nowIso = new Date().toISOString();
 
-  const { data: linkRows } = await supabase
-    .from('listing_categories')
-    .select('listing_id')
-    .in('category_id', categoryIds)
-    .neq('listing_id', listing.id);
-
-  const candidateIds = Array.from(new Set((linkRows ?? []).map((r: any) => r.listing_id)));
-  if (candidateIds.length === 0) return [];
-
-  const { data, error } = await supabase
+  const { data: sameState } = await supabase
     .from('listings')
     .select(LISTING_SELECT)
     .eq('status', 'approved')
-    .gt('expires_at', new Date().toISOString())
-    .in('id', candidateIds)
+    .gt('expires_at', nowIso)
+    .ilike('state', listing.state)
+    .neq('id', listing.id)
     .order('created_at', { ascending: false })
-    .limit(limit);
+    .limit(limit * 3);
 
-  if (error || !data) return [];
-  return (data as any[]).map(mapListing);
+  const results = sortByTierFirst((sameState ?? []).map(mapListing)).slice(0, limit);
+  if (results.length >= limit) return results;
+
+  // Thin state — fill the remaining slots with vendors who travel anywhere.
+  const seen = new Set([listing.id, ...results.map((l) => l.id)]);
+  const { data: nationwide } = await supabase
+    .from('listings')
+    .select(LISTING_SELECT)
+    .eq('status', 'approved')
+    .gt('expires_at', nowIso)
+    .eq('travels_nationwide', true)
+    .order('created_at', { ascending: false })
+    .limit(limit * 3);
+
+  const fillers = sortByTierFirst((nationwide ?? []).map(mapListing)).filter((l) => !seen.has(l.id));
+  return [...results, ...fillers].slice(0, limit);
+}
+
+/**
+ * How many approved listings have declared each vendor-supplied fact.
+ *
+ * The directory uses this to hide a filter entirely until at least one vendor
+ * has filled it in. Both columns start empty on every row (nothing was
+ * backfilled when categories were retired), so rendering the controls
+ * unconditionally would mean shipping filters that match zero vendors.
+ */
+export async function getListingFilterFacets(): Promise<{ pricedCount: number; crewCount: number }> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc('listing_filter_facets');
+
+  if (error || !data || (data as any[]).length === 0) {
+    return { pricedCount: 0, crewCount: 0 };
+  }
+
+  const row = (data as any[])[0];
+  return {
+    pricedCount: Number(row.priced_count ?? 0),
+    crewCount: Number(row.crew_count ?? 0),
+  };
 }

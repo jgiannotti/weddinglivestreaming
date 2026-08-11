@@ -4,15 +4,18 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Search, MapPin, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
-import { CATEGORIES } from '@/lib/categories';
 import { cn } from '@/lib/utils';
 import { POPULAR_CITIES, type CitySuggestion } from '@/lib/geo-constants';
 
 interface SearchBarProps {
   variant?: 'hero' | 'compact';
   defaultLocation?: string;
-  defaultCategory?: string;
+  /**
+   * Filters already active on the directory (price band, crew). Carried onto
+   * the new URL so searching a different city doesn't silently reset the
+   * filters the couple just set.
+   */
+  keepParams?: Record<string, string | undefined>;
 }
 
 const RECENT_SEARCHES_KEY = 'wls:recentSearches';
@@ -46,12 +49,9 @@ interface MapboxSuggestion {
   place_formatted: string;
 }
 
-export function SearchBar({ variant = 'hero', defaultLocation = '', defaultCategory = '' }: SearchBarProps) {
+export function SearchBar({ variant = 'hero', defaultLocation = '', keepParams }: SearchBarProps) {
   const router = useRouter();
   const [location, setLocation] = useState(defaultLocation);
-  // Radix Select can't use an empty string as an item value, so "all" is the
-  // sentinel for "no category filter" — translated back to "no param" below.
-  const [category, setCategory] = useState(defaultCategory || 'all');
   const [focused, setFocused] = useState(false);
   const [open, setOpen] = useState(false);
   const [ownSuggestions, setOwnSuggestions] = useState<CitySuggestion[]>([]);
@@ -143,7 +143,9 @@ export function SearchBar({ variant = 'hero', defaultLocation = '', defaultCateg
     setOpen(false);
     const params = new URLSearchParams();
     if (trimmed) params.set('location', trimmed);
-    if (category && category !== 'all') params.set('category', category);
+    for (const [key, value] of Object.entries(keepParams ?? {})) {
+      if (value) params.set(key, value);
+    }
     router.push(`/directory?${params.toString()}`);
   }
 
@@ -297,22 +299,6 @@ export function SearchBar({ variant = 'hero', defaultLocation = '', defaultCateg
           </ul>
         )}
       </div>
-
-      <div className="hidden md:block h-6 w-px bg-border shrink-0" />
-
-      <Select value={category} onValueChange={setCategory}>
-        <SelectTrigger aria-label="Category" className="h-11 border-0 md:w-[180px] shrink-0 focus:ring-0">
-          <SelectValue placeholder="All Categories" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">All Categories</SelectItem>
-          {CATEGORIES.map((c) => (
-            <SelectItem key={c.slug} value={c.slug}>
-              {c.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
 
       <Button type="submit" size={isHero ? 'lg' : 'default'} className="md:w-auto shrink-0">
         <Search className="h-4 w-4" />

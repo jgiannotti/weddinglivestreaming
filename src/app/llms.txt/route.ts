@@ -34,7 +34,7 @@ export async function GET() {
     '## Core pages',
     '',
     `- [Homepage](${BASE}/): overview, featured vendors, browse by state.`,
-    `- [Directory](${BASE}/directory): search and filter every vendor by location and category.`,
+    `- [Directory](${BASE}/directory): search and filter every vendor by location, starting price, and crew size.`,
     `- [How It Works](${BASE}/how-it-works): the process for couples and for vendors.`,
     `- [For Vendors](${BASE}/for-vendors): how vendors list their business and get discovered.`,
     `- [Pricing](${BASE}/pricing): vendor listing tiers (free Basic, paid Featured).`,

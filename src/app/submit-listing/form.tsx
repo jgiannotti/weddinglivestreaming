@@ -7,17 +7,15 @@ import { Input } from '@/components/ui/input';
 import { useSupabase } from '@/lib/supabase/client';
 import { slugify } from '@/lib/utils';
 import { Loader2, Upload } from 'lucide-react';
-import type { Category } from '@/lib/types';
-import { suggestRadiusDefaults } from '@/lib/categories';
+import { CREW_OPTIONS, parsePriceInput, type CrewType } from '@/lib/listing-facets';
 import { US_STATES } from '@/lib/states';
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
 
 interface Props {
-  categories: Category[];
   userId: string;
 }
 
-export function SubmitListingForm({ categories, userId }: Props) {
+export function SubmitListingForm({ userId }: Props) {
   const router = useRouter();
   // Supabase client carrying the caller's Clerk token, so the insert lands
   // under their own RLS identity rather than anonymously.
@@ -28,31 +26,22 @@ export function SubmitListingForm({ categories, userId }: Props) {
   const [phone, setPhone] = useState('');
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
-  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
   const [heroFile, setHeroFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Milestone 2 — coverage radius. Pre-filled from category selection
-  // (radiusTouched guards against clobbering a manual edit once the vendor
-  // has interacted with the slider themselves).
+  // Coverage radius. The old pre-fill guessed a starting number from the
+  // vendor's category picks; with categories retired every vendor starts at
+  // the same 60 miles and moves the slider themselves.
   const [radiusMiles, setRadiusMiles] = useState(60);
   const [nationwide, setNationwide] = useState(false);
-  const [radiusTouched, setRadiusTouched] = useState(false);
 
-  function toggleCategory(id: string) {
-    const next = new Set(selectedCategories);
-    if (next.has(id)) next.delete(id);
-    else next.add(id);
-    setSelectedCategories(next);
-
-    if (!radiusTouched) {
-      const slugs = categories.filter((c) => next.has(c.id)).map((c) => c.slug);
-      const { radiusMiles: suggested, nationwide: suggestedNationwide } = suggestRadiusDefaults(slugs);
-      setRadiusMiles(suggested);
-      setNationwide(suggestedNationwide);
-    }
-  }
+  // Vendor-declared filters (migration 0014). Both optional — a vendor who
+  // skips them still gets a complete listing, just no price/crew badge and no
+  // presence in those filters.
+  const [startingPrice, setStartingPrice] = useState('');
+  const [priceError, setPriceError] = useState<string | null>(null);
+  const [crewType, setCrewType] = useState<CrewType | ''>('');
 
   async function geocode(city: string, state: string): Promise<{ lat: number; lng: number } | null> {
     try {
@@ -67,6 +56,16 @@ export function SubmitListingForm({ categories, userId }: Props) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+
+    // Validate before creating anything — a bad price would otherwise fail at
+    // the listing insert, after the vendor row and hero upload already landed.
+    const parsedPrice = parsePriceInput(startingPrice);
+    if (parsedPrice.error) {
+      setPriceError(parsedPrice.error);
+      return;
+    }
+    setPriceError(null);
+
     setLoading(true);
     try {
       // (hoisted to the component body — hooks can't run inside a handler)
@@ -102,7 +101,7 @@ export function SubmitListingForm({ categories, userId }: Props) {
       const coords = await geocode(city, state);
 
       // 4. Create listing
-      const { data: listing, error: listingErr } = await supabase
+      const { error: listingErr } = await supabase
         .from('listings')
         .insert({
           vendor_id: vendor.id,
@@ -119,17 +118,12 @@ export function SubmitListingForm({ categories, userId }: Props) {
           tier: 'basic',
           service_radius_miles: radiusMiles,
           travels_nationwide: nationwide,
+          starting_price_cents: parsedPrice.cents,
+          crew_type: crewType || null,
         })
         .select('id, slug')
         .single();
       if (listingErr) throw listingErr;
-
-      // 5. Link categories
-      if (selectedCategories.size > 0) {
-        await supabase.from('listing_categories').insert(
-          [...selectedCategories].map((catId) => ({ listing_id: listing.id, category_id: catId }))
-        );
-      }
 
       // Update profile role to vendor. Direct role updates are blocked by
       // column-level grants (migration 0009 — privilege-escalation fix);
@@ -211,18 +205,15 @@ export function SubmitListingForm({ categories, userId }: Props) {
       <section className="rounded-2xl border bg-card p-6 space-y-4">
         <h2 className="font-display text-xl font-semibold">How far will you travel?</h2>
         <p className="text-sm text-muted-foreground">
-          Couples searching within this distance of your city will find you. We picked a starting
-          number based on your categories below — adjust it to fit how you actually work.
+          Couples searching within this distance of your city will find you. Adjust it to fit how
+          you actually work.
         </p>
 
         <label className="flex items-center gap-2 px-3 py-2.5 rounded-full border cursor-pointer hover:bg-muted transition-colors w-fit">
           <input
             type="checkbox"
             checked={nationwide}
-            onChange={(e) => {
-              setNationwide(e.target.checked);
-              setRadiusTouched(true);
-            }}
+            onChange={(e) => setNationwide(e.target.checked)}
             className="rounded"
           />
           <span className="text-sm font-medium">I travel nationwide for destination weddings</span>
@@ -241,37 +232,85 @@ export function SubmitListingForm({ categories, userId }: Props) {
               max={500}
               step={10}
               value={radiusMiles}
-              onChange={(e) => {
-                setRadiusMiles(parseInt(e.target.value, 10));
-                setRadiusTouched(true);
-              }}
+              onChange={(e) => setRadiusMiles(parseInt(e.target.value, 10))}
               className="w-full accent-primary"
             />
           </div>
         )}
       </section>
 
-      <section className="rounded-2xl border bg-card p-6 space-y-4">
-        <h2 className="font-display text-xl font-semibold">Categories</h2>
-        <p className="text-sm text-muted-foreground">Pick all that apply — couples will filter by these.</p>
-        <div className="grid grid-cols-2 gap-2">
-          {categories.map((cat) => (
-            <label
-              key={cat.id}
-              className={`flex items-center gap-2 px-3 py-2 rounded-full border cursor-pointer transition-colors ${
-                selectedCategories.has(cat.id) ? 'border-primary bg-accent' : 'border-input hover:bg-muted'
-              }`}
-            >
-              <input
-                type="checkbox"
-                checked={selectedCategories.has(cat.id)}
-                onChange={() => toggleCategory(cat.id)}
-                className="rounded"
-              />
-              <span className="text-sm">{cat.name}</span>
-            </label>
-          ))}
+      <section className="rounded-2xl border bg-card p-6 space-y-5">
+        <div>
+          <h2 className="font-display text-xl font-semibold">Pricing &amp; crew</h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            Both optional — but couples filter on them, so filling them in puts you in front of
+            people who already know what they&rsquo;re looking for.
+          </p>
         </div>
+
+        <div>
+          <label htmlFor="startingPrice" className="block text-sm font-medium mb-1.5">
+            Packages start at
+          </label>
+          <div className="relative max-w-[200px]">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
+            <Input
+              id="startingPrice"
+              inputMode="decimal"
+              value={startingPrice}
+              onChange={(e) => {
+                setStartingPrice(e.target.value);
+                if (priceError) setPriceError(null);
+              }}
+              placeholder="1200"
+              className="pl-7"
+              aria-invalid={priceError ? true : undefined}
+              aria-describedby={priceError ? 'startingPrice-error' : 'startingPrice-help'}
+            />
+          </div>
+          {priceError ? (
+            <p id="startingPrice-error" className="text-xs text-destructive mt-1.5">{priceError}</p>
+          ) : (
+            <p id="startingPrice-help" className="text-xs text-muted-foreground mt-1.5">
+              Your lowest wedding package. Shown as &ldquo;From $1,200&rdquo; — leave blank to show no price.
+            </p>
+          )}
+        </div>
+
+        <fieldset>
+          <legend className="block text-sm font-medium mb-2">Crew size</legend>
+          <div className="space-y-2">
+            {CREW_OPTIONS.map((option) => (
+              <label
+                key={option.value}
+                className={`flex items-start gap-3 px-3 py-2.5 rounded-xl border cursor-pointer transition-colors ${
+                  crewType === option.value ? 'border-primary bg-accent' : 'border-input hover:bg-muted'
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="crewType"
+                  checked={crewType === option.value}
+                  onChange={() => setCrewType(option.value)}
+                  className="mt-0.5"
+                />
+                <span>
+                  <span className="block text-sm font-medium">{option.label}</span>
+                  <span className="block text-xs text-muted-foreground">{option.description}</span>
+                </span>
+              </label>
+            ))}
+          </div>
+          {crewType && (
+            <button
+              type="button"
+              onClick={() => setCrewType('')}
+              className="text-xs text-muted-foreground hover:text-foreground underline mt-2"
+            >
+              Clear selection
+            </button>
+          )}
+        </fieldset>
       </section>
 
       <section className="rounded-2xl border bg-card p-6 space-y-4">

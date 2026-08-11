@@ -63,7 +63,13 @@ async function matchByProximity({ state, city }: MatchArgs): Promise<string[]> {
     search_lat: resolved.lat,
     search_lng: resolved.lng,
     search_state: resolved.stateName ?? state,
-    category_slug: null,
+    // Lead matching never narrows by the vendor-declared filters — a couple
+    // submitting a lead hasn't expressed a price or crew preference, and
+    // filtering here would silently drop every vendor who hasn't filled
+    // those in.
+    min_price_cents: null,
+    max_price_cents: null,
+    crew_filter: null,
     result_limit: 24,
   });
   if (error || !rpcRows || rpcRows.length === 0) return [];

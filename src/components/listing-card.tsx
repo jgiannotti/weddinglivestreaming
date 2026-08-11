@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { MapPin, Sparkles } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { getPlaceholderImage } from '@/lib/constants';
+import { formatStartingPrice, getCrewOption } from '@/lib/listing-facets';
 import type { Listing } from '@/lib/types';
 
 interface ListingCardProps {
@@ -12,6 +13,11 @@ interface ListingCardProps {
 
 export function ListingCard({ listing, priority = false }: ListingCardProps) {
   const isFeatured = listing.tier === 'featured';
+  // Vendor-declared, and absent on most listings until vendors fill them in.
+  // The row is omitted entirely rather than rendering "Price on request" —
+  // a card that says nothing reads better than one advertising a gap.
+  const startingPrice = formatStartingPrice(listing.startingPriceCents);
+  const crew = getCrewOption(listing.crewType);
 
   return (
     <Link
@@ -58,13 +64,18 @@ export function ListingCard({ listing, priority = false }: ListingCardProps) {
           )}
         </div>
 
-        {listing.categories.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-1.5">
-            {listing.categories.slice(0, 2).map((cat) => (
-              <Badge key={cat.id} variant="secondary" className="text-xs">
-                {cat.name}
+        {(startingPrice || crew) && (
+          <div className="mt-3 flex flex-wrap items-center gap-1.5">
+            {startingPrice && (
+              <Badge variant="secondary" className="text-xs font-medium">
+                {startingPrice}
               </Badge>
-            ))}
+            )}
+            {crew && (
+              <Badge variant="secondary" className="text-xs">
+                {crew.shortLabel}
+              </Badge>
+            )}
           </div>
         )}
       </div>

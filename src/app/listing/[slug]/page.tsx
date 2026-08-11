@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { ListingCard } from '@/components/listing-card';
 import { LeadForm } from '@/components/lead-form';
 import { getListingBySlug, getRelatedListings } from '@/lib/data/listings';
+import { formatStartingPrice, getCrewOption } from '@/lib/listing-facets';
 import { formatDate } from '@/lib/utils';
 import { getPlaceholderImage } from '@/lib/constants';
 import { ListingJsonLd, BreadcrumbJsonLd } from '@/components/json-ld';
@@ -84,11 +85,18 @@ export default async function ListingPage({ params }: PageProps) {
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-10">
           {/* MAIN COLUMN */}
           <div>
-            <div className="flex flex-wrap gap-2 mb-6">
-              {listing.categories.map((cat) => (
-                <Badge key={cat.id} variant="secondary">{cat.name}</Badge>
-              ))}
-            </div>
+            {/* Vendor-declared facts. Absent on any listing whose vendor
+                hasn't supplied them, in which case nothing renders here. */}
+            {(listing.startingPriceCents !== null || listing.crewType !== null) && (
+              <div className="flex flex-wrap gap-2 mb-6">
+                {listing.startingPriceCents !== null && (
+                  <Badge variant="secondary">{formatStartingPrice(listing.startingPriceCents)}</Badge>
+                )}
+                {listing.crewType !== null && (
+                  <Badge variant="secondary">{getCrewOption(listing.crewType)?.label}</Badge>
+                )}
+              </div>
+            )}
 
             <section className="mb-10">
               <h2 className="font-display text-2xl font-semibold mb-4">About this vendor</h2>

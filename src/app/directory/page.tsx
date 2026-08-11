@@ -6,9 +6,9 @@ import { SearchBar } from '@/components/search-bar';
 import { ListingCard } from '@/components/listing-card';
 import { LeadForm } from '@/components/lead-form';
 import { Button } from '@/components/ui/button';
-import { getListings, getListingsByLocation } from '@/lib/data/listings';
+import { getListings, getListingsByLocation, getListingFilterFacets } from '@/lib/data/listings';
 import { getStateByName, getStateByAbbreviation } from '@/lib/states';
-import { CATEGORIES } from '@/lib/categories';
+import { PRICE_BANDS, CREW_OPTIONS } from '@/lib/listing-facets';
 import { BreadcrumbJsonLd, ListingsItemListJsonLd } from '@/components/json-ld';
 import { cn } from '@/lib/utils';
 
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   description: 'Browse professional wedding live streaming vendors across the United States.',
   // Every filter/sort/page combination is the same underlying content — point
   // them all at the unfiltered canonical URL so search engines don't treat
-  // ?location=&category=&page= combinations as separate duplicate pages.
+  // ?location=&price=&page= combinations as separate duplicate pages.
   alternates: { canonical: '/directory' },
 };
 
@@ -39,13 +39,31 @@ function resolveStateName(location?: string): string | undefined {
   return undefined;
 }
 
+interface DirectoryParams {
+  location?: string;
+  /** PRICE_BANDS slug */
+  price?: string;
+  /** CrewType value */
+  crew?: string;
+  sort?: 'date' | 'title';
+  page?: string;
+}
+
 interface PageProps {
-  searchParams: Promise<{
-    location?: string;
-    category?: string;
-    sort?: 'date' | 'title';
-    page?: string;
-  }>;
+  searchParams: Promise<DirectoryParams>;
+}
+
+/** Same params, minus paging, with one key overridden (or cleared when null). */
+function buildFilterUrl(params: DirectoryParams, key: 'price' | 'crew', value: string | null) {
+  const qs = new URLSearchParams();
+  if (params.location) qs.set('location', params.location);
+  if (params.sort) qs.set('sort', params.sort);
+  const price = key === 'price' ? value : params.price;
+  const crew = key === 'crew' ? value : params.crew;
+  if (price) qs.set('price', price);
+  if (crew) qs.set('crew', crew);
+  const query = qs.toString();
+  return query ? `/directory?${query}` : '/directory';
 }
 
 export default async function DirectoryPage({ searchParams }: PageProps) {
@@ -58,15 +76,25 @@ export default async function DirectoryPage({ searchParams }: PageProps) {
   // St. Petersburg vendor for a Tampa search. No location -> plain browse,
   // still sortable by date/title. Radius results are always
   // tier-then-distance sorted; the sort control only applies to plain browse.
+  const filters = { priceBand: params.price, crew: params.crew };
+
   let all;
   let locationResolved = true;
   if (params.location?.trim()) {
-    const result = await getListingsByLocation(params.location, { category: params.category });
+    const result = await getListingsByLocation(params.location, filters);
     all = result.listings;
     locationResolved = result.resolvedLabel !== null;
   } else {
-    all = await getListings({ category: params.category, sortBy: params.sort || 'date' });
+    all = await getListings({ ...filters, sortBy: params.sort || 'date' });
   }
+
+  // Price and crew are vendor-supplied and start empty on every listing, so
+  // each facet stays hidden until at least one vendor has declared a value.
+  // Without this the directory would ship two filters that match nobody.
+  const facets = await getListingFilterFacets();
+  const showPriceFilter = facets.pricedCount > 0;
+  const showCrewFilter = facets.crewCount > 0;
+  const anyFilterActive = Boolean(params.price || params.crew);
 
   const totalPages = Math.ceil(all.length / PAGE_SIZE);
   const listings = all.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -91,47 +119,48 @@ export default async function DirectoryPage({ searchParams }: PageProps) {
 
       <div className="mb-8">
         <Suspense>
-          <SearchBar variant="compact" defaultLocation={params.location} defaultCategory={params.category} />
+          <SearchBar
+            variant="compact"
+            defaultLocation={params.location}
+            keepParams={{ price: params.price, crew: params.crew }}
+          />
         </Suspense>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-8">
-        {/* Sidebar filters — chip row on mobile, stacked list on desktop */}
+        {/* Sidebar filters — chip row on mobile, stacked list on desktop.
+            Both facets are vendor-declared and hidden until someone has
+            declared one, so this aside can legitimately render empty. */}
         <aside className="space-y-6">
-          <div>
-            <h3 className="eyebrow mb-3">Categories</h3>
-            <ul className="flex md:flex-col gap-2 md:gap-1 overflow-x-auto md:overflow-visible no-scrollbar scroll-fade-r md:[mask-image:none] pb-2 md:pb-0 -mx-4 px-4 md:mx-0 md:px-0">
-              <li className="shrink-0 md:shrink">
-                <Link
-                  href={`/directory${params.location ? `?location=${encodeURIComponent(params.location)}` : ''}`}
-                  className={cn(
-                    'block px-4 py-2 rounded-full md:rounded-md text-sm whitespace-nowrap transition-colors border md:border-0',
-                    !params.category ? 'bg-accent text-accent-foreground font-medium border-transparent' : 'bg-card md:bg-transparent hover:bg-accent/40 md:hover:bg-muted border-border/70 md:border-transparent'
-                  )}
-                >
-                  All Categories
-                </Link>
-              </li>
-              {CATEGORIES.map((cat) => {
-                const qs = new URLSearchParams();
-                if (params.location) qs.set('location', params.location);
-                qs.set('category', cat.slug);
-                return (
-                  <li key={cat.slug} className="shrink-0 md:shrink">
-                    <Link
-                      href={`/directory?${qs.toString()}`}
-                      className={cn(
-                        'block px-4 py-2 rounded-full md:rounded-md text-sm whitespace-nowrap transition-colors border md:border-0',
-                        params.category === cat.slug ? 'bg-accent text-accent-foreground font-medium border-transparent' : 'bg-card md:bg-transparent hover:bg-accent/40 md:hover:bg-muted border-border/70 md:border-transparent'
-                      )}
-                    >
-                      {cat.name}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
+          {showPriceFilter && (
+            <FilterGroup
+              title="Starting price"
+              allLabel="Any price"
+              allHref={buildFilterUrl(params, 'price', null)}
+              allActive={!params.price}
+              options={PRICE_BANDS.map((band) => ({
+                key: band.slug,
+                label: band.label,
+                href: buildFilterUrl(params, 'price', band.slug),
+                active: params.price === band.slug,
+              }))}
+            />
+          )}
+
+          {showCrewFilter && (
+            <FilterGroup
+              title="Crew size"
+              allLabel="Any crew size"
+              allHref={buildFilterUrl(params, 'crew', null)}
+              allActive={!params.crew}
+              options={CREW_OPTIONS.map((option) => ({
+                key: option.value,
+                label: option.label,
+                href: buildFilterUrl(params, 'crew', option.value),
+                active: params.crew === option.value,
+              }))}
+            />
+          )}
 
           {/* Sort only applies to a plain (no-location) browse — a location
               search is always tier-then-distance sorted, which is the point
@@ -145,7 +174,8 @@ export default async function DirectoryPage({ searchParams }: PageProps) {
               ].map((opt) => {
                 const qs = new URLSearchParams();
                 if (params.location) qs.set('location', params.location);
-                if (params.category) qs.set('category', params.category);
+                if (params.price) qs.set('price', params.price);
+                if (params.crew) qs.set('crew', params.crew);
                 qs.set('sort', opt.key);
                 return (
                   <li key={opt.key}>
@@ -173,13 +203,26 @@ export default async function DirectoryPage({ searchParams }: PageProps) {
                 <h3 className="font-display text-2xl md:text-3xl mb-3">
                   {params.location && !locationResolved
                     ? `We couldn't find "${params.location}"`
-                    : 'Vendors are joining city by city'}
+                    : anyFilterActive
+                      ? 'No vendors match those filters'
+                      : 'Vendors are joining city by city'}
                 </h3>
                 <p className="text-muted-foreground">
                   {params.location && !locationResolved
                     ? 'Try a city name, "City, ST", or a 5-digit ZIP code — or tell us below and we’ll do the rest.'
-                    : 'Tell us your date and city and we’ll connect you as soon as a vendor covers your area — free.'}
+                    : anyFilterActive
+                      ? 'Price and crew size are supplied by vendors themselves, and not everyone has filled them in yet — clearing the filters will show more.'
+                      : 'Tell us your date and city and we’ll connect you as soon as a vendor covers your area — free.'}
                 </p>
+                {anyFilterActive && (
+                  <Button asChild variant="outline" size="sm" className="mt-5">
+                    <Link
+                      href={params.location ? `/directory?location=${encodeURIComponent(params.location)}` : '/directory'}
+                    >
+                      Clear filters
+                    </Link>
+                  </Button>
+                )}
               </div>
               <div className="max-w-xl mx-auto">
                 {/* Only prefill the state when the searched location actually
@@ -253,11 +296,52 @@ export default async function DirectoryPage({ searchParams }: PageProps) {
   );
 }
 
-function buildPageUrl(params: { location?: string; category?: string; sort?: string }, page: number) {
+function buildPageUrl(params: DirectoryParams, page: number) {
   const qs = new URLSearchParams();
   if (params.location) qs.set('location', params.location);
-  if (params.category) qs.set('category', params.category);
+  if (params.price) qs.set('price', params.price);
+  if (params.crew) qs.set('crew', params.crew);
   if (params.sort) qs.set('sort', params.sort);
   qs.set('page', String(page));
   return `/directory?${qs.toString()}`;
+}
+
+interface FilterGroupProps {
+  title: string;
+  allLabel: string;
+  allHref: string;
+  allActive: boolean;
+  options: { key: string; label: string; href: string; active: boolean }[];
+}
+
+/** Chip row on mobile, stacked list on desktop — the layout the category
+ *  filter used, kept so the directory's shape doesn't change under vendors. */
+function FilterGroup({ title, allLabel, allHref, allActive, options }: FilterGroupProps) {
+  const itemClass = (active: boolean) =>
+    cn(
+      'block px-4 py-2 rounded-full md:rounded-md text-sm whitespace-nowrap transition-colors border md:border-0',
+      active
+        ? 'bg-accent text-accent-foreground font-medium border-transparent'
+        : 'bg-card md:bg-transparent hover:bg-accent/40 md:hover:bg-muted border-border/70 md:border-transparent'
+    );
+
+  return (
+    <div>
+      <h3 className="eyebrow mb-3">{title}</h3>
+      <ul className="flex md:flex-col gap-2 md:gap-1 overflow-x-auto md:overflow-visible no-scrollbar scroll-fade-r md:[mask-image:none] pb-2 md:pb-0 -mx-4 px-4 md:mx-0 md:px-0">
+        <li className="shrink-0 md:shrink">
+          <Link href={allHref} className={itemClass(allActive)}>
+            {allLabel}
+          </Link>
+        </li>
+        {options.map((opt) => (
+          <li key={opt.key} className="shrink-0 md:shrink">
+            <Link href={opt.href} className={itemClass(opt.active)}>
+              {opt.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }

@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { SubmitListingForm } from './form';
-import { CATEGORIES } from '@/lib/categories';
 import { ensureProfile } from '@/lib/auth';
 
 export const metadata = { title: 'List Your Business', alternates: { canonical: '/submit-listing' } };
@@ -44,7 +43,7 @@ export default async function SubmitListingPage() {
         </p>
       </div>
 
-      <SubmitListingForm categories={CATEGORIES} userId={user.id} />
+      <SubmitListingForm userId={user.id} />
     </div>
   );
 }

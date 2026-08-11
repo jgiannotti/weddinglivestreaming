@@ -1,7 +1,6 @@
 import { notFound, redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { EditListingForm } from './form';
-import { CATEGORIES } from '@/lib/categories';
 import { ensureProfile } from '@/lib/auth';
 
 export const metadata = { title: 'Edit Listing' };
@@ -38,21 +37,19 @@ export default async function EditListingPage({ params }: PageProps) {
   // guesses another vendor's listing id.
   const { data: listing } = await supabase
     .from('listings')
-    .select('*, listing_categories(category_id)')
+    .select('*')
     .eq('id', id)
     .eq('vendor_id', vendor.id)
     .maybeSingle();
 
   if (!listing) notFound();
 
-  const selectedCategoryIds: string[] = (listing.listing_categories ?? []).map((lc: any) => lc.category_id);
-
   return (
     <div className="container max-w-2xl py-12">
       <div className="mb-8">
         <p className="eyebrow mb-2">Your Listing</p>
         <h1 className="font-display text-3xl md:text-4xl font-medium mb-2">Edit listing</h1>
-        <p className="text-muted-foreground">Update your details, coverage area, and categories.</p>
+        <p className="text-muted-foreground">Update your details, coverage area, pricing, and crew size.</p>
       </div>
 
       <EditListingForm
@@ -65,9 +62,9 @@ export default async function EditListingPage({ params }: PageProps) {
           state: listing.state,
           serviceRadiusMiles: listing.service_radius_miles ?? 60,
           travelsNationwide: listing.travels_nationwide ?? false,
+          startingPriceCents: listing.starting_price_cents ?? null,
+          crewType: listing.crew_type ?? null,
         }}
-        categories={CATEGORIES}
-        selectedCategoryIds={selectedCategoryIds}
       />
     </div>
   );
