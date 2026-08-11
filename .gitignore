@@ -25,3 +25,4 @@ _typecheck_bundle.tgz
 
 # Generated vendor contact list (scripts/outreach-list.mjs) — never commit contact data
 outreach.csv
+.env*
