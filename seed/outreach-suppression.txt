@@ -1,0 +1,3 @@
+# Addresses that must never be emailed again.
+# One per line. Add anyone who asks to be removed, immediately.
+# Then also remove/unpublish their listing — the email promises same-day removal.
