@@ -1,5 +1,6 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
+import { shouldTrack, trackPageView } from '@/lib/track-request';
 
 const isProtected = createRouteMatcher(['/dashboard(.*)', '/admin(.*)']);
 
@@ -11,8 +12,22 @@ const isProtected = createRouteMatcher(['/dashboard(.*)', '/admin(.*)']);
  * profiles.role on every matched request, which meant a database round trip
  * on public pages too. Role lives with the layout that needs it; middleware
  * just keeps anonymous traffic out.
+ *
+ * Middleware is also where first-party pageview logging happens (migration
+ * 0015). It has to be here rather than in a client component: AI crawlers —
+ * GPTBot, PerplexityBot, ClaudeBot — never execute JavaScript, so a
+ * browser-side tracker like Vercel Web Analytics cannot see them at all. Their
+ * crawl rate is the main leading indicator we have for the AEO work, and this
+ * is the only layer that observes it.
  */
-export default clerkMiddleware(async (auth, request) => {
+export default clerkMiddleware(async (auth, request, event) => {
+  // Queued before the auth check so it still records on redirects, and
+  // deliberately not awaited — waitUntil lets the response go out first, so a
+  // slow Supabase write adds zero latency to the page.
+  if (shouldTrack(request)) {
+    event.waitUntil(trackPageView(request));
+  }
+
   if (isProtected(request)) {
     const { userId } = await auth();
     if (!userId) {
