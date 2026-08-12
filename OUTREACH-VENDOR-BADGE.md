@@ -5,20 +5,47 @@ change the voice to sound like you, then send it yourself (see "How to send" bel
 
 ## Why this is the highest-value off-site play
 
-We have 200 seeded vendors; **72 have a usable public email address** on their own
-site. (105 have a non-empty `emails` array, but 33 of those entries were captured
-without an actual address — worth a look if you want to recover them, since it's a
-third of the list.) Every vendor who adds the badge gives us a backlink from a
-wedding/AV business site — exactly the topical neighbourhood Google wants to see
-linking to a wedding directory. Even a 15% response rate is ~10 relevant backlinks,
-which for a site with zero authority is worth more than any amount of additional
-on-page work.
+We have 200 seeded vendors and **154 unique, verified email recipients** — up from 72
+before enrichment. Every vendor who adds the badge gives us a backlink from a
+wedding/AV business site, exactly the topical neighbourhood Google wants to see
+linking to a wedding directory. For a site with no authority yet, that is worth more
+than any amount of additional on-page work.
 
-Generate the merge list with:
+## Building the list (run in this order)
 
 ```bash
+# 1. Scrape contact emails for vendors whose seed record has none.
+#    Re-runnable; records every attempt so it never re-scrapes the same site.
+node scripts/enrich-emails.mjs
+
+# 2. Resolve each vendor to its REAL live listing slug (see warning below).
+node scripts/resolve-listing-slugs.mjs
+
+# 3. Build the mail-merge CSV.
 node scripts/outreach-list.mjs > outreach.csv
 ```
+
+Current output: **154 recipients** — 104 from the seed data, 50 recovered by
+scraping. 68 have an owner first name. 2 duplicate addresses were collapsed (one
+operator running two brands), and 9 vendors have no resolvable live listing.
+
+### Two data problems this pipeline fixes — don't bypass it
+
+**1. `suggested_slug` is not the live slug.** The seed field is what the seeding pass
+*proposed*; the importer often created something different (usually a missing state
+suffix). Building profile links from it sends **39 of 154 vendors to a 404** — a
+quarter of the campaign clicking "here's your listing" and landing on an error page.
+`resolve-listing-slugs.mjs` matches against the live sitemap instead, and every URL
+in the current CSV has been verified to return 200.
+
+**2. Emails come in two shapes.** Older seed records store `contact.emails` as plain
+strings, newer ones as `{address, ...}` objects. Reading only `.address` silently
+drops 33 vendors. Both shapes are handled now.
+
+The `has_profile` column marks the 9 vendors with no live listing — their `profile`
+column points at `/claim` instead. **Use a different first line for those nine**
+("I've added your business to the directory — you can find and claim it here")
+since "here is your listing" would be wrong.
 
 The badge embed already produces a plain `rel="noopener"` link (no `nofollow`), so
 these pass link equity. The generator is live at `/vendor-badge`.
@@ -97,10 +124,10 @@ Safer approach:
    batches — it's a genuinely personal email, it should look like one, and replies
    come straight to you.
 3. **Personalise the merge fields for real.** The CSV carries `business`, `city`,
-   `state`, and `profile` for every row, plus `first_name` for 31 of the 72. A vendor
-   who sees their actual city treats it as a real email; one who sees a literal
-   `[City]` treats it as spam. For the 41 rows with no first name, use "Hi there" —
-   never leave a visible placeholder.
+   `state`, and a verified `profile` for every row, plus `first_name` for 68 of the
+   154. A vendor who sees their actual city treats it as a real email; one who sees a
+   literal `[City]` treats it as spam. For the 86 rows with no first name, use "Hi
+   there" — never leave a visible placeholder.
 4. **CAN-SPAM:** because this promotes a commercial service, include a physical
    mailing address and an opt-out. The "reply and I'll remove it" line covers opt-out
    intent, but add your address in the signature to be properly compliant.
@@ -118,6 +145,11 @@ a few weeks; badge backlinks appear there once Google recrawls the vendor sites.
 Cold outreach to vendors about a free listing they're already in typically sees
 20–40% open and 10–20% action, because the offer is genuinely free and specific to
 them. Of those who claim, maybe half will add a badge if asked well. Rough
-expectation from 72 emails: 10–18 claims, 5–10 badge backlinks. That is a meaningful
-authority change for a site starting from zero — and the claims matter in their own
-right, since a claimed listing is a vendor who might later pay for Featured.
+expectation from 154 emails: 20–40 claims, 10–20 badge backlinks. That is a
+meaningful authority change for a site starting from zero — and the claims matter in
+their own right, since a claimed listing is a vendor who might later pay for
+Featured.
+
+These are rough industry-shaped estimates, not predictions from our own data; we have
+no send history yet to calibrate against. The first batch of 20 is what turns this
+into a real forecast.
