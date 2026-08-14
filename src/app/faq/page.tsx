@@ -43,7 +43,7 @@ const FAQ_ITEMS = [
   {
     section: 'For Vendors',
     items: [
-      { q: 'How long does my listing stay up?', a: '12 months from the date your listing is approved. We\'ll email you before it expires so you can renew.' },
+      { q: 'How long does my listing stay up?', a: 'For as long as you want it there. Listings don\'t expire and there\'s nothing to renew. If you ever want yours removed, reply to any email from us and it comes down the same day.' },
       { q: 'What\'s the difference between Basic and Featured?', a: 'Basic is free forever with a full profile and direct messaging. Featured ($29/mo or $199/yr) puts you at the top of search results, gives you a gold badge, and includes a spot in the homepage spotlight.' },
       { q: 'Can I cancel Featured anytime?', a: 'Yes — cancel from your dashboard. Your listing reverts to Basic at the end of your billing period.' },
       { q: 'Are there commission fees on bookings?', a: 'Never. Whatever you charge a couple, you keep 100% of it. The monthly fee is the only cost.' },

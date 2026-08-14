@@ -39,7 +39,7 @@ export default async function SubmitListingPage() {
         <p className="eyebrow mb-2">For Vendors</p>
         <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-medium mb-2">List your business</h1>
         <p className="text-muted-foreground">
-          Tell couples about your wedding livestream services. Free to list, 12-month duration.
+          Tell couples about your wedding livestream services. Free to list, and your listing never expires.
         </p>
       </div>
 

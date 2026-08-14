@@ -24,7 +24,7 @@ function PricingJsonLd() {
         name: 'Basic Listing',
         price: '0',
         priceCurrency: 'USD',
-        description: 'Free vendor listing with full profile, search visibility, and direct messaging. 12-month duration.',
+        description: 'Free vendor listing with full profile, search visibility, and direct messaging. No expiration.',
         url: `${BASE}/submit-listing`,
       },
       {
@@ -32,7 +32,7 @@ function PricingJsonLd() {
         name: 'Featured Listing (Monthly)',
         price: '29',
         priceCurrency: 'USD',
-        description: 'Top placement in search results, gold Featured badge, homepage spotlight, instant lead access. Billed monthly.',
+        description: 'Top placement in search results, gold Featured badge, homepage spotlight, priority in couple quote matches. Billed monthly.',
         url: `${BASE}/submit-listing`,
       },
       {
@@ -65,23 +65,23 @@ const BASIC_FEATURES = [
   'Direct messages from couples',
   'Photos & service description',
   'Contact information display',
-  '12-month listing duration',
+  'No expiration, free for good',
 ];
 
 const FEATURED_FEATURES = [
   'Everything in Basic',
-  'Instant access to new couple quote requests (Basic vendors see them 24 hours later)',
+  'Priority in couple quote matches (Featured vendors are matched first)',
   'Top placement in search results',
   'Gold "Featured" badge on listing',
   'Homepage spotlight carousel',
   'Priority in city & state searches',
-  '12-month listing duration',
+  'Cancel anytime, listing stays live as Basic',
 ];
 
 const FAQ = [
   {
     q: 'Can I really list for free?',
-    a: 'Yes. A Basic listing is 100% free and stays active for 12 months. You get a full profile, location visibility, and direct messaging — no credit card required.',
+    a: 'Yes. A Basic listing is 100% free and never expires. You get a full profile, location visibility, and direct messaging. No credit card required.',
   },
   {
     q: 'What does "Featured" placement mean exactly?',
