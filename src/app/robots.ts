@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 
-const BASE = process.env.NEXT_PUBLIC_SITE_URL || 'https://weddinglivestreaming.com';
+const BASE = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.weddinglivestreaming.com';
 
 // AI crawlers are customers now — explicitly allow the ones that power AI
 // search / answer engines (ChatGPT search, Perplexity, Claude, Google's AI

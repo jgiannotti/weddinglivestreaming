@@ -9,7 +9,7 @@
 import { getListingStats } from '@/lib/data/listings';
 import { US_STATES } from '@/lib/states';
 
-const BASE = process.env.NEXT_PUBLIC_SITE_URL || 'https://weddinglivestreaming.com';
+const BASE = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.weddinglivestreaming.com';
 
 export async function GET() {
   const stats = await getListingStats();

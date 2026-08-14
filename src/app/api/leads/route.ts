@@ -193,7 +193,7 @@ export async function POST(request: Request) {
         <strong>Budget:</strong> ${budget ? escapeHtml(String(budget)) : '—'}<br/>
         <strong>Matched vendors:</strong> ${matched_vendor_ids.length}</p>
         ${safe.message ? `<p><strong>Message:</strong> ${safe.message}</p>` : ''}
-        <p><a href="https://weddinglivestreaming.com/admin/leads">Open the leads queue</a></p>
+        <p><a href="https://www.weddinglivestreaming.com/admin/leads">Open the leads queue</a></p>
       `,
     })
   );

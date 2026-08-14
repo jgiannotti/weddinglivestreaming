@@ -24,7 +24,7 @@ export function welcomeSubscriberEmail(params: WelcomeSubscriberParams): { subje
           <p style="margin: 0 0 16px; font-size: 15px; color: #6b5c60; line-height: 1.5;">
             Thanks for subscribing with ${email}. We&rsquo;ll send you occasional tips and deals for planning your wedding live stream — no spam, just the good stuff.
           </p>
-          <a href="https://weddinglivestreaming.com/directory" style="display: inline-block; background-color: #d49a35; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: bold;">
+          <a href="https://www.weddinglivestreaming.com/directory" style="display: inline-block; background-color: #d49a35; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: bold;">
             Browse vendors
           </a>
         </td>

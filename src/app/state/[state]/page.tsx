@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button';
 import { ListingCard } from '@/components/listing-card';
 import { LeadForm } from '@/components/lead-form';
 import { getStateBySlug, US_STATES } from '@/lib/states';
-import { getListings } from '@/lib/data/listings';
+import { getListings, getCitiesWithListings } from '@/lib/data/listings';
+import { slugify } from '@/lib/utils';
 import { STATE_CONTENT } from '@/lib/state-content';
 import { BreadcrumbJsonLd, ListingsItemListJsonLd, FaqJsonLd } from '@/components/json-ld';
 
@@ -41,6 +42,18 @@ export default async function StatePage({ params }: PageProps) {
   const allListings = await getListings({ state: info.name });
   const listings = allListings.slice(0, 9);
   const content = STATE_CONTENT[info.slug];
+
+  // Cities in this state that have a real city landing page (i.e. >=1 approved
+  // listing). City chips link there instead of /directory?location=... —
+  // parameterized directory URLs aren't indexable (canonical points at bare
+  // /directory) and Google was flagging them as duplicates, so internal links
+  // should spend their weight on real pages wherever one exists.
+  const cityPairs = await getCitiesWithListings();
+  const citiesWithPages = new Set(
+    cityPairs
+      .filter((p) => p.state.toLowerCase() === info.name.toLowerCase())
+      .map((p) => slugify(p.city))
+  );
 
   return (
     <div>
@@ -128,7 +141,11 @@ export default async function StatePage({ params }: PageProps) {
             {info.topCities.map((city) => (
               <Link
                 key={city}
-                href={`/directory?location=${encodeURIComponent(city)}`}
+                href={
+                  citiesWithPages.has(slugify(city))
+                    ? `/wedding-live-streaming-${info.slug}/${slugify(city)}`
+                    : `/directory?location=${encodeURIComponent(city)}`
+                }
                 className="px-4 py-2 rounded-full border bg-card text-sm font-medium hover:border-primary hover:text-primary transition-colors"
               >
                 {city}

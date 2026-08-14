@@ -28,7 +28,7 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://weddinglivestreaming.com'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://www.weddinglivestreaming.com'),
   title: {
     default: 'Find Wedding Live Streaming Vendors Near You | WeddingLiveStreaming.com',
     template: '%s | WeddingLiveStreaming',

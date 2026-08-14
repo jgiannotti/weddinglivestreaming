@@ -22,7 +22,7 @@ export function ListingJsonLd({ listing }: ListingJsonLdProps) {
     name: listing.title,
     description: listing.description,
     image: listing.heroImageUrl ?? getPlaceholderImage(listing.id),
-    url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://weddinglivestreaming.com'}/listing/${listing.slug}`,
+    url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.weddinglivestreaming.com'}/listing/${listing.slug}`,
     address: {
       '@type': 'PostalAddress',
       addressLocality: listing.city,
@@ -52,7 +52,7 @@ export function OrganizationJsonLd() {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'WeddingLiveStreaming',
-    url: 'https://weddinglivestreaming.com',
+    url: 'https://www.weddinglivestreaming.com',
     description: 'The nationwide directory of wedding live streaming professionals.',
     sameAs: [],
   };
@@ -68,7 +68,7 @@ export function OrganizationJsonLd() {
 // internal search so they can surface a sitelinks searchbox / route queries
 // to /directory?location=... instead of a plain external link.
 export function WebsiteJsonLd() {
-  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://weddinglivestreaming.com';
+  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.weddinglivestreaming.com';
   const data = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
@@ -97,7 +97,7 @@ export interface BreadcrumbItem {
 }
 
 export function BreadcrumbJsonLd({ items }: { items: BreadcrumbItem[] }) {
-  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://weddinglivestreaming.com';
+  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.weddinglivestreaming.com';
   const data = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -119,7 +119,7 @@ export function BreadcrumbJsonLd({ items }: { items: BreadcrumbItem[] }) {
 // ItemList for directory/state/city listing grids — helps AI engines and
 // Google understand "this page is a ranked list of N businesses."
 export function ListingsItemListJsonLd({ listings }: { listings: Listing[] }) {
-  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://weddinglivestreaming.com';
+  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.weddinglivestreaming.com';
   const data = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
@@ -141,7 +141,7 @@ export function ListingsItemListJsonLd({ listings }: { listings: Listing[] }) {
 // Generic ItemList for non-listing collections (e.g. the guides hub) — same
 // shape as ListingsItemListJsonLd but takes plain name/path pairs.
 export function PagesItemListJsonLd({ items }: { items: { name: string; path: string }[] }) {
-  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://weddinglivestreaming.com';
+  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.weddinglivestreaming.com';
   const data = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
@@ -198,7 +198,7 @@ export function ArticleJsonLd({
   headline: string;
   description: string;
 }) {
-  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://weddinglivestreaming.com';
+  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.weddinglivestreaming.com';
   const data = {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -233,7 +233,7 @@ export function DatasetJsonLd({
   url: string; // path, e.g. "/guides/wedding-live-streaming-cost-by-state"
   dateModified: string; // ISO date, e.g. "2026-08-07"
 }) {
-  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://weddinglivestreaming.com';
+  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.weddinglivestreaming.com';
   const data = {
     '@context': 'https://schema.org',
     '@type': 'Dataset',

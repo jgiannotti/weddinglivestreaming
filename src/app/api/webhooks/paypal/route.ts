@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
 
 // PayPal subscription webhook. Configure at developer.paypal.com →
-//   Webhooks → URL: https://weddinglivestreaming.com/api/webhooks/paypal
+//   Webhooks → URL: https://www.weddinglivestreaming.com/api/webhooks/paypal
 //   Events: BILLING.SUBSCRIPTION.ACTIVATED, .CANCELLED, .EXPIRED, .PAYMENT.FAILED
 // PayPal sends signed JSON. Verification omitted here for brevity — in production
 // validate via PayPal's verify-webhook-signature endpoint.

@@ -58,7 +58,7 @@ export function leadNotificationEmail(params: LeadNotificationParams): { subject
           <p style="margin: 0 0 20px; font-size: 14px; color: #35272c; line-height: 1.5;">
             Reply directly to this email to reach the couple, or manage your listing from your dashboard.
           </p>
-          <a href="https://weddinglivestreaming.com/dashboard" style="display: inline-block; background-color: #d49a35; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: bold;">
+          <a href="https://www.weddinglivestreaming.com/dashboard" style="display: inline-block; background-color: #d49a35; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: bold;">
             Open your dashboard
           </a>
         </td>

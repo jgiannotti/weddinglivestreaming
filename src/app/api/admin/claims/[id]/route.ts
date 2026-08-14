@@ -50,8 +50,8 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
         html: `
           <h2>Your profile is yours!</h2>
           <p>Your claim${listing?.title ? ` for <strong>${escapeHtml(listing.title)}</strong>` : ''} has been approved. You now manage this listing.</p>
-          ${waitingLeads > 0 ? `<p><strong>You have ${waitingLeads} couple inquir${waitingLeads === 1 ? 'y' : 'ies'} waiting</strong> — couples who requested wedding livestream quotes in your area. Their contact details are in your dashboard: <a href="https://weddinglivestreaming.com/dashboard/leads">view your leads</a>.</p>` : ''}
-          <p><a href="https://weddinglivestreaming.com/dashboard">Open your dashboard</a>${listing?.slug ? ` · <a href="https://weddinglivestreaming.com/listing/${listing.slug}">View your public listing</a>` : ''}</p>
+          ${waitingLeads > 0 ? `<p><strong>You have ${waitingLeads} couple inquir${waitingLeads === 1 ? 'y' : 'ies'} waiting</strong> — couples who requested wedding livestream quotes in your area. Their contact details are in your dashboard: <a href="https://www.weddinglivestreaming.com/dashboard/leads">view your leads</a>.</p>` : ''}
+          <p><a href="https://www.weddinglivestreaming.com/dashboard">Open your dashboard</a>${listing?.slug ? ` · <a href="https://www.weddinglivestreaming.com/listing/${listing.slug}">View your public listing</a>` : ''}</p>
         `,
       });
     }

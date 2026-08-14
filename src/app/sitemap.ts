@@ -3,7 +3,7 @@ import { US_STATES, getStateByName } from '@/lib/states';
 import { getListings, getCitiesWithListings } from '@/lib/data/listings';
 import { slugify } from '@/lib/utils';
 
-const BASE = process.env.NEXT_PUBLIC_SITE_URL || 'https://weddinglivestreaming.com';
+const BASE = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.weddinglivestreaming.com';
 
 // lastModified policy: only claim a date we can actually stand behind.
 // Stamping `new Date()` on every URL each build teaches crawlers the field is

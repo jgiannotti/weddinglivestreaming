@@ -4,7 +4,7 @@ import { Check, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { BreadcrumbJsonLd, FaqJsonLd } from '@/components/json-ld';
 
-const BASE = process.env.NEXT_PUBLIC_SITE_URL || 'https://weddinglivestreaming.com';
+const BASE = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.weddinglivestreaming.com';
 
 // Product + Offer schema for the vendor plans — makes the membership terms
 // machine-readable for search/AI engines answering "what does a listing on

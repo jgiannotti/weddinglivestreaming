@@ -7,7 +7,7 @@ interface WelcomeAccountParams {
   role: 'couple' | 'vendor' | 'admin';
 }
 
-const SITE = 'https://weddinglivestreaming.com';
+const SITE = 'https://www.weddinglivestreaming.com';
 
 function shell(inner: string): string {
   return `

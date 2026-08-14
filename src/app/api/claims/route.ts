@@ -80,7 +80,7 @@ export async function POST(request: Request) {
       <h2>New claim request</h2>
       <p><strong>Claimant:</strong> ${escapeHtml(user.email || user.id)}</p>
       <p style="white-space:pre-line">${escapeHtml(details)}</p>
-      <p><a href="https://weddinglivestreaming.com/admin/claims">Review in the claims queue</a></p>
+      <p><a href="https://www.weddinglivestreaming.com/admin/claims">Review in the claims queue</a></p>
     `,
   });
 
