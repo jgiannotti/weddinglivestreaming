@@ -26,7 +26,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const listing = await getListingBySlug(slug);
   if (!listing) return { title: 'Vendor Not Found' };
   return {
-    title: listing.title,
+    // Brand-name searches for the vendor are these pages' main query source
+    // (GSC). Location + service in the title tells both Google and the
+    // searcher why this result is relevant beyond the bare brand string.
+    title: `${listing.title} — Wedding Live Streaming in ${listing.city}, ${listing.state}`,
     description: listing.description.slice(0, 160),
     alternates: { canonical: `/listing/${listing.slug}` },
     openGraph: {

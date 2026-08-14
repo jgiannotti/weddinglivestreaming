@@ -36,6 +36,12 @@ export function ListingJsonLd({ listing }: ListingJsonLdProps) {
         longitude: listing.lng,
       },
     }),
+    // sameAs -> the vendor's own site is the entity-linking signal that helps
+    // Google connect this listing to the brand people actually search for.
+    ...(listing.websiteUrl && { sameAs: [listing.websiteUrl] }),
+    ...(listing.startingPriceCents != null && {
+      priceRange: `From $${Math.round(listing.startingPriceCents / 100).toLocaleString('en-US')}`,
+    }),
     serviceType: 'Wedding Live Streaming',
   };
 
