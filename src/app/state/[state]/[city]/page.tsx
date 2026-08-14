@@ -7,7 +7,38 @@ import { ListingCard } from '@/components/listing-card';
 import { getStateBySlug } from '@/lib/states';
 import { getListings, getListingsByLocation, getCitiesWithListings } from '@/lib/data/listings';
 import { slugify } from '@/lib/utils';
-import { BreadcrumbJsonLd, ListingsItemListJsonLd } from '@/components/json-ld';
+import { BreadcrumbJsonLd, ListingsItemListJsonLd, FaqJsonLd } from '@/components/json-ld';
+import costData from '@/lib/data/cost-by-state.generated.json';
+
+const fmtUsd = (n: number) => `$${n.toLocaleString('en-US')}`;
+
+// City-specific FAQ built from real data: state-level median pricing from the
+// directory's own dataset, and the radius-search behavior that powers this
+// page's vendor grid. This is what makes each city page substantively unique
+// rather than a templated shell — and it targets the "wedding livestream
+// [city]" question cluster that GSC shows earning impressions.
+function buildCityFaqs(cityName: string, stateName: string, stateCode: string, vendorCount: number) {
+  const stateRow = costData.states.find((s) => s.code === stateCode);
+  const nat = costData.national;
+  const costAnswer = stateRow
+    ? `Based on published vendor pricing in our directory, livestream packages in ${stateName} typically start around ${fmtUsd(stateRow.medianStart)} (the state median). Nationally, most professional ceremony streams start between ${fmtUsd(nat.p25Start)} and ${fmtUsd(nat.p75Start)}. Vendors serving ${cityName} list their own starting prices on their profiles, so you can compare exact numbers before reaching out.`
+    : `Nationally, most professional wedding livestream packages start between ${fmtUsd(nat.p25Start)} and ${fmtUsd(nat.p75Start)}, with a median starting price of ${fmtUsd(nat.medianStart)}. Vendors serving ${cityName} list their own starting prices on their profiles, so you can compare exact numbers before reaching out.`;
+
+  return [
+    {
+      question: `How much does wedding live streaming cost in ${cityName}?`,
+      answer: costAnswer,
+    },
+    {
+      question: `Do I need a vendor based in ${cityName} itself?`,
+      answer: `No — most wedding livestream vendors travel. The ${vendorCount > 0 ? `${vendorCount} vendor${vendorCount === 1 ? '' : 's'} shown here` : 'vendors shown here'} include professionals whose coverage area reaches ${cityName}, not just businesses headquartered in it. Many list a travel radius or serve their whole region, so a vendor a town over is often the right choice.`,
+    },
+    {
+      question: `How do I book a wedding livestream in ${cityName}?`,
+      answer: `Compare the vendors below, open a profile, and message them directly with your date and venue — it's free for couples, with no booking fees or commission. Before you book anyone, run through our vetting checklist (backup internet, audio plan, what's included in the price) so you can compare answers side by side.`,
+    },
+  ];
+}
 
 interface PageProps {
   params: Promise<{ state: string; city: string }>;
@@ -59,6 +90,8 @@ export default async function CityPage({ params }: PageProps) {
     ? radiusResult.listings
     : await getListings({ state: stateInfo.name, city: cityName });
 
+  const cityFaqs = buildCityFaqs(cityName, stateInfo.name, stateInfo.abbreviation, listings.length);
+
   return (
     <div>
       <BreadcrumbJsonLd
@@ -69,6 +102,7 @@ export default async function CityPage({ params }: PageProps) {
         ]}
       />
       {listings.length > 0 && <ListingsItemListJsonLd listings={listings} />}
+      <FaqJsonLd items={cityFaqs} />
 
       <section className="bg-accent/30 border-b">
         <div className="container py-16 md:py-20">
@@ -107,6 +141,25 @@ export default async function CityPage({ params }: PageProps) {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {listings.map((listing) => (
             <ListingCard key={listing.id} listing={listing} />
+          ))}
+        </div>
+      </section>
+
+      {/* CITY FAQ — mirrors the state pages' FAQ treatment with city-level,
+          data-driven answers (state median pricing, radius coverage). */}
+      <section className="container py-16 border-t max-w-3xl">
+        <h2 className="font-display text-2xl md:text-3xl font-medium mb-8">
+          Wedding Livestreaming in {cityName}: Quick Answers
+        </h2>
+        <div className="space-y-3">
+          {cityFaqs.map((item) => (
+            <details key={item.question} className="group rounded-2xl border bg-card p-5 transition-shadow open:shadow-md">
+              <summary className="cursor-pointer font-semibold flex items-center justify-between list-none">
+                {item.question}
+                <span className="text-muted-foreground transition-transform group-open:rotate-45 text-xl">+</span>
+              </summary>
+              <p className="mt-3 text-muted-foreground leading-relaxed">{item.answer}</p>
+            </details>
           ))}
         </div>
       </section>
