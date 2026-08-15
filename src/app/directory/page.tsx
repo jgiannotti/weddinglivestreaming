@@ -13,8 +13,12 @@ import { BreadcrumbJsonLd, ListingsItemListJsonLd } from '@/components/json-ld';
 import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
-  title: 'Find Vendors',
-  description: 'Browse professional wedding live streaming vendors across the United States.',
+  // This page is the natural ranker for the "wedding streaming service" /
+  // "wedding livestream vendors" query family (GSC) — the title should carry
+  // those terms, not an internal nav label.
+  title: 'Wedding Live Streaming Vendor Directory — Search by City & State',
+  description:
+    'Search professional wedding live streaming vendors in every U.S. state. Compare published starting prices, filter by crew size, and message vendors directly — free for couples.',
   // Every filter/sort/page combination is the same underlying content — point
   // them all at the unfiltered canonical URL so search engines don't treat
   // ?location=&price=&page= combinations as separate duplicate pages.
