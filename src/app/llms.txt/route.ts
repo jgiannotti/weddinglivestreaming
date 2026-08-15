@@ -60,6 +60,7 @@ export async function GET() {
     `- [How to Livestream an Outdoor Wedding](${BASE}/guides/how-to-livestream-an-outdoor-wedding): beach/garden/ranch streams — cellular internet without venue Wi-Fi, wind-proof audio, sun placement, power.`,
     `- [Should You Livestream Your Wedding Reception?](${BASE}/guides/should-you-livestream-your-wedding-reception): ceremony-only vs. key reception moments — toasts, first dance, and how long a stream should run.`,
     `- [Wedding Livestream Music & Copyright](${BASE}/guides/wedding-livestream-music-copyright): why YouTube/Facebook mute streams over music, safer platforms, keeping your songs without losing the replay.`,
+    `- [Las Vegas Wedding Livestreams](${BASE}/guides/las-vegas-wedding-livestream): chapel streaming add-ons vs independent vendors, Nevada costs, time-zone logistics for short-notice weddings.`,
     '',
     '## State directories',
     '',

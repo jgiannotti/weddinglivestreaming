@@ -97,6 +97,13 @@ const GUIDES = [
     href: '/guides/should-you-livestream-your-wedding-reception',
   },
   {
+    eyebrow: 'Destination Guide',
+    title: 'Las Vegas Wedding Livestreams',
+    description:
+      'Which chapels stream ceremonies, what it costs in Nevada, and how far-away family watches a short-notice Vegas wedding.',
+    href: '/guides/las-vegas-wedding-livestream',
+  },
+  {
     eyebrow: 'Venue Guide',
     title: 'How to Livestream an Outdoor Wedding',
     description:

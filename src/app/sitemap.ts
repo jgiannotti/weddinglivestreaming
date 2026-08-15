@@ -28,6 +28,7 @@ const GUIDE_DATES: Record<string, string> = {
   '/guides/how-to-livestream-an-outdoor-wedding': '2026-08-07',
   '/guides/should-you-livestream-your-wedding-reception': '2026-08-07',
   '/guides/wedding-livestream-music-copyright': '2026-08-07',
+  '/guides/las-vegas-wedding-livestream': '2026-08-15',
 };
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
