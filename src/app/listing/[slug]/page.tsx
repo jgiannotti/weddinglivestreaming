@@ -12,6 +12,7 @@ import { formatStartingPrice, getCrewOption } from '@/lib/listing-facets';
 import { formatDate } from '@/lib/utils';
 import { getPlaceholderImage } from '@/lib/constants';
 import { ListingJsonLd, BreadcrumbJsonLd } from '@/components/json-ld';
+import { getStateByName } from '@/lib/states';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -48,13 +49,22 @@ export default async function ListingPage({ params }: PageProps) {
   const related = await getRelatedListings(listing, 3);
   const hasCoordinates = listing.lat != null && listing.lng != null;
 
+  // Route the breadcrumb through the state page rather than the generic
+  // directory: it mirrors the site's real geo hierarchy, and ~200 listing
+  // pages each contributing a visible link to their state page is internal
+  // authority pointed exactly where the geo queries land.
+  const stateInfo = getStateByName(listing.state);
+  const stateCrumb = stateInfo
+    ? { name: stateInfo.name, path: `/wedding-live-streaming-${stateInfo.slug}` }
+    : { name: 'Directory', path: '/directory' };
+
   return (
     <div>
       <ListingJsonLd listing={listing} />
       <BreadcrumbJsonLd
         items={[
           { name: 'Home', path: '/' },
-          { name: 'Directory', path: '/directory' },
+          stateCrumb,
           { name: listing.title, path: `/listing/${listing.slug}` },
         ]}
       />
@@ -85,6 +95,15 @@ export default async function ListingPage({ params }: PageProps) {
       </div>
 
       <div className="container py-10 md:py-12">
+        <nav aria-label="Breadcrumb" className="mb-8 text-sm text-muted-foreground">
+          <Link href="/" className="hover:text-primary">Home</Link>
+          <span className="mx-2">/</span>
+          <Link href={stateCrumb.path} className="hover:text-primary">
+            {stateInfo ? `${stateInfo.name} Vendors` : 'Directory'}
+          </Link>
+          <span className="mx-2">/</span>
+          <span className="text-foreground">{listing.title}</span>
+        </nav>
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-10">
           {/* MAIN COLUMN */}
           <div>
