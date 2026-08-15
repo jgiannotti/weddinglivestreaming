@@ -34,6 +34,10 @@ function buildCityFaqs(cityName: string, stateName: string, stateCode: string, v
       answer: `No — most wedding livestream vendors travel. The ${vendorCount > 0 ? `${vendorCount} vendor${vendorCount === 1 ? '' : 's'} shown here` : 'vendors shown here'} include professionals whose coverage area reaches ${cityName}, not just businesses headquartered in it. Many list a travel radius or serve their whole region, so a vendor a town over is often the right choice.`,
     },
     {
+      question: `Can my wedding videographer also livestream the ceremony?`,
+      answer: `Often, yes — many wedding videographers offer livestreaming as an add-on, and several vendors serving ${cityName} are videography studios that do both. It can be cost-effective to bundle, but ask the livestream-specific questions before assuming: whether a dedicated operator runs the stream (or a camera is simply left running), what the backup internet plan is, and whether streaming is priced separately from the film.`,
+    },
+    {
       question: `How do I book a wedding livestream in ${cityName}?`,
       answer: `Compare the vendors below, open a profile, and message them directly with your date and venue — it's free for couples, with no booking fees or commission. Before you book anyone, run through our vetting checklist (backup internet, audio plan, what's included in the price) so you can compare answers side by side.`,
     },
