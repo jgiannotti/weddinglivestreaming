@@ -6,24 +6,45 @@ import { BreadcrumbJsonLd, FaqJsonLd } from '@/components/json-ld';
 
 const BASE = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.weddinglivestreaming.com';
 
-// Product + Offer schema for the vendor plans — makes the membership terms
+// Service + Offer schema for the vendor plans — makes the membership terms
 // machine-readable for search/AI engines answering "what does a listing on
 // weddinglivestreaming.com cost".
+//
+// Deliberately `Service`, NOT `Product`. This was Product until 2026-08-17,
+// which pulled the page into Google's Shopping/Merchant-listings pipeline:
+// GSC then demanded retail fields that are meaningless for a directory
+// membership — shippingDetails, hasMerchantReturnPolicy, a product image —
+// and flagged the item invalid for the missing image. `Service` describes what
+// this actually is, keeps the pricing machine-readable via `offers`, and stays
+// out of the merchant pipeline entirely.
+//
+// Note on the "missing aggregateRating / review" warnings Google also raised:
+// those stay unfixed on purpose. We have no genuine ratings for the listing
+// tiers, and inventing them would be structured-data spam — grounds for a
+// manual action, and dishonest to couples and vendors alike.
 function PricingJsonLd() {
   const data = {
     '@context': 'https://schema.org',
-    '@type': 'Product',
+    '@type': 'Service',
     name: 'WeddingLiveStreaming Vendor Listing',
+    serviceType: 'Wedding vendor directory listing',
     description:
       'A vendor listing in the nationwide wedding live streaming directory. Basic listings are free; Featured listings get top placement in search results.',
     url: `${BASE}/pricing`,
-    brand: { '@type': 'Organization', name: 'WeddingLiveStreaming' },
+    provider: {
+      '@type': 'Organization',
+      name: 'WeddingLiveStreaming',
+      url: BASE,
+    },
+    areaServed: { '@type': 'Country', name: 'United States' },
+    audience: { '@type': 'Audience', audienceType: 'Wedding live streaming vendors' },
     offers: [
       {
         '@type': 'Offer',
         name: 'Basic Listing',
         price: '0',
         priceCurrency: 'USD',
+        availability: 'https://schema.org/InStock',
         description: 'Free vendor listing with full profile, search visibility, and direct messaging. No expiration.',
         url: `${BASE}/submit-listing`,
       },
@@ -32,6 +53,7 @@ function PricingJsonLd() {
         name: 'Featured Listing (Monthly)',
         price: '29',
         priceCurrency: 'USD',
+        availability: 'https://schema.org/InStock',
         description: 'Top placement in search results, gold Featured badge, homepage spotlight, priority in couple quote matches. Billed monthly.',
         url: `${BASE}/submit-listing`,
       },
@@ -40,6 +62,7 @@ function PricingJsonLd() {
         name: 'Featured Listing (Annual)',
         price: '199',
         priceCurrency: 'USD',
+        availability: 'https://schema.org/InStock',
         description: 'All Featured benefits, billed annually (save 43% vs. monthly).',
         url: `${BASE}/submit-listing`,
       },
