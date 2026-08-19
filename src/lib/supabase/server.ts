@@ -22,7 +22,12 @@ export async function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
-      accessToken: async () => (await getToken()) ?? null,
+      // The 'supabase' JWT template adds {"role": "authenticated"}. Without it,
+      // PostgREST sees no role claim and treats every signed-in user as anon:
+      // public reads still work, but every RLS write and every
+      // authenticated-only policy silently fails. That broke all profile
+      // claims from 2026-07-25 until 2026-08-19. Do not remove the template.
+      accessToken: async () => (await getToken({ template: 'supabase' })) ?? null,
       auth: { persistSession: false, autoRefreshToken: false },
     }
   );

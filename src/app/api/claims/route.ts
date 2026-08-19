@@ -69,7 +69,17 @@ export async function POST(request: Request) {
     status: 'pending',
   });
 
-  if (error) return NextResponse.json({ error: 'Could not submit your claim. Please try again.' }, { status: 500 });
+  if (error) {
+    // Surface the real failure in Vercel runtime logs. Swallowing it hid a
+    // total claim outage for three weeks; never let this fail silently again.
+    console.error('[claims] insert failed', {
+      code: (error as any).code,
+      message: error.message,
+      userId: user.id,
+      listingId,
+    });
+    return NextResponse.json({ error: 'Could not submit your claim. Please try again.' }, { status: 500 });
+  }
 
   // Owner alert — claims need manual review in /admin/claims.
   await sendEmail({

@@ -21,7 +21,9 @@ export function useSupabase() {
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
         {
-          accessToken: async () => (await session?.getToken()) ?? null,
+          // Same 'supabase' JWT template as the server client: adds the
+          // {"role": "authenticated"} claim PostgREST needs. See server.ts.
+          accessToken: async () => (await session?.getToken({ template: 'supabase' })) ?? null,
           auth: { persistSession: false, autoRefreshToken: false },
         }
       ),
