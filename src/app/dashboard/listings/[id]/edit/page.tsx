@@ -55,8 +55,10 @@ export default async function EditListingPage({ params }: PageProps) {
       <EditListingForm
         listing={{
           id: listing.id,
+          slug: listing.slug,
           title: listing.title,
           description: listing.description,
+          heroImageUrl: listing.hero_image_url ?? null,
           websiteUrl: listing.website_url ?? '',
           city: listing.city,
           state: listing.state,

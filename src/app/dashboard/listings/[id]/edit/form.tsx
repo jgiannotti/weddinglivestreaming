@@ -15,8 +15,10 @@ import {
 
 interface EditableListing {
   id: string;
+  slug: string;
   title: string;
   description: string;
+  heroImageUrl: string | null;
   websiteUrl: string;
   city: string;
   state: string;
@@ -43,6 +45,8 @@ export function EditListingForm({ listing }: Props) {
   const [startingPrice, setStartingPrice] = useState(priceCentsToInput(listing.startingPriceCents));
   const [priceError, setPriceError] = useState<string | null>(null);
   const [crewType, setCrewType] = useState<CrewType | ''>(listing.crewType ?? '');
+  const [heroFile, setHeroFile] = useState<File | null>(null);
+  const [heroPreview, setHeroPreview] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -76,6 +80,19 @@ export function EditListingForm({ listing }: Props) {
         }
       }
 
+      // Upload the new cover photo first (if one was chosen), same bucket and
+      // path scheme as the submit-listing form.
+      let heroUpdate: { hero_image_url?: string } = {};
+      if (heroFile) {
+        const path = `listings/${listing.slug}-${Date.now()}-${heroFile.name}`;
+        const { error: uploadErr } = await supabase.storage
+          .from('listings')
+          .upload(path, heroFile, { upsert: false });
+        if (uploadErr) throw uploadErr;
+        const { data: pub } = supabase.storage.from('listings').getPublicUrl(path);
+        heroUpdate = { hero_image_url: pub.publicUrl };
+      }
+
       // RLS ("vendor owners manage their listings") enforces ownership
       // server-side regardless of what this client sends.
       const { error: updateErr } = await supabase
@@ -92,6 +109,7 @@ export function EditListingForm({ listing }: Props) {
           // the column, so a vendor can withdraw a price they no longer honour.
           starting_price_cents: parsedPrice.cents,
           crew_type: crewType || null,
+          ...heroUpdate,
           ...coordUpdate,
         })
         .eq('id', listing.id);
@@ -108,6 +126,41 @@ export function EditListingForm({ listing }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      <section className="rounded-2xl border bg-card p-6 space-y-4">
+        <h2 className="font-display text-xl font-semibold">Cover photo</h2>
+        <p className="text-sm text-muted-foreground">
+          The large photo at the top of your listing. If you haven&rsquo;t added one,
+          couples see a generic stock photo instead of your work.
+        </p>
+        {(heroPreview || listing.heroImageUrl) && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={heroPreview ?? listing.heroImageUrl ?? ''}
+            alt="Listing cover"
+            className="w-full max-h-56 object-cover rounded-xl border"
+          />
+        )}
+        <div>
+          <label htmlFor="heroFile" className="block text-sm font-medium mb-1.5">
+            {listing.heroImageUrl || heroPreview ? 'Replace photo' : 'Upload a photo'}
+          </label>
+          <input
+            id="heroFile"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={(e) => {
+              const f = e.target.files?.[0] ?? null;
+              setHeroFile(f);
+              setHeroPreview(f ? URL.createObjectURL(f) : null);
+            }}
+            className="block w-full text-sm file:mr-4 file:rounded-full file:border-0 file:bg-accent file:px-4 file:py-2 file:text-sm file:font-medium hover:file:bg-muted"
+          />
+          <p className="text-xs text-muted-foreground mt-1.5">
+            JPG, PNG, or WebP. A wide photo of your actual work looks best. Saved when you hit Save changes.
+          </p>
+        </div>
+      </section>
+
       <section className="rounded-2xl border bg-card p-6 space-y-4">
         <h2 className="font-display text-xl font-semibold">Business details</h2>
         <div>
