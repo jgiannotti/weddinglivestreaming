@@ -13,6 +13,13 @@ export const metadata: Metadata = {
 
 const GUIDES = [
   {
+    eyebrow: 'Free Tool',
+    title: 'Wedding Livestream Cost Calculator',
+    description:
+      'Pick your state, cameras, coverage and add-ons for a budget range built from the published pricing of 65 vendors — the only calculator based on real directory data.',
+    href: '/tools/wedding-livestream-cost-calculator',
+  },
+  {
     eyebrow: 'Original Data',
     title: 'Average Wedding Live Streaming Cost by State',
     description:
@@ -102,6 +109,27 @@ const GUIDES = [
     description:
       'Which chapels stream ceremonies, what it costs in Nevada, and how far-away family watches a short-notice Vegas wedding.',
     href: '/guides/las-vegas-wedding-livestream',
+  },
+  {
+    eyebrow: 'Comparison',
+    title: 'Wedding Videographer vs. Livestreamer: Do You Need Both?',
+    description:
+      'One makes a film you watch later; the other puts absent guests in the room live. What each costs, when one vendor can do both, and how to choose.',
+    href: '/guides/wedding-videographer-vs-livestreamer',
+  },
+  {
+    eyebrow: 'Planning Guide',
+    title: 'How to Plan a Hybrid Wedding',
+    description:
+      'In-person and virtual guests at the same time — the guest list, a timeline, remote-guest etiquette, and the tech decisions in order of how much they matter.',
+    href: '/guides/hybrid-wedding-guide',
+  },
+  {
+    eyebrow: 'Ceremony Guide',
+    title: 'Livestreaming a Religious Wedding Ceremony',
+    description:
+      'Catholic, Jewish, Hindu, Muslim, Orthodox and Protestant ceremonies — who to ask, where the camera goes, how long you’ll stream, and what not to broadcast.',
+    href: '/guides/livestreaming-a-religious-wedding-ceremony',
   },
   {
     eyebrow: 'Venue Guide',

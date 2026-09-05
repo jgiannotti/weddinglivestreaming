@@ -2,10 +2,12 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { BreadcrumbJsonLd } from '@/components/json-ld';
+import { FOUNDER, FOUNDER_BIO_SHORT } from '@/lib/founder';
 
 export const metadata: Metadata = {
-  title: 'About',
-  description: 'WeddingLiveStreaming.com — the only directory dedicated to wedding live streaming.',
+  title: 'About WeddingLiveStreaming.com — Who We Are and How We Work',
+  description:
+    'The only U.S. directory dedicated to wedding live streaming, founded by Tampa production sound mixer Joe Giannotti. No commissions, no fees for couples, vendor-published pricing.',
   alternates: { canonical: '/about' },
 };
 
@@ -27,6 +29,54 @@ export default function AboutPage() {
           We don&rsquo;t take commissions. We don&rsquo;t charge couples a cent. Vendors pay nothing to list (or a small monthly fee for premium placement). Our job is to make the introduction — what happens next is between you and your vendor.
         </p>
       </div>
+
+      <section id="founder" className="mt-14 max-w-3xl">
+        <p className="eyebrow mb-3">Who&rsquo;s behind it</p>
+        <h2 className="font-display text-2xl md:text-3xl font-medium mb-4">{FOUNDER.name}</h2>
+        <div className="text-foreground/80 space-y-4 text-lg leading-relaxed">
+          <p>{FOUNDER_BIO_SHORT()}</p>
+          <p>
+            That background is why this directory cares about the unglamorous parts of a
+            livestream: whether the vows are actually audible, whether there&rsquo;s a backup
+            internet connection, and whether someone is watching the stream the whole time. Those
+            are the questions our guides push couples to ask, and the reason listings show real,
+            vendor-published pricing instead of &ldquo;contact for a quote.&rdquo;
+          </p>
+          <p>
+            Joe&rsquo;s production work lives at{' '}
+            <a
+              href={FOUNDER.url}
+              rel="noopener"
+              target="_blank"
+              className="underline underline-offset-4 hover:text-primary"
+            >
+              floridasoundman.com
+            </a>
+            . Questions, corrections, or press inquiries:{' '}
+            <Link href="/contact" className="underline underline-offset-4 hover:text-primary">
+              contact us
+            </Link>
+            .
+          </p>
+        </div>
+      </section>
+
+      <section className="mt-12 max-w-3xl">
+        <p className="eyebrow mb-3">How we work</p>
+        <div className="text-foreground/80 space-y-4 text-lg leading-relaxed">
+          <p>
+            Vendors are listed because they publicly offer wedding livestreaming — most were added
+            from their own websites and can claim, edit, or remove their listing free at any time.
+            Prices shown on profiles and in our{' '}
+            <Link href="/guides/wedding-live-streaming-cost-by-state" className="underline underline-offset-4 hover:text-primary">
+              cost data
+            </Link>{' '}
+            are what vendors publish themselves; we never estimate a price for a vendor. Guides are
+            written from that data and from production experience, and no vendor pays to be
+            mentioned in one.
+          </p>
+        </div>
+      </section>
 
       <div className="mt-12 flex flex-wrap gap-3">
         <Button asChild size="lg"><Link href="/directory">Find a Vendor</Link></Button>

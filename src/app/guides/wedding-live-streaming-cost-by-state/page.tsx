@@ -203,7 +203,11 @@ export default function CostByStatePage() {
             <Link href="/guides/wedding-live-streaming-cost" className="underline underline-offset-4 hover:text-primary">
               cost guide
             </Link>{' '}
-            breaks down what each tier includes.
+            breaks down what each tier includes, and the{' '}
+            <Link href="/tools/wedding-livestream-cost-calculator" className="underline underline-offset-4 hover:text-primary">
+              cost calculator
+            </Link>{' '}
+            turns these medians into a budget range for your cameras, coverage and travel.
           </p>
           <p className="text-muted-foreground leading-relaxed">
             One practical note for couples in thin or expensive markets: many vendors publish a free

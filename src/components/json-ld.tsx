@@ -1,4 +1,5 @@
 import { getPlaceholderImage } from '@/lib/constants';
+import { FOUNDER } from '@/lib/founder';
 import type { Listing } from '@/lib/types';
 
 // JSON.stringify does not escape '<', so vendor-controlled text (e.g. a listing
@@ -54,12 +55,26 @@ export function ListingJsonLd({ listing }: ListingJsonLdProps) {
 }
 
 export function OrganizationJsonLd() {
+  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.weddinglivestreaming.com';
   const data = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
+    '@id': `${base}/#organization`,
     name: 'WeddingLiveStreaming',
-    url: 'https://www.weddinglivestreaming.com',
+    url: base,
+    logo: `${base}/opengraph-image`,
     description: 'The nationwide directory of wedding live streaming professionals.',
+    // A real, verifiable person behind the site — the entity signal Google's
+    // quality systems and AI answer engines look for on advice content.
+    founder: {
+      '@type': 'Person',
+      '@id': `${base}/about#founder`,
+      name: FOUNDER.name,
+      jobTitle: 'Production sound mixer',
+      url: FOUNDER.url,
+      sameAs: [...FOUNDER.sameAs],
+      worksFor: { '@id': `${base}/#organization` },
+    },
     sameAs: [],
   };
   return (
@@ -210,10 +225,24 @@ export function ArticleJsonLd({
     '@type': 'Article',
     headline,
     description,
-    publisher: {
+    author: {
       '@type': 'Organization',
+      '@id': `${base}/#organization`,
       name: 'WeddingLiveStreaming',
       url: base,
+    },
+    publisher: {
+      '@type': 'Organization',
+      '@id': `${base}/#organization`,
+      name: 'WeddingLiveStreaming',
+      url: base,
+    },
+    // Editorial oversight by a named, verifiable practitioner — see /about.
+    reviewedBy: {
+      '@type': 'Person',
+      '@id': `${base}/about#founder`,
+      name: FOUNDER.name,
+      url: FOUNDER.url,
     },
   };
   return (

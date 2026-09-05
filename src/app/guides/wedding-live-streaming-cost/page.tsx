@@ -141,7 +141,15 @@ export default function WeddingLiveStreamingCostPage() {
           >
             average cost by state
           </Link>{' '}
-          — real published pricing from vendors in our directory, state by state.
+          — real published pricing from vendors in our directory, state by state. Or get a budget
+          range for your exact setup with the{' '}
+          <Link
+            href="/tools/wedding-livestream-cost-calculator"
+            className="underline underline-offset-4 hover:text-primary"
+          >
+            cost calculator
+          </Link>
+          .
         </p>
       </section>
 

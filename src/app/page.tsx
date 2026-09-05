@@ -86,7 +86,15 @@ export default async function HomePage() {
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" />
                     <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" />
                   </span>
-                  <span className="text-xs font-medium whitespace-nowrap">LIVE · 214 watching from 12 countries</span>
+                  {/* Real numbers from the directory — this used to be a
+                      hardcoded "214 watching from 12 countries" that no data
+                      backed, which is exactly the kind of claim AI answer
+                      engines quote and quality raters penalize. */}
+                  <span className="text-xs font-medium whitespace-nowrap">
+                    {stats.vendorCount > 0 && stats.stateCount > 0
+                      ? `${stats.vendorCount}+ vendors · ${stats.stateCount} states · free for couples`
+                      : 'Free for couples · no booking fees'}
+                  </span>
                 </div>
               </div>
             </div>
