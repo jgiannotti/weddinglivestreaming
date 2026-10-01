@@ -14,7 +14,7 @@
 // the real one lets inflated days into what vendors are shown. (The opt-out
 // rule has a week of slack built in, below, so a deploy that slips a few days
 // never leaves a vendor holding a link that will not opt them out.)
-export const RELEASE_DATE = '2026-10-02';
+export const RELEASE_DATE = '2026-10-01';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
