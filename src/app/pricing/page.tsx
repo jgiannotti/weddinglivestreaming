@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { Check, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { BreadcrumbJsonLd, FaqJsonLd } from '@/components/json-ld';
+import { FOUNDING_MONTHS } from '@/lib/founding-shared';
+import { FOUNDING_FAQ_ANSWER, CANCEL_SENTENCE } from '@/lib/vendor-copy';
 
 const BASE = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.weddinglivestreaming.com';
 
@@ -29,7 +31,7 @@ function PricingJsonLd() {
     name: 'WeddingLiveStreaming Vendor Listing',
     serviceType: 'Wedding vendor directory listing',
     description:
-      'A vendor listing in the nationwide wedding live streaming directory. Basic listings are free; Featured listings get top placement in search results.',
+      `A vendor listing in the nationwide wedding live streaming directory. Basic listings are free; Featured listings get top placement in search results. Founding vendors who add a starting price and a cover photo get Featured free for ${FOUNDING_MONTHS} months.`,
     url: `${BASE}/pricing`,
     provider: {
       '@type': 'Organization',
@@ -76,17 +78,20 @@ function PricingJsonLd() {
   );
 }
 
+// Written for the question a vendor asks ("what does a listing cost"), with the
+// actual prices in it. The old title was "Vendor Pricing" and the description
+// named no price at all.
 export const metadata: Metadata = {
-  title: 'Vendor Pricing',
-  description: "Start for free. Upgrade when you're ready to grow. No contracts, no surprises.",
+  title: { absolute: 'Vendor Pricing: Free Listing, Featured $29/mo' },
+  description: `A Basic listing is free and never expires. Featured is $29 a month or $199 a year, and free for ${FOUNDING_MONTHS} months for founding vendors. No commission.`,
   alternates: { canonical: '/pricing' },
 };
 
 const BASIC_FEATURES = [
   'Complete vendor profile',
   'Location-based search visibility',
-  'Direct messages from couples',
-  'Photos & service description',
+  'Couple quote requests and direct messages',
+  'Cover photo and service description',
   'Contact information display',
   'No expiration, free for good',
 ];
@@ -96,9 +101,9 @@ const FEATURED_FEATURES = [
   'Priority in couple quote matches (Featured vendors are matched first)',
   'Top placement in search results',
   'Gold "Featured" badge on listing',
-  'Homepage spotlight carousel',
+  'A turn in the homepage spotlight',
   'Priority in city & state searches',
-  'Cancel anytime, listing stays live as Basic',
+  'Cancel any time by email, listing stays live as Basic',
 ];
 
 const FAQ = [
@@ -108,19 +113,23 @@ const FAQ = [
   },
   {
     q: 'What does "Featured" placement mean exactly?',
-    a: 'Featured listings appear at the top of search results in your area, above Basic listings. They also display a gold "Featured" badge and appear in the Featured Vendors section on the homepage. This significantly increases your visibility with couples actively searching.',
+    a: 'Featured listings appear at the top of search results in your area, above Basic listings. They also display a gold "Featured" badge, take a turn in the Featured Vendors section on the homepage, and are matched first when a couple requests quotes in your area.',
+  },
+  {
+    q: 'What is the founding vendor offer?',
+    a: FOUNDING_FAQ_ANSWER,
   },
   {
     q: 'Are there any fees when a couple contacts me?',
-    a: "Never. We don't charge booking fees, commission, or any per-inquiry costs. The monthly fee is the only cost — what happens between you and the couple is entirely between you.",
+    a: "Never. We don't charge booking fees, commission, or any per-inquiry costs. The Featured fee is the only cost, and it is optional. What happens between you and the couple is entirely between you.",
   },
   {
     q: 'Can I cancel my Featured plan anytime?',
-    a: 'Yes. Cancel anytime from your account dashboard. Your listing reverts to Basic at the end of your billing period. Annual plans are non-refundable but can be cancelled to prevent renewal.',
+    a: `Yes. ${CANCEL_SENTENCE} Your listing stays up as a free Basic listing. Annual plans are non-refundable but can be cancelled to prevent renewal.`,
   },
   {
     q: 'How do I upgrade from Basic to Featured?',
-    a: 'Log in to your account, go to your listing dashboard, and select "Upgrade to Featured." You can upgrade at any time after your listing goes live.',
+    a: 'Sign in, open Plan in your dashboard, choose monthly or annual, and press "Pay with Card (Stripe)". You can upgrade any time after your listing is live. Founding vendors can subscribe once their free period has ended.',
   },
 ];
 
@@ -150,7 +159,7 @@ export default function PricingPage() {
           <div className="rounded-2xl border bg-card p-8 flex flex-col">
             <div className="mb-6">
               <h2 className="font-display text-2xl font-semibold mb-1">Basic Listing</h2>
-              <p className="text-sm text-muted-foreground">Free — always</p>
+              <p className="text-sm text-muted-foreground">Free, always</p>
             </div>
             <div className="mb-6">
               <span className="font-display text-5xl font-medium">$0</span>
@@ -164,16 +173,18 @@ export default function PricingPage() {
               ))}
             </ul>
             <Button asChild variant="outline" size="lg" className="w-full">
-              <Link href="/submit-listing">Create Free Listing</Link>
+              <Link href="/claim">Find &amp; Claim Your Listing</Link>
             </Button>
           </div>
 
           {/* FEATURED — ink variant, dark-vs-light contrast makes the upsell obvious */}
           <div className="relative rounded-2xl bg-ink text-ink-foreground p-8 flex flex-col shadow-lg">
             <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium gold-gradient text-white shadow-sm">
+              {/* Was "Most Popular", on a plan nobody had bought yet. A label a
+                  vendor can check and find false costs more trust than it earns. */}
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium gold-gradient text-white shadow-sm whitespace-nowrap">
                 <Sparkles className="h-3 w-3" />
-                Most Popular
+                Free for {FOUNDING_MONTHS} months for founding vendors
               </span>
             </div>
             <div className="mb-6">
@@ -184,7 +195,7 @@ export default function PricingPage() {
               <span className="font-display text-5xl font-medium">$29</span>
               <span className="text-ink-foreground/60 ml-1">/month</span>
             </div>
-            <p className="text-sm text-ink-foreground/60 mb-6">or $199/year — save 43%</p>
+            <p className="text-sm text-ink-foreground/60 mb-6">or $199/year (save 43%)</p>
             <ul className="space-y-3 mb-8 flex-1">
               {FEATURED_FEATURES.map((f) => (
                 <li key={f} className="flex items-start gap-2 text-sm">
@@ -194,8 +205,30 @@ export default function PricingPage() {
               ))}
             </ul>
             <Button asChild size="lg" className="w-full bg-background text-foreground hover:bg-background/90">
-              <Link href="/submit-listing">Get Featured</Link>
+              <Link href="#founding-offer">See the Founding Offer</Link>
             </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* FOUNDING OFFER */}
+      <section id="founding-offer" className="container pb-16 md:pb-20 scroll-mt-24">
+        <div className="rounded-3xl border border-gold/40 bg-gold/10 p-8 md:p-10 max-w-4xl mx-auto">
+          <p className="eyebrow text-gold mb-3 flex items-center gap-2">
+            <Sparkles className="h-4 w-4" /> Founding vendor offer
+          </p>
+          <h2 className="font-display text-2xl md:text-3xl mb-3">
+            Featured free for {FOUNDING_MONTHS} months
+          </h2>
+          <p className="text-muted-foreground prose-measure mb-6">
+            Claim or add your listing, then add your starting price and a cover photo. Your listing
+            becomes Featured with no card and no automatic charge. After {FOUNDING_MONTHS} months it
+            returns to a free Basic listing unless you choose to subscribe. Claiming or adding a
+            listing needs a free account.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Button asChild size="lg"><Link href="/claim">Find &amp; Claim Your Listing</Link></Button>
+            <Button asChild size="lg" variant="outline"><Link href="/submit-listing">Add a New Listing</Link></Button>
           </div>
         </div>
       </section>
@@ -226,11 +259,16 @@ export default function PricingPage() {
         <div className="rounded-3xl bg-gradient-to-br from-primary/10 via-accent/30 to-background border p-10 md:p-14 text-center">
           <h2 className="font-display text-3xl md:text-4xl font-medium mb-3">Ready to Start Growing?</h2>
           <p className="text-muted-foreground mb-8">
-            Create your free listing today. No credit card needed.
+            Claim the listing you already have, or add your business. No credit card needed.
           </p>
-          <Button asChild size="lg">
-            <Link href="/submit-listing">List Your Business Free</Link>
-          </Button>
+          <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3">
+            <Button asChild size="lg">
+              <Link href="/claim">Find &amp; Claim Your Listing</Link>
+            </Button>
+            <Button asChild size="lg" variant="outline">
+              <Link href="/submit-listing">Add a New Listing</Link>
+            </Button>
+          </div>
         </div>
       </section>
     </div>

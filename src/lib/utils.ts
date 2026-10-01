@@ -26,3 +26,12 @@ export function absoluteUrl(path: string) {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
   return `${baseUrl}${path.startsWith('/') ? path : `/${path}`}`;
 }
+
+/**
+ * An email address made safe to put after "mailto:". Addresses typed into a
+ * public form end up in links; encoded, characters such as ? and & in a
+ * crafted "address" cannot add a cc, a subject or a body of their own.
+ */
+export function mailtoAddress(address: string): string {
+  return encodeURIComponent(address).replace('%40', '@');
+}

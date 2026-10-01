@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Reveal } from '@/components/reveal';
 import { BreadcrumbJsonLd } from '@/components/json-ld';
+import { getListingStats } from '@/lib/data/listings';
+import { FOUNDING_MONTHS } from '@/lib/founding-shared';
 
 export const metadata: Metadata = {
   title: 'How It Works',
@@ -17,12 +19,19 @@ const COUPLE_STEPS = [
 ];
 
 const VENDOR_STEPS = [
-  { title: 'Create Your Listing',  body: 'Sign up and build your vendor profile in minutes. Add your services, location, bio, and photos to showcase your work.' },
-  { title: 'Get Discovered',       body: 'Couples searching in your area will find your listing. Upgrade to Featured for premium placement at the top of search results.' },
-  { title: 'Receive Inquiries',    body: 'Interested couples message you directly through the platform. Respond at your own pace and grow your client base organically.' },
+  { title: 'Claim or Create Your Listing', body: 'Your business may already be listed from public information. Claim that profile, or add a new one in minutes with your services, location and a cover photo.' },
+  { title: 'Get Discovered',       body: `Couples searching in your area find your listing. Add a starting price and a cover photo and it is Featured free for ${FOUNDING_MONTHS} months as a founding vendor.` },
+  { title: 'Receive Inquiries',    body: 'Couples’ quote requests and messages come straight to you, with their contact details. Reply directly. There is no commission and no booking fee.' },
 ];
 
-export default function HowItWorksPage() {
+export default async function HowItWorksPage() {
+  // Real counts instead of the "hundreds of professionals" this page claimed.
+  const stats = await getListingStats();
+  const vendorLine =
+    stats.vendorCount > 0 && stats.stateCount > 0
+      ? `${stats.vendorCount} live streaming ${stats.vendorCount === 1 ? 'vendor' : 'vendors'} in ${stats.stateCount} ${stats.stateCount === 1 ? 'state' : 'states'} ${stats.vendorCount === 1 ? 'is' : 'are'} listed. Claim your profile or add your business.`
+      : 'Claim your profile or add your business. It is free.';
+
   return (
     <div>
       <BreadcrumbJsonLd items={[{ name: 'Home', path: '/' }, { name: 'How It Works', path: '/how-it-works' }]} />
@@ -61,7 +70,7 @@ export default function HowItWorksPage() {
             <div className="text-center mb-12">
               <p className="eyebrow mb-2">For Vendors</p>
               <h2 className="font-display text-3xl md:text-4xl">Growing Your Business</h2>
-              <p className="mt-3 text-muted-foreground">Join hundreds of live streaming professionals already connecting with couples.</p>
+              <p className="mt-3 text-muted-foreground">{vendorLine}</p>
             </div>
             <div className="grid md:grid-cols-3 gap-10 max-w-5xl mx-auto">
               {VENDOR_STEPS.map((step, i) => (
@@ -72,6 +81,11 @@ export default function HowItWorksPage() {
                 </div>
               ))}
             </div>
+            <div className="mt-10 flex flex-col sm:flex-row flex-wrap gap-3">
+              <Button asChild size="lg"><Link href="/claim">Find &amp; Claim Your Listing</Link></Button>
+              <Button asChild size="lg" variant="outline"><Link href="/submit-listing">Add a New Listing</Link></Button>
+            </div>
+            <p className="mt-3 text-sm text-muted-foreground">Both are free and need a free account.</p>
           </div>
         </section>
       </Reveal>

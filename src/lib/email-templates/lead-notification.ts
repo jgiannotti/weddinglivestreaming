@@ -1,6 +1,8 @@
 // Sent to matched vendors when a couple submits the Get Free Quotes form.
 // Wired in src/app/api/leads/route.ts. Callers must pass pre-escaped values.
 
+import { emailSiteUrl } from '@/lib/site-url';
+
 interface LeadNotificationParams {
   vendorName: string;
   leadName: string;
@@ -10,19 +12,27 @@ interface LeadNotificationParams {
   venueCity?: string;
   venueState?: string;
   message?: string;
+  /** The couple asked for the quote on this vendor's own profile page. */
+  direct?: boolean;
 }
 
 export function leadNotificationEmail(params: LeadNotificationParams): { subject: string; html: string } {
-  const { vendorName, leadName, leadEmail, leadPhone, weddingDate, venueCity, venueState, message } = params;
+  const { vendorName, leadName, leadEmail, leadPhone, weddingDate, venueCity, venueState, message, direct = false } = params;
+  const site = emailSiteUrl();
+  const intro = direct
+    ? `Hi ${vendorName}, a couple just requested a quote from your profile on WeddingLiveStreaming.com.`
+    : `Hi ${vendorName}, a couple just requested wedding livestream quotes on WeddingLiveStreaming.com, and your listing was one of the matches for their venue.`;
 
-  const subject = `New lead: ${leadName} is looking for a wedding live streaming vendor`;
+  const subject = direct
+    ? `New quote request from your profile: ${leadName}`
+    : `New quote request: ${leadName} is looking for a wedding live streaming vendor`;
 
   const detailRows = [
     ['Name', leadName],
     ['Email', leadEmail],
-    ['Phone', leadPhone || '—'],
-    ['Wedding date', weddingDate || '—'],
-    ['Venue', [venueCity, venueState].filter(Boolean).join(', ') || '—'],
+    ['Phone', leadPhone || 'Not given'],
+    ['Wedding date', weddingDate || 'Not given'],
+    ['Venue', [venueCity, venueState].filter(Boolean).join(', ') || 'Not given'],
   ]
     .map(
       ([label, value]) => `
@@ -43,9 +53,9 @@ export function leadNotificationEmail(params: LeadNotificationParams): { subject
       </tr>
       <tr>
         <td style="padding: 32px;">
-          <h1 style="margin: 0 0 12px; font-size: 22px; color: #35272c;">You&rsquo;ve got a new lead!</h1>
+          <h1 style="margin: 0 0 12px; font-size: 22px; color: #35272c;">You have a new quote request</h1>
           <p style="margin: 0 0 20px; font-size: 15px; color: #6b5c60; line-height: 1.5;">
-            Hi ${vendorName}, a couple matching your service area just submitted a request on WeddingLiveStreaming.com.
+            ${intro}
           </p>
           <table role="presentation" width="100%" style="border-collapse: collapse; margin-bottom: 20px;">
             ${detailRows}
@@ -58,8 +68,8 @@ export function leadNotificationEmail(params: LeadNotificationParams): { subject
           <p style="margin: 0 0 20px; font-size: 14px; color: #35272c; line-height: 1.5;">
             Reply directly to this email to reach the couple, or manage your listing from your dashboard.
           </p>
-          <a href="https://www.weddinglivestreaming.com/dashboard" style="display: inline-block; background-color: #d49a35; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: bold;">
-            Open your dashboard
+          <a href="${site}/dashboard/leads" style="display: inline-block; background-color: #d49a35; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: bold;">
+            See your quote requests
           </a>
         </td>
       </tr>

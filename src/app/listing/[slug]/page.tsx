@@ -8,11 +8,13 @@ import { Badge } from '@/components/ui/badge';
 import { ListingCard } from '@/components/listing-card';
 import { LeadForm } from '@/components/lead-form';
 import { getListingBySlug, getRelatedListings } from '@/lib/data/listings';
+import { trackNavigation } from '@/lib/track-navigation';
 import { formatStartingPrice, getCrewOption } from '@/lib/listing-facets';
 import { formatDate } from '@/lib/utils';
 import { getPlaceholderImage } from '@/lib/constants';
 import { ListingJsonLd, BreadcrumbJsonLd } from '@/components/json-ld';
 import { getStateByName } from '@/lib/states';
+import { FOUNDING_MONTHS } from '@/lib/founding-shared';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -45,6 +47,9 @@ export default async function ListingPage({ params }: PageProps) {
   const { slug } = await params;
   const listing = await getListingBySlug(slug);
   if (!listing) notFound();
+  // Count a visitor arriving from elsewhere on the site (a directory card, a
+  // state page). Page loads are counted by middleware; see track-navigation.
+  await trackNavigation(`/listing/${listing.slug}`);
 
   const related = await getRelatedListings(listing, 3);
   const hasCoordinates = listing.lat != null && listing.lng != null;
@@ -172,7 +177,7 @@ export default async function ListingPage({ params }: PageProps) {
                     <p className="font-semibold text-sm">{listing.vendor.businessName}</p>
                     <p className="text-xs text-muted-foreground">
                       {listing.vendor.userId
-                        ? `Member since ${formatDate(listing.vendor.memberSince)}`
+                        ? `Member since ${formatDate(listing.vendor.claimedAt ?? listing.vendor.memberSince)}`
                         : 'Unclaimed profile'}
                     </p>
                   </div>
@@ -224,13 +229,14 @@ export default async function ListingPage({ params }: PageProps) {
                   Is {listing.vendor.businessName} your business?
                 </p>
                 <p className="text-sm text-muted-foreground mb-4">
-                  Claim this free profile to edit it, add photos, and receive couple inquiries
-                  directly.
+                  Claim this free profile to edit it and have couples&rsquo; quote requests sent
+                  straight to you. Add your starting price and a cover photo and it is Featured free
+                  for {FOUNDING_MONTHS} months.
                 </p>
                 <Button asChild size="sm" className="w-full">
                   <Link href={`/claim/${listing.slug}`}>
                     <ShieldCheck className="h-4 w-4" />
-                    Claim This Profile — Free
+                    Claim This Profile, Free
                   </Link>
                 </Button>
               </div>

@@ -8,6 +8,7 @@ import { ListingCard } from '@/components/listing-card';
 import { Reveal } from '@/components/reveal';
 import { getFeaturedListings, getListingStats } from '@/lib/data/listings';
 import { US_STATES } from '@/lib/states';
+import { FOUNDING_MONTHS } from '@/lib/founding-shared';
 
 export const metadata: Metadata = {
   alternates: { canonical: '/' },
@@ -43,7 +44,7 @@ export default async function HomePage() {
                 <em className="italic text-primary">every guest</em>
               </h1>
               <p className="mt-6 text-lg text-muted-foreground max-w-xl prose-measure">
-                Find trusted live streaming professionals who bring your wedding day to the people who matter most, wherever they are.
+                Find live streaming professionals who bring your wedding day to the people who matter most, wherever they are.
               </p>
 
               <div className="mt-8">
@@ -51,11 +52,13 @@ export default async function HomePage() {
               </div>
 
               <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
+                {/* "Vendors Listed", not "Verified Vendors": most profiles are built
+                    from public sources and only become verified when the owner claims them. */}
                 {stats.vendorCount > 0 && (
-                  <span><span className="font-semibold text-foreground">{stats.vendorCount}+</span> Verified Vendors</span>
+                  <span><span className="font-semibold text-foreground">{stats.vendorCount}</span> Vendors Listed</span>
                 )}
                 {stats.stateCount > 0 && (
-                  <span><span className="font-semibold text-foreground">{stats.stateCount}+</span> States Covered</span>
+                  <span><span className="font-semibold text-foreground">{stats.stateCount}</span> States Covered</span>
                 )}
                 <span><span className="font-semibold text-foreground">Free</span> To Search &amp; Contact</span>
               </div>
@@ -92,7 +95,7 @@ export default async function HomePage() {
                       engines quote and quality raters penalize. */}
                   <span className="text-xs font-medium whitespace-nowrap">
                     {stats.vendorCount > 0 && stats.stateCount > 0
-                      ? `${stats.vendorCount}+ vendors · ${stats.stateCount} states · free for couples`
+                      ? `${stats.vendorCount} vendors · ${stats.stateCount} states · free for couples`
                       : 'Free for couples · no booking fees'}
                   </span>
                 </div>
@@ -109,7 +112,12 @@ export default async function HomePage() {
               left-borders + padding read as random indents. Plain centered
               gaps wrap cleanly at every width. */}
           <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2.5 text-sm text-muted-foreground">
-            {['Vetted professionals', 'Direct contact — no middlemen', 'Free for couples'].map((item) => (
+            {/* "Wedding livestream vendors only" is what the directory actually
+                guarantees: every listing publicly offers wedding live streaming.
+                It replaced "Vetted professionals", which we do not do for seeded
+                listings, and it does not say "specialists", because many of
+                them are videography or AV studios that also stream. */}
+            {['Wedding livestream vendors only', 'Direct contact, no middlemen', 'Free for couples'].map((item) => (
               <span key={item} className="flex items-center gap-2">
                 <Check className="h-4 w-4 text-primary shrink-0" />
                 {item}
@@ -182,7 +190,7 @@ export default async function HomePage() {
             {featured.length > 0 && (
               <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
                 <div>
-                  <p className="eyebrow mb-2">Hand-Picked</p>
+                  <p className="eyebrow mb-2">Spotlight</p>
                   <h2 className="font-display text-3xl md:text-4xl">Featured Vendors</h2>
                 </div>
                 <Button asChild variant="outline">
@@ -206,12 +214,12 @@ export default async function HomePage() {
                 <div className="absolute inset-0 bg-ink/70" aria-hidden="true" />
                 <div className="relative text-ink-foreground text-center py-16 px-6 md:py-20">
                   <p className="eyebrow text-gold mb-3">Founding Vendors</p>
-                  <h3 className="font-display text-3xl md:text-4xl mb-4">Claim a founding spot in your city</h3>
+                  <h3 className="font-display text-3xl md:text-4xl mb-4">Featured free for {FOUNDING_MONTHS} months</h3>
                   <p className="text-ink-foreground/75 max-w-xl mx-auto mb-8">
-                    The first vendors to join each market get top placement as the directory grows — before it&rsquo;s competitive.
+                    Wedding livestream vendors: claim your listing, add your starting price and a cover photo, and it is Featured at no charge. No card needed.
                   </p>
                   <Button asChild variant="outline" size="lg" className="border-gold text-gold hover:bg-gold hover:text-gold-foreground bg-transparent">
-                    <Link href="/submit-listing">Become a Founding Vendor</Link>
+                    <Link href="/for-vendors">Become a Founding Vendor</Link>
                   </Button>
                 </div>
               </div>
@@ -318,11 +326,11 @@ export default async function HomePage() {
             Get discovered by couples searching in your area
           </h2>
           <p className="text-ink-foreground/70 max-w-2xl mx-auto mb-8">
-            Create a listing in minutes and start receiving direct inquiries from couples planning their wedding. Free to list — upgrade to Featured for top placement.
+            Your business may already be listed. Claim your profile, or add it in minutes, and couples&rsquo; quote requests come straight to you. Free to list, and Featured is free for {FOUNDING_MONTHS} months for founding vendors.
           </p>
           <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3">
             <Button asChild size="lg" className="w-full sm:w-auto bg-background text-foreground hover:bg-background/90">
-              <Link href="/submit-listing">List Your Business — Free</Link>
+              <Link href="/for-vendors">Claim or List Your Business</Link>
             </Button>
             <Button asChild variant="ghost" size="lg" className="w-full sm:w-auto text-ink-foreground hover:bg-white/10 hover:text-ink-foreground">
               <Link href="/pricing">See Featured pricing</Link>

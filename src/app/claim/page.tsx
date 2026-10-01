@@ -3,11 +3,13 @@ import Link from 'next/link';
 import { Search, BadgeCheck, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getListings } from '@/lib/data/listings';
+import { FOUNDING_MONTHS } from '@/lib/founding-shared';
 
 export const metadata: Metadata = {
   title: 'Claim Your Listing',
   description:
-    'Already listed on WeddingLiveStreaming.com? Find your business and claim your free profile to manage photos, coverage area, and couple inquiries.',
+    'Already listed on WeddingLiveStreaming.com? Find your business and claim your free profile to manage your details, coverage area and quote requests.',
+  alternates: { canonical: '/claim' },
 };
 
 interface PageProps {
@@ -26,8 +28,12 @@ export default async function ClaimIndexPage({ searchParams }: PageProps) {
         <h1 className="font-display text-4xl md:text-5xl mb-4">Claim your listing</h1>
         <p className="text-muted-foreground text-lg max-w-xl mx-auto">
           We may have already listed your business in our directory. Find it below and claim it
-          for free — you&rsquo;ll get a verified badge, direct couple inquiries, and full control
-          of your profile.
+          for free. You&rsquo;ll get a verified badge, couples&rsquo; quote requests sent straight to
+          you, and full control of your profile.
+        </p>
+        <p className="mt-4 text-sm text-muted-foreground max-w-xl mx-auto">
+          <strong className="text-foreground">Founding vendor offer:</strong> claim your profile, add
+          your starting price and a cover photo, and it is Featured free for {FOUNDING_MONTHS} months. No card needed.
         </p>
       </div>
 

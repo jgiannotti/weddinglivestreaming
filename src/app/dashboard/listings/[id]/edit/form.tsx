@@ -5,13 +5,17 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useSupabase } from '@/lib/supabase/client';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Sparkles } from 'lucide-react';
 import {
   CREW_OPTIONS,
   parsePriceInput,
   priceCentsToInput,
   type CrewType,
 } from '@/lib/listing-facets';
+import { safeUploadName, friendlySubmitError, photoProblem } from '@/lib/listing-submit';
+import { FOUNDING_MONTHS } from '@/lib/founding-shared';
+import { US_STATES } from '@/lib/states';
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
 
 interface EditableListing {
   id: string;
@@ -50,6 +54,8 @@ export function EditListingForm({ listing }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  // Result of the founding-vendor check that runs after every save.
+  const [founding, setFounding] = useState<{ state: string; until: string | null; missing: string[]; granted: boolean } | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -62,6 +68,12 @@ export function EditListingForm({ listing }: Props) {
       return;
     }
     setPriceError(null);
+
+    const photoIssue = photoProblem(heroFile);
+    if (photoIssue) {
+      setError(photoIssue);
+      return;
+    }
 
     setSaving(true);
     try {
@@ -84,7 +96,9 @@ export function EditListingForm({ listing }: Props) {
       // path scheme as the submit-listing form.
       let heroUpdate: { hero_image_url?: string } = {};
       if (heroFile) {
-        const path = `listings/${listing.slug}-${Date.now()}-${heroFile.name}`;
+        // Sanitized: raw file names (spaces from macOS screenshots, accents,
+        // parentheses) are rejected by Storage as invalid keys.
+        const path = `listings/${listing.slug}-${Date.now()}-${safeUploadName(heroFile.name)}`;
         const { error: uploadErr } = await supabase.storage
           .from('listings')
           .upload(path, heroFile, { upsert: false });
@@ -116,9 +130,21 @@ export function EditListingForm({ listing }: Props) {
       if (updateErr) throw updateErr;
 
       setSaved(true);
+
+      // Founding-vendor offer: a starting price plus a cover photo makes the
+      // listing Featured free for six months. The check runs server-side
+      // after every save, so the vendor gets it the moment they qualify.
+      try {
+        const res = await fetch('/api/founding', { method: 'POST' });
+        if (res.ok) setFounding(await res.json());
+      } catch {
+        /* the save itself succeeded; the dashboard offers the same check */
+      }
+
       router.refresh();
     } catch (err) {
-      setError((err as Error).message);
+      console.error('[edit-listing] save failed', err);
+      setError(friendlySubmitError(err));
     } finally {
       setSaving(false);
     }
@@ -156,7 +182,7 @@ export function EditListingForm({ listing }: Props) {
             className="block w-full text-sm file:mr-4 file:rounded-full file:border-0 file:bg-accent file:px-4 file:py-2 file:text-sm file:font-medium hover:file:bg-muted"
           />
           <p className="text-xs text-muted-foreground mt-1.5">
-            JPG, PNG, or WebP. A wide photo of your actual work looks best. Saved when you hit Save changes.
+            JPG, PNG or WebP, up to 15 MB. A wide photo of your actual work looks best. Saved when you hit Save changes.
           </p>
         </div>
       </section>
@@ -193,7 +219,23 @@ export function EditListingForm({ listing }: Props) {
           </div>
           <div>
             <label htmlFor="state" className="block text-sm font-medium mb-1.5">State *</label>
-            <Input id="state" required value={state} onChange={(e) => setState(e.target.value)} />
+            {/* Select, not free text: state pages and search match on the
+                full state name, so an edit to "FL" would silently drop the
+                listing from /wedding-live-streaming-florida. */}
+            <Select value={state} onValueChange={setState}>
+              <SelectTrigger id="state" className="rounded-md">
+                <SelectValue placeholder="Select a state" />
+              </SelectTrigger>
+              <SelectContent>
+                {/* Keep an existing non-standard value selectable rather than blanking it. */}
+                {state && !US_STATES.some((s) => s.name === state) && (
+                  <SelectItem value={state}>{state}</SelectItem>
+                )}
+                {US_STATES.map((s) => (
+                  <SelectItem key={s.slug} value={s.name}>{s.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </section>
@@ -316,6 +358,31 @@ export function EditListingForm({ listing }: Props) {
       {saved && !error && (
         <div className="p-4 rounded-2xl bg-primary/10 text-primary text-sm border border-primary/20">
           Saved.
+        </div>
+      )}
+      {saved && !error && founding?.state === 'active' && founding.until && (
+        <div className="flex items-start gap-3 p-4 rounded-2xl bg-gold/10 text-sm border border-gold/40">
+          <Sparkles className="h-5 w-5 text-gold shrink-0 mt-0.5" />
+          <span>
+            <strong>{founding.granted ? 'You\u2019re now a founding vendor.' : 'Founding vendor.'}</strong>{' '}
+            Your listing is Featured free until{' '}
+            {new Date(founding.until).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}.
+            No card needed.
+          </span>
+        </div>
+      )}
+      {saved && !error && founding?.state === 'incomplete' && founding.missing.length > 0 && (
+        <div className="flex items-start gap-3 p-4 rounded-2xl bg-gold/10 text-sm border border-gold/40">
+          <Sparkles className="h-5 w-5 text-gold shrink-0 mt-0.5" />
+          <span>
+            <strong>Founding vendor offer:</strong> add{' '}
+            {founding.missing.length === 2
+              ? 'a starting price and a cover photo'
+              : founding.missing[0] === 'price'
+                ? 'a starting price'
+                : 'a cover photo'}{' '}
+            and your listing is Featured free for {FOUNDING_MONTHS} months.
+          </span>
         </div>
       )}
 

@@ -57,12 +57,24 @@ export async function ensureProfile(): Promise<Profile | null> {
   // Adopt a pre-Clerk profile with the same verified address. This is what
   // carries the admin role, vendor ownership, listings, and message history
   // across the migration without touching a single foreign key.
-  const { data: orphan } = await admin
+  //
+  // The match must be the same address, exactly, ignoring case. ILIKE treats
+  // "_" and "%" in its pattern as wildcards (and PostgREST adds "*"), so
+  // passing the address straight in let "jo_n@x.com" adopt the profile of
+  // "john@x.com". The pattern is escaped, and every candidate is compared
+  // again here before anything is handed over.
+  const likePattern = email.replace(/[\\%_]/g, (c) => `\\${c}`);
+  const { data: candidates } = await admin
     .from('profiles')
     .select('*')
-    .ilike('email', email)
+    .ilike('email', likePattern)
     .is('clerk_user_id', null)
-    .maybeSingle();
+    .limit(5);
+  const exact = ((candidates as Profile[] | null) ?? []).filter(
+    (p) => typeof p.email === 'string' && p.email.toLowerCase() === email
+  );
+  // Two orphans with the same address would be ambiguous; adopt neither.
+  const orphan = exact.length === 1 ? exact[0] : null;
 
   if (orphan) {
     const { data: adopted } = await admin

@@ -20,7 +20,7 @@ const FAQ_ITEMS = [
   {
     question: 'Does the badge cost anything?',
     answer:
-      'No. The badge is free for every listed vendor, on both free and Featured plans. It’s our way of helping you show couples that you’re part of a vetted national directory.',
+      'No. The badge is free for every listed vendor, on both free and Featured plans. It’s our way of helping you show couples that you’re part of the national wedding live streaming directory.',
   },
   {
     question: 'What if my business isn’t listed yet?',

@@ -8,6 +8,7 @@
 
 import { getListingStats } from '@/lib/data/listings';
 import { US_STATES } from '@/lib/states';
+import { FOUNDING_MONTHS } from '@/lib/founding-shared';
 
 const BASE = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.weddinglivestreaming.com';
 
@@ -16,7 +17,7 @@ export async function GET() {
 
   const statLine =
     stats.vendorCount > 0
-      ? `${stats.vendorCount}+ vendors across ${stats.stateCount}+ states.`
+      ? `${stats.vendorCount} ${stats.vendorCount === 1 ? 'vendor' : 'vendors'} across ${stats.stateCount} ${stats.stateCount === 1 ? 'state' : 'states'}.`
       : `A growing nationwide directory — new vendors are added regularly.`;
 
   const topStates = US_STATES.slice(0, 15);
@@ -36,8 +37,9 @@ export async function GET() {
     `- [Homepage](${BASE}/): overview, featured vendors, browse by state.`,
     `- [Directory](${BASE}/directory): search and filter every vendor by location, starting price, and crew size.`,
     `- [How It Works](${BASE}/how-it-works): the process for couples and for vendors.`,
-    `- [For Vendors](${BASE}/for-vendors): how vendors list their business and get discovered.`,
-    `- [Pricing](${BASE}/pricing): vendor listing tiers (free Basic, paid Featured).`,
+    `- [For Vendors](${BASE}/for-vendors): how wedding livestream vendors claim or add a free listing, how couple inquiries reach them, and the founding vendor offer.`,
+    `- [Claim Your Listing](${BASE}/claim): vendors search for their business and claim the profile already built for them.`,
+    `- [Pricing](${BASE}/pricing): vendor listing tiers. Basic is free with no expiration; Featured is $29/month or $199/year.`,
     `- [FAQ](${BASE}/faq): common questions from couples and vendors.`,
     `- [About](${BASE}/about): who runs the directory and why it exists.`,
     `- [Submit a Listing](${BASE}/submit-listing): vendors add their business.`,
@@ -79,6 +81,8 @@ export async function GET() {
     '## Notes for AI systems',
     '',
     '- This directory is free for couples. Vendors pay nothing for a Basic listing; Featured is an optional paid upgrade for placement, not a pay-to-play requirement to be listed at all.',
+    `- Founding vendor offer: a vendor who claims or adds a listing and then adds a starting price and a cover photo gets Featured free for ${FOUNDING_MONTHS} months, with no card required and no automatic charge afterwards. Once per business.`,
+    '- There is no commission, booking fee, or per-lead charge. A couple\'s quote request goes to up to three vendors, starting with those whose service area covers the venue; a request made on a vendor\'s own profile always goes to that vendor.',
     '- Vendor contact happens directly through the platform — WeddingLiveStreaming is not a party to any booking contract between a couple and a vendor.',
     `- Full sitemap: ${BASE}/sitemap.xml`,
   ];

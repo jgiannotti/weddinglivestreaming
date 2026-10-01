@@ -47,19 +47,75 @@ export function shouldTrack(req: NextRequest): boolean {
   // are crawler plumbing rather than content.)
   if (/\.[a-z0-9]{2,5}$/i.test(pathname)) return false;
 
-  // Next.js client-side navigations refetch RSC payloads for a route the user
-  // is already on; counting them would double every soft navigation.
-  if (req.headers.get('rsc') === '1' || req.nextUrl.searchParams.has('_rsc')) return false;
+  // Only real page loads are counted here.
+  //
+  // This used to test the `rsc` header and the `_rsc` query to skip Next.js
+  // data requests. That test could never be true: Next removes those headers
+  // and that query from the request before middleware sees it. So every link
+  // PREFETCH was logged as a page view. In production <Link> prefetches each
+  // link as it scrolls into view, which means showing a vendor's card on the
+  // directory counted as someone opening that vendor's profile, and every
+  // page in the header and footer collected a "view" on every visit.
+  //
+  // Browsers label every request with what it is for. A page load is
+  // `document`; a prefetch or an in-app navigation is a fetch() and arrives as
+  // `empty`. Crawlers send no such header and are kept, as before.
+  if (!isDocumentRequest(req.headers)) return false;
 
   return true;
 }
 
-export async function trackPageView(req: NextRequest): Promise<void> {
+/**
+ * True for a top-level page load (or a client that does not say, such as a
+ * crawler). False for anything a script fetched in the background.
+ *
+ * A page the browser loads ahead of time (Chrome preloading the top search
+ * result, say) is still a page load and is counted: if the visitor then opens
+ * it there is no second request, so skipping it would lose real visits from
+ * search, the number this log exists to measure.
+ */
+export function isDocumentRequest(headers: Headers): boolean {
+  const dest = headers.get('sec-fetch-dest');
+  if (dest) return dest === 'document';
+
+  // No label at all. Crawlers never send one, and they must be logged.
+  if (isBot(headers.get('user-agent') ?? '')) return true;
+
+  // A browser too old to send one (Safari before 16.4) still prefetches links.
+  // A page load asks for text/html; a background fetch asks for "*/*".
+  const accept = headers.get('accept');
+  return !accept || /text\/html/i.test(accept);
+}
+
+/** What logPageView needs to know about a request. */
+export interface PageHit {
+  headers: Headers;
+  pathname: string;
+  /** This site's own hostname, so internal referrers are recognised. */
+  hostname: string;
+  searchParams?: URLSearchParams;
+}
+
+export function trackPageView(req: NextRequest): Promise<void> {
+  return logPageView({
+    headers: req.headers,
+    pathname: req.nextUrl.pathname,
+    hostname: req.nextUrl.hostname,
+    searchParams: req.nextUrl.searchParams,
+  });
+}
+
+/**
+ * Write one page_views row. Shared by middleware (page loads) and by
+ * src/lib/track-navigation.ts (in-app navigations to a listing).
+ */
+export async function logPageView(hit: PageHit): Promise<void> {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return;
 
   try {
+    const req = { headers: hit.headers };
     const ua = req.headers.get('user-agent') ?? '';
     const aiCrawler = detectAiCrawler(ua);
     const bot = isBot(ua);
@@ -79,8 +135,8 @@ export async function trackPageView(req: NextRequest): Promise<void> {
       }
     }
 
-    const selfHost = req.nextUrl.hostname;
-    const params = req.nextUrl.searchParams;
+    const selfHost = hit.hostname;
+    const params = hit.searchParams ?? new URLSearchParams();
 
     // Only real visitors get a visitor_hash — see the note in 0015_page_views.
     let hash: string | null = null;
@@ -97,7 +153,7 @@ export async function trackPageView(req: NextRequest): Promise<void> {
     }
 
     const row = {
-      path: req.nextUrl.pathname,
+      path: hit.pathname,
       visitor_hash: hash,
       referrer_host: referrerHost,
       source: classifyReferrer(referrerHost, selfHost),

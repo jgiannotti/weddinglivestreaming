@@ -10,8 +10,11 @@ const NAV = [
   // "My Listings" removed: /dashboard/listings just redirects to Overview,
   // which already shows the vendor's listings — two nav items to one page.
   { label: 'Overview',     href: '/dashboard',          icon: LayoutDashboard },
-  { label: 'Inquiries',    href: '/dashboard/messages', icon: MessageSquare },
-  { label: 'Leads',        href: '/dashboard/leads',    icon: Heart },
+  // Named for what the vendor sees elsewhere: emails and the overview call
+  // these "quote requests" and "messages". They used to be "Leads" and
+  // "Inquiries", while the emails said "inquiries" for the leads page.
+  { label: 'Quote requests', href: '/dashboard/leads',    icon: Heart },
+  { label: 'Messages',       href: '/dashboard/messages', icon: MessageSquare },
   { label: 'Plan',         href: '/dashboard/plan',     icon: CreditCard },
   { label: 'Security',     href: '/dashboard/security', icon: ShieldCheck },
 ];

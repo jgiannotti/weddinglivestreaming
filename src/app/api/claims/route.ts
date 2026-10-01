@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { sendEmail, escapeHtml, ADMIN_EMAIL } from '@/lib/email';
 import { ensureProfile } from '@/lib/auth';
+import { emailSiteUrl } from '@/lib/site-url';
+import { ownedVendors } from '@/lib/data/my-vendor';
 
 // POST /api/claims — submit a claim for a seeded (unclaimed) vendor profile.
 export async function POST(request: Request) {
@@ -25,6 +27,25 @@ export async function POST(request: Request) {
 
   if (!listingId || !businessEmail || !proof) {
     return NextResponse.json({ error: 'Business email and verification details are required.' }, { status: 400 });
+  }
+
+  // One account, one vendor (every dashboard page works on a single vendor).
+  // Without this check a claim from an account that already manages a
+  // business would sit in the queue, get approved, and leave the account with
+  // two vendors it cannot see or manage.
+  // (An empty vendor row from an interrupted sign-up is not a business.)
+  const { real: owned, failed: ownedUnknown } = await ownedVendors(supabase, user.id);
+  if (ownedUnknown) {
+    return NextResponse.json({ error: 'Could not submit your claim. Please try again.' }, { status: 500 });
+  }
+  if (owned.length > 0) {
+    const mine = owned[0].business_name || 'another business';
+    return NextResponse.json(
+      {
+        error: `This account already manages ${mine}. One account manages one business, so to claim this one, sign in with a different email address or write to hello@weddinglivestreaming.com.`,
+      },
+      { status: 409 }
+    );
   }
 
   // The listing must exist, be public, and belong to an UNCLAIMED vendor.
@@ -90,7 +111,7 @@ export async function POST(request: Request) {
       <h2>New claim request</h2>
       <p><strong>Claimant:</strong> ${escapeHtml(user.email || user.id)}</p>
       <p style="white-space:pre-line">${escapeHtml(details)}</p>
-      <p><a href="https://www.weddinglivestreaming.com/admin/claims">Review in the claims queue</a></p>
+      <p><a href="${emailSiteUrl()}/admin/claims">Review in the claims queue</a></p>
     `,
   });
 

@@ -56,11 +56,20 @@ export function LeadForm({ venueState, venueCity, sourceListingId, title }: Prop
           website,
         }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Something went wrong. Please try again.');
+      // The answer is JSON from our own route, except when something between
+      // here and it answers instead (a timeout page, an outage page). That used
+      // to surface as a JSON parse error shown to the couple.
+      const data = (await res.json().catch(() => null)) as { error?: string } | null;
+      if (!res.ok) throw new Error(data?.error || 'Something went wrong on our side. Please try again in a minute.');
       setSuccess(true);
     } catch (err) {
-      setError((err as Error).message);
+      // A failed connection throws a TypeError whose message ("Failed to
+      // fetch", "Load failed") means nothing to a visitor.
+      setError(
+        err instanceof TypeError
+          ? 'We could not reach the site. Please check your connection and try again.'
+          : (err as Error).message
+      );
     } finally {
       setLoading(false);
     }

@@ -2,6 +2,13 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { formatDate } from '@/lib/utils';
 import { AnnouncementForm } from './announcement-form';
+import { CopyClaimLink } from './copy-claim-link';
+import { claimUrlFor } from '@/lib/claim-link';
+import { emailSiteUrl } from '@/lib/site-url';
+
+// Claim links copied from this page are pasted into emails and messages, so
+// they must point at the real site whatever host this page is served from.
+const SITE = emailSiteUrl();
 
 // Mirrors effectiveTier() in src/lib/data/listings.ts — a listing whose
 // featured_until has passed reads back as 'basic' immediately, regardless of
@@ -18,7 +25,7 @@ export default async function AdminVendorsPage() {
   const { data: vendors } = await supabase
     .from('vendors')
     .select(`
-      id, business_name, slug, phone, member_since, created_at,
+      id, user_id, business_name, slug, phone, member_since, created_at,
       profile:profiles(email),
       listings(id, slug, status, tier, featured_until, created_at)
     `)
@@ -44,6 +51,7 @@ export default async function AdminVendorsPage() {
                 <th className="px-4 py-3 font-medium">Status</th>
                 <th className="px-4 py-3 font-medium">Joined</th>
                 <th className="px-4 py-3 font-medium">Listing</th>
+                <th className="px-4 py-3 font-medium">Claim</th>
               </tr>
             </thead>
             <tbody>
@@ -83,6 +91,19 @@ export default async function AdminVendorsPage() {
                         <Link href={`/listing/${primary.slug}`} className="text-primary hover:underline">
                           View →
                         </Link>
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
+                      )}
+                    </td>
+                    {/* A signed link the vendor can use to claim instantly. Paste
+                        it into a reply when a vendor asks how to claim. */}
+                    <td className="px-4 py-3">
+                      {v.user_id ? (
+                        <span className="text-muted-foreground">Claimed</span>
+                      ) : primary?.slug && primary.status === 'approved' ? (
+                        <CopyClaimLink
+                          url={claimUrlFor({ site: SITE, slug: primary.slug, vendorId: v.id, utmSource: 'owner' })}
+                        />
                       ) : (
                         <span className="text-muted-foreground">—</span>
                       )}

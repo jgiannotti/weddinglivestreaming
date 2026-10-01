@@ -24,7 +24,10 @@ export async function POST(request: Request) {
     sender_name: name,
     sender_phone: phone,
   });
-  if (insertErr) return NextResponse.json({ error: insertErr.message }, { status: 500 });
+  if (insertErr) {
+    console.error('[messages] insert failed', { code: (insertErr as { code?: string }).code, message: insertErr.message });
+    return NextResponse.json({ error: 'We could not send your message just now. Please try again.' }, { status: 500 });
+  }
 
   // Increment inquiry counter on the listing
   try {

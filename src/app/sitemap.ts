@@ -49,6 +49,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/faq',
     '/privacy-policy',
     '/submit-listing',
+    '/claim',
     '/vendor-badge',
     '/press',
   ].map((path) => ({

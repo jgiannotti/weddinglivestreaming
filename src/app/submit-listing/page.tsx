@@ -1,7 +1,9 @@
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { SubmitListingForm } from './form';
 import { ensureProfile } from '@/lib/auth';
+import { getMyVendor } from '@/lib/data/my-vendor';
 
 export const metadata = { title: 'List Your Business', alternates: { canonical: '/submit-listing' } };
 export const dynamic = 'force-dynamic';
@@ -24,14 +26,34 @@ export default async function SubmitListingPage() {
     redirect('/auth/register?next=/submit-listing');
   }
 
-  // If they already have a vendor profile, take them to their dashboard
-  const { data: existing } = await supabase
-    .from('vendors')
-    .select('id')
-    .eq('user_id', user.id)
-    .maybeSingle();
+  // getMyVendor prefers a vendor that already has listings, so an account
+  // with a finished listing is never sent back through this form.
+  const mine = await getMyVendor(supabase, user.id);
 
-  if (existing) redirect('/dashboard/listings');
+  // A vendor record with a listing means they are done here. A vendor record
+  // WITHOUT one means an earlier attempt failed partway (the vendor row is
+  // written first). That used to bounce the vendor to a dashboard with no way
+  // to add a listing, permanently. Now the form picks up where it stopped.
+  let resume: { id: string; businessName: string; websiteUrl: string; phone: string } | null = null;
+  if (mine) {
+    const { count } = await supabase
+      .from('listings')
+      .select('id', { count: 'exact', head: true })
+      .eq('vendor_id', mine.id);
+    if ((count ?? 0) > 0) redirect('/dashboard');
+    const { data: details } = await supabase
+      .from('vendors')
+      .select('website_url, phone')
+      .eq('id', mine.id)
+      .maybeSingle();
+    const d = (details as { website_url: string | null; phone: string | null } | null) ?? null;
+    resume = {
+      id: mine.id,
+      businessName: mine.business_name ?? '',
+      websiteUrl: d?.website_url ?? '',
+      phone: d?.phone ?? '',
+    };
+  }
 
   return (
     <div className="container max-w-2xl py-12">
@@ -43,7 +65,20 @@ export default async function SubmitListingPage() {
         </p>
       </div>
 
-      <SubmitListingForm userId={user.id} />
+      {/* Most vendors who reach this page are already in the directory (it was
+          seeded from public sources). Creating a second listing gives them a
+          duplicate and leaves the original unclaimed, so point them at the
+          claim flow before they start typing. */}
+      <p className="rounded-2xl border bg-accent/30 px-5 py-4 text-sm mb-8">
+        <strong>Already in the directory?</strong> We may have listed your business from public
+        information.{' '}
+        <Link href="/claim" className="text-primary font-medium hover:underline">
+          Search for it and claim it
+        </Link>{' '}
+        instead of creating a second listing.
+      </p>
+
+      <SubmitListingForm userId={user.id} resumeVendor={resume} />
     </div>
   );
 }

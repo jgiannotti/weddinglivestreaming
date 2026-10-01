@@ -1,12 +1,16 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
-import { BadgeCheck, ShieldCheck, MessageSquare, BarChart3 } from 'lucide-react';
+import { BadgeCheck, ShieldCheck, MessageSquare, BarChart3, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createClient } from '@/lib/supabase/server';
 import { getListingBySlug } from '@/lib/data/listings';
 import { ClaimForm } from './claim-form';
+import { InstantClaim } from './instant-claim';
 import { ensureProfile } from '@/lib/auth';
+import { verifyClaimToken } from '@/lib/claim-link';
+import { FOUNDING_MONTHS } from '@/lib/founding-shared';
+import { ownedVendors } from '@/lib/data/my-vendor';
 
 export const metadata: Metadata = {
   title: 'Claim Your Profile',
@@ -15,22 +19,34 @@ export const metadata: Metadata = {
 
 const BENEFITS = [
   { icon: BadgeCheck,    text: 'Verified owner badge on your listing' },
-  { icon: MessageSquare, text: 'Receive couple inquiries directly' },
-  { icon: BarChart3,     text: 'Edit your profile, photos & coverage area' },
-  { icon: ShieldCheck,   text: 'Free — no credit card required' },
+  { icon: MessageSquare, text: 'Couples’ quote requests sent straight to you' },
+  { icon: BarChart3,     text: 'Edit your profile, cover photo and coverage area' },
+  { icon: ShieldCheck,   text: 'Free, no credit card required' },
 ];
 
 interface PageProps {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ t?: string | string[] }>;
 }
 
-export default async function ClaimPage({ params }: PageProps) {
+export default async function ClaimPage({ params, searchParams }: PageProps) {
   const { slug } = await params;
+  const { t } = await searchParams;
   const listing = await getListingBySlug(slug);
   if (!listing || !listing.vendor) notFound();
 
   // Already owned — nothing to claim.
   if (listing.vendor.userId) redirect(`/listing/${listing.slug}`);
+
+  // A signed token from one of our own emails (lead teaser, outreach). When it
+  // checks out, the claim is approved on the spot instead of waiting in the
+  // manual review queue. See src/lib/claim-link.ts.
+  const token = typeof t === 'string' ? t : null;
+  const tokenValid = verifyClaimToken(token, listing.vendor.id);
+
+  // Carry the token through sign-up so the vendor lands back here with it.
+  const returnTo = `/claim/${listing.slug}${tokenValid && token ? `?t=${encodeURIComponent(token)}` : ''}`;
+  const next = encodeURIComponent(returnTo);
 
   const supabase = await createClient();
   // Clerk session -> public.profiles row. profiles.id is the same uuid the
@@ -38,6 +54,15 @@ export default async function ClaimPage({ params }: PageProps) {
   const user = await ensureProfile();
 
   let existingClaim: { status: string } | null = null;
+  // The business this account already manages, if any. One account manages
+  // one business, so it cannot claim a second.
+  let alreadyManages: string | null = null;
+  if (user) {
+    // Only a vendor with a listing counts. An empty row left by an interrupted
+    // sign-up must not stop this account claiming its real profile.
+    const { real } = await ownedVendors(supabase, user.id);
+    if (real.length > 0) alreadyManages = real[0].business_name || 'another business';
+  }
   if (user) {
     const { data } = await supabase
       .from('claim_requests')
@@ -50,6 +75,11 @@ export default async function ClaimPage({ params }: PageProps) {
     existingClaim = data;
   }
 
+  // A valid emailed link outranks a claim that is still waiting in the queue:
+  // the vendor should not sit in manual review when they can prove ownership
+  // right now.
+  const showInstant = Boolean(user) && tokenValid && existingClaim?.status !== 'approved';
+
   return (
     <div className="container max-w-2xl py-12 md:py-16">
       <p className="eyebrow mb-2">Claim Your Profile</p>
@@ -61,7 +91,7 @@ export default async function ClaimPage({ params }: PageProps) {
         {listing.state} can find you. Claim it — free — to take control of it.
       </p>
 
-      <ul className="grid sm:grid-cols-2 gap-3 mb-10">
+      <ul className="grid sm:grid-cols-2 gap-3 mb-4">
         {BENEFITS.map(({ icon: Icon, text }) => (
           <li key={text} className="flex items-center gap-3 rounded-2xl border bg-card px-4 py-3 text-sm">
             <Icon className="h-5 w-5 text-primary shrink-0" />
@@ -70,21 +100,51 @@ export default async function ClaimPage({ params }: PageProps) {
         ))}
       </ul>
 
+      <p className="flex items-start gap-3 rounded-2xl border border-gold/40 bg-gold/10 px-4 py-3 text-sm mb-10">
+        <Sparkles className="h-5 w-5 text-gold shrink-0 mt-0.5" />
+        <span>
+          <strong>Founding vendor offer:</strong> claim your profile, add your starting price and a
+          cover photo, and your listing is Featured free for {FOUNDING_MONTHS} months. No card needed.
+        </span>
+      </p>
+
       {!user ? (
         <div className="rounded-3xl bg-accent/30 border border-accent p-8 text-center">
           <h2 className="font-display text-2xl mb-2">Create a free account to claim</h2>
           <p className="text-muted-foreground text-sm mb-6">
-            Sign in (or register in under a minute) so we know who to hand the profile to.
+            {tokenValid
+              ? 'Sign in or register in under a minute. Because you came from your personal claim link, your claim is approved as soon as you confirm it.'
+              : 'Sign in (or register in under a minute) so we know who to hand the profile to.'}
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-3">
             <Button asChild size="lg" className="w-full sm:w-auto">
-              <Link href={`/auth/register?next=/claim/${listing.slug}`}>Create Account</Link>
+              <Link href={`/auth/register?next=${next}`}>Create Account</Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
-              <Link href={`/auth/sign-in?next=/claim/${listing.slug}`}>Sign In</Link>
+              <Link href={`/auth/sign-in?next=${next}`}>Sign In</Link>
             </Button>
           </div>
         </div>
+      ) : alreadyManages ? (
+        <div className="rounded-3xl bg-accent/30 border border-accent p-8 text-center">
+          <h2 className="font-display text-2xl mb-2">This account already manages a business</h2>
+          <p className="text-muted-foreground text-sm prose-measure mx-auto">
+            You are signed in to the account that manages <strong>{alreadyManages}</strong>. One account
+            manages one business. To claim {listing.vendor.businessName} as well, sign in with a
+            different email address, or write to{' '}
+            <a href="mailto:hello@weddinglivestreaming.com" className="text-primary underline">
+              hello@weddinglivestreaming.com
+            </a>{' '}
+            and we will sort it out.
+          </p>
+          <p className="mt-4 text-sm">
+            <Link href="/dashboard" className="text-primary font-medium hover:underline">
+              Go to your dashboard
+            </Link>
+          </p>
+        </div>
+      ) : showInstant && token ? (
+        <InstantClaim listingId={listing.id} businessName={listing.vendor.businessName} token={token} />
       ) : existingClaim ? (
         <div className="rounded-3xl bg-accent/30 border border-accent p-8 text-center">
           <h2 className="font-display text-2xl mb-2">
@@ -104,7 +164,15 @@ export default async function ClaimPage({ params }: PageProps) {
           </p>
         </div>
       ) : (
-        <ClaimForm listingId={listing.id} businessName={listing.vendor.businessName} />
+        <>
+          {token && !tokenValid && (
+            <p className="rounded-2xl border bg-card px-4 py-3 text-sm text-muted-foreground mb-4">
+              That claim link has expired, so we will review this claim by hand, usually within 1
+              business day.
+            </p>
+          )}
+          <ClaimForm listingId={listing.id} businessName={listing.vendor.businessName} />
+        </>
       )}
     </div>
   );

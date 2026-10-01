@@ -253,6 +253,10 @@ export async function getListings(
   return results;
 }
 
+// How many Featured listings to consider for the homepage spotlight before
+// rotating through them.
+const SPOTLIGHT_POOL = 96;
+
 export async function getFeaturedListings(limit = 6): Promise<Listing[]> {
   const supabase = await createClient();
   const nowIso = new Date().toISOString();
@@ -270,10 +274,23 @@ export async function getFeaturedListings(limit = 6): Promise<Listing[]> {
     // Featured vendor).
     .or(`featured_until.is.null,featured_until.gte.${nowIso}`)
     .order('created_at', { ascending: false })
-    .limit(limit);
+    // Listings imported together share a created_at. Without a second key the
+    // order between them is not fixed, and the day's rotation could change
+    // whenever one of those rows is edited.
+    .order('id', { ascending: true })
+    .limit(SPOTLIGHT_POOL);
 
   if (error || !data) return [];
-  return (data as any[]).map(mapListing);
+  const all = (data as any[]).map(mapListing);
+  if (all.length <= limit) return all;
+
+  // "A place in the homepage spotlight" is part of what Featured promises. With
+  // more Featured vendors than slots, taking the newest N would show the same
+  // few forever, so the window advances by one slot-set each day (UTC). Every
+  // Featured vendor gets the same number of days on the homepage.
+  const day = Math.floor(Date.now() / 86_400_000);
+  const start = (day * limit) % all.length;
+  return Array.from({ length: limit }, (_, i) => all[(start + i) % all.length]);
 }
 
 export async function getListingBySlug(slug: string): Promise<Listing | null> {

@@ -24,12 +24,11 @@ export default async function EditListingPage({ params }: PageProps) {
   const user = await ensureProfile();
   if (!user) redirect(`/auth/sign-in?next=/dashboard/listings/${id}/edit`);
 
-  const { data: vendor } = await supabase
-    .from('vendors')
-    .select('id')
-    .eq('user_id', user.id)
-    .maybeSingle();
-  if (!vendor) redirect('/dashboard');
+  // Every vendor this account owns. Normally one; .maybeSingle() here used to
+  // return null for an account with two rows and bounce it off its own listing.
+  const { data: vendorRows } = await supabase.from('vendors').select('id').eq('user_id', user.id);
+  const vendorIds = ((vendorRows as { id: string }[] | null) ?? []).map((v) => v.id);
+  if (vendorIds.length === 0) redirect('/dashboard');
 
   // RLS ("vendor owners manage their listings") already scopes this to the
   // signed-in vendor's own rows, but we also check vendor_id explicitly here
@@ -39,7 +38,7 @@ export default async function EditListingPage({ params }: PageProps) {
     .from('listings')
     .select('*')
     .eq('id', id)
-    .eq('vendor_id', vendor.id)
+    .in('vendor_id', vendorIds)
     .maybeSingle();
 
   if (!listing) notFound();

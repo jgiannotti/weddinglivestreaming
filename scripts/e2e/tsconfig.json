@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "../..",
+    "plugins": [],
+    "paths": {
+      "@/*": ["./src/*"],
+      "@clerk/nextjs/server": ["./scripts/e2e/stubs/clerk-server.ts"],
+      "resend": ["./scripts/e2e/stubs/resend.ts"]
+    }
+  },
+  "include": ["./**/*.ts"],
+  "exclude": []
+}

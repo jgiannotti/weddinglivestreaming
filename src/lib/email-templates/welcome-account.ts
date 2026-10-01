@@ -71,8 +71,11 @@ export function welcomeAccountEmail(params: WelcomeAccountParams): { subject: st
           <p style="margin: 0 0 8px; font-size: 15px; color: #6b5c60; line-height: 1.5;">
             &bull; <a href="${SITE}/directory" style="color: #913049;">Browse vendors</a> near your venue and message them directly.
           </p>
-          <p style="margin: 0 0 20px; font-size: 15px; color: #6b5c60; line-height: 1.5;">
+          <p style="margin: 0 0 8px; font-size: 15px; color: #6b5c60; line-height: 1.5;">
             &bull; New to live streaming? Our <a href="${SITE}/guides" style="color: #913049;">guides</a> cover costs, questions to ask, and how it all works.
+          </p>
+          <p style="margin: 0 0 20px; font-size: 15px; color: #6b5c60; line-height: 1.5;">
+            &bull; Here as a wedding livestream vendor? <a href="${SITE}/claim" style="color: #913049;">Claim your listing</a> or <a href="${SITE}/submit-listing" style="color: #913049;">add your business</a>. Both are free.
           </p>
           <a href="${SITE}/directory" style="display: inline-block; background-color: #d49a35; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: bold;">
             Browse vendors

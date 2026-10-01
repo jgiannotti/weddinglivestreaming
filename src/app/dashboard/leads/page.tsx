@@ -1,23 +1,25 @@
 import Link from 'next/link';
 import { Heart, Mail, Phone, CalendarDays, MapPin, Users } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
-import { formatDate } from '@/lib/utils';
+import { formatDate, mailtoAddress } from '@/lib/utils';
 import { ensureProfile } from '@/lib/auth';
+import { getMyVendor } from '@/lib/data/my-vendor';
 
 // Couples' quote requests matched to this vendor. Row visibility is enforced
 // by RLS ("vendors see leads matched to them" — matched_vendor_ids must
 // contain one of the signed-in user's vendor ids), so the query below can
 // stay simple: whatever comes back is theirs to see.
-export default async function VendorLeadsPage() {
+interface PageProps {
+  searchParams: Promise<{ claimed?: string }>;
+}
+
+export default async function VendorLeadsPage({ searchParams }: PageProps) {
+  const { claimed } = await searchParams;
   const supabase = await createClient();
   const user = await ensureProfile();
   if (!user) return null;
 
-  const { data: vendor } = await supabase
-    .from('vendors')
-    .select('id')
-    .eq('user_id', user.id)
-    .maybeSingle();
+  const vendor = await getMyVendor(supabase, user.id);
 
   if (!vendor) {
     return <p className="text-muted-foreground">You don&rsquo;t have a vendor profile yet.</p>;
@@ -31,17 +33,25 @@ export default async function VendorLeadsPage() {
 
   return (
     <div>
-      <h1 className="font-display text-3xl md:text-4xl font-medium mb-2">Leads</h1>
+      {/* Arriving straight from an instant claim: confirm it worked before
+          showing the couple they came for. */}
+      {claimed && (
+        <div className="rounded-xl border border-primary/30 bg-primary/10 p-5 mb-6 text-sm">
+          <strong>Your profile is claimed.</strong> Your quote requests are below, with each
+          couple&rsquo;s contact details. Reply to them directly.
+        </div>
+      )}
+      <h1 className="font-display text-3xl md:text-4xl font-medium mb-2">Quote requests</h1>
       <p className="text-muted-foreground mb-8 prose-measure">
-        Couples who requested quotes for a wedding in your service area. Reach
-        out directly — replying within a day dramatically improves your odds of
-        booking.
+        Couples who asked for wedding livestream quotes and were matched to your listing, or who
+        asked on your own profile. Reach out directly, and soon: a request can go to up to three
+        vendors.
       </p>
 
       {(!leads || leads.length === 0) ? (
         <div className="rounded-xl border-2 border-dashed p-10 text-center text-muted-foreground">
-          No leads yet. When a couple near you requests quotes, their details
-          will appear here and you&rsquo;ll get an email.
+          No quote requests yet. When a couple&rsquo;s request is matched to you, their details
+          appear here and you get an email.
         </div>
       ) : (
         <ul className="space-y-4">
@@ -58,7 +68,7 @@ export default async function VendorLeadsPage() {
                     <p className="text-xs text-muted-foreground">Received {formatDate(lead.created_at)}</p>
                   </div>
                   <Link
-                    href={`mailto:${lead.email}?subject=${encodeURIComponent('Your wedding livestream quote request')}`}
+                    href={`mailto:${mailtoAddress(lead.email)}?subject=${encodeURIComponent('Your wedding livestream quote request')}`}
                     className="shrink-0 rounded-full bg-primary text-primary-foreground text-sm font-medium px-4 py-2 hover:opacity-90 transition-opacity"
                   >
                     Reply by Email
@@ -68,7 +78,7 @@ export default async function VendorLeadsPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm mb-3">
                   <p className="flex items-center gap-2">
                     <Mail className="h-4 w-4 text-muted-foreground" />
-                    <a href={`mailto:${lead.email}`} className="hover:underline">{lead.email}</a>
+                    <a href={`mailto:${mailtoAddress(lead.email)}`} className="hover:underline">{lead.email}</a>
                   </p>
                   {lead.phone && (
                     <p className="flex items-center gap-2">

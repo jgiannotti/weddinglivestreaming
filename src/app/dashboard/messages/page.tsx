@@ -1,7 +1,8 @@
 import { createClient } from '@/lib/supabase/server';
-import { formatDate } from '@/lib/utils';
+import { formatDate, mailtoAddress } from '@/lib/utils';
 import { Mail, MailOpen } from 'lucide-react';
 import { ensureProfile } from '@/lib/auth';
+import { getMyVendor } from '@/lib/data/my-vendor';
 
 export default async function MessagesPage() {
   const supabase = await createClient();
@@ -10,11 +11,7 @@ export default async function MessagesPage() {
   const user = await ensureProfile();
   if (!user) return null;
 
-  const { data: vendor } = await supabase
-    .from('vendors')
-    .select('id')
-    .eq('user_id', user.id)
-    .maybeSingle();
+  const vendor = await getMyVendor(supabase, user.id);
 
   if (!vendor) {
     return <p className="text-muted-foreground">You don&rsquo;t have a vendor profile yet.</p>;
@@ -28,12 +25,12 @@ export default async function MessagesPage() {
 
   return (
     <div>
-      <h1 className="font-display text-3xl md:text-4xl font-medium mb-2">Inquiries</h1>
+      <h1 className="font-display text-3xl md:text-4xl font-medium mb-2">Messages</h1>
       <p className="text-muted-foreground mb-8">Messages from couples interested in your services.</p>
 
       {(!messages || messages.length === 0) ? (
         <div className="rounded-xl border-2 border-dashed p-10 text-center text-muted-foreground">
-          No inquiries yet. They&rsquo;ll show up here as couples reach out.
+          No messages yet. They&rsquo;ll show up here as couples reach out.
         </div>
       ) : (
         <ul className="space-y-3">
@@ -57,7 +54,7 @@ export default async function MessagesPage() {
               <p className="text-sm whitespace-pre-line text-foreground/80">{m.body}</p>
               <div className="mt-4 flex gap-2">
                 <a
-                  href={`mailto:${m.sender_email}?subject=Re: ${encodeURIComponent(m.subject || 'Your wedding livestream inquiry')}`}
+                  href={`mailto:${mailtoAddress(m.sender_email)}?subject=${encodeURIComponent(`Re: ${m.subject || 'Your wedding livestream inquiry'}`)}`}
                   className="text-sm text-primary font-medium hover:underline"
                 >
                   Reply via email →

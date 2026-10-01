@@ -21,9 +21,38 @@ function effectiveTier(row: any): 'basic' | 'featured' {
 interface MatchArgs {
   state: string;
   city?: string;
+  /**
+   * The vendor whose own profile the couple was on when they asked for a
+   * quote (see sourceVendorForListing). Always matched, and always first.
+   */
+  sourceVendorId?: string | null;
 }
 
 const MAX_MATCHES = 3;
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+// The vendor behind the listing page a quote request was submitted from, or
+// null if the id is missing, malformed, or not a live listing.
+//
+// Until 2026-10 this id was stored on the lead and then ignored: matching took
+// the three nearest vendors, so a couple could ask for a quote on one vendor's
+// profile and that vendor might never hear about it. A request made on your
+// own page is the strongest inquiry there is, so it now always reaches you.
+export async function sourceVendorForListing(listingId: unknown): Promise<string | null> {
+  if (typeof listingId !== 'string' || !UUID_RE.test(listingId)) return null;
+
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from('listings')
+    .select('vendor_id')
+    .eq('id', listingId)
+    .eq('status', 'approved')
+    .gt('expires_at', new Date().toISOString())
+    .maybeSingle();
+
+  return (data as { vendor_id: string | null } | null)?.vendor_id ?? null;
+}
 
 // Returns up to 3 vendor ids for the given venue location.
 //
@@ -37,13 +66,18 @@ const MAX_MATCHES = 3;
 // Fallback path (location can't be resolved to coordinates): the original
 // city/state text match, so a lead is never dropped just because the couple
 // typed a venue town our cities table doesn't know.
-export async function matchVendorsForLead({ state, city }: MatchArgs): Promise<string[]> {
-  if (!state) return [];
+//
+// When the request came from a specific vendor's profile, that vendor takes
+// the first slot and location matching fills the remaining two.
+export async function matchVendorsForLead({ state, city, sourceVendorId }: MatchArgs): Promise<string[]> {
+  if (!state) return sourceVendorId ? [sourceVendorId] : [];
 
-  const proximity = await matchByProximity({ state, city });
-  if (proximity.length > 0) return proximity;
+  let byLocation = await matchByProximity({ state, city });
+  if (byLocation.length === 0) byLocation = await matchByText({ state, city });
 
-  return matchByText({ state, city });
+  if (!sourceVendorId) return byLocation;
+
+  return [sourceVendorId, ...byLocation.filter((id) => id !== sourceVendorId)].slice(0, MAX_MATCHES);
 }
 
 async function matchByProximity({ state, city }: MatchArgs): Promise<string[]> {
